@@ -1,0 +1,92 @@
+﻿<vertical preferred-width='120' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<horizontal id='filterContainer' preferred-height='10' child-control-width='false' child-expand-width='false' pad-left='1'>
+		<button on-click='SelectRandom' text='Select random'/>
+		<vertical id='searchBoxContainer' preferred-width='44' pad-left='2'/>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pref-height='1' preferred-width='1'>
+			<loading id="searchInProgress" preserve-aspect="true" min-width="5" min-height="5"/>
+		</vertical>
+		
+		<vertical preferred-width='48' pad-left='2'>
+			<dropdown-list-setting text='Sort by' value="opt_sort" apply-on-change="true" choices='sortModeSelections' on-change='UpdateData'/>
+		</vertical>
+	</horizontal>
+	<horizontal preferred-height='75' pad-top='3' pad-bottom='2' preferred-width='80'>
+		<vertical preferred-width='70'>
+			<custom-list id='songList' contents='searchedSongsList' visible-cells='6' cell-size='11.7' select-cell='SelectSong'>
+				<vertical id='bgContainer' bg='round-rect-panel' pad='1' pad-bottom='2' horizontal-fit='Unconstrained'>
+					<horizontal spacing='3'>
+						<text text='~fullFormattedSongName' align='MidlineLeft' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false'/>
+						<text text='~uploadDateFormatted' align='MidlineRight' font-size='2.7' word-wrapping='false' color='#AAA'/>
+					</horizontal>
+					<horizontal pad-top='1' pad-bottom='2' spacing='2'>
+						<macro.as-host host='detailsSong'>
+							<text text='~levelAuthorName' align='MidlineLeft' font-size='2.3' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC'/>
+						</macro.as-host>
+						<text text='~songLengthAndRating' align='MidlineRight' font-size='2.5' font-color='#CCC' word-wrapping='false'/>
+					</horizontal>
+					<horizontal bg='round-rect-panel' background-color='black' preferred-height='3.9'>
+						<macro.for-each items='diffs'>
+							<text text='~formattedDiffDisplay' font-size='2.5' align='Center' overflow-mode='Truncate'/>
+						</macro.for-each>
+					</horizontal>
+				</vertical>
+			</custom-list>
+		</vertical>
+		<vertical preferred-width='8' id='scrollBarContainer' vertical-fit='Unconstrained'/>
+		<vertical preferred-width='40' bg='round-rect-panel' pad='2' child-expand-height='false'>
+			<macro.as-host host='selectedSongView'>
+				<vertical vertical-fit="PreferredSize" horizontal-fit="Unconstrained">
+					<text id="selectedSongAuthor" align='Center' font-size='3.2' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC'/>
+					<text id="selectedSongName" align='Center' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false'/>
+				</vertical>
+				<horizontal child-align='MiddleCenter' preferred-height="28" child-expand-height="true" pad-bottom="2">
+					<image id="coverImage" preserve-aspect="true"/>
+					<loading id="coverLoading" preserve-aspect="true"/>
+				</horizontal>
+				<horizontal horizontal-fit="Unconstrained">
+					<text id="selectedSongDiffInfo" align='Center' font-size='2.5' word-wrapping='false' color='#CCC'/>
+				</horizontal>
+				<vertical vertical-fit="PreferredSize">
+					<primary-button id="downloadButton" on-click='Download' text='Download' horizontal-fit='Unconstrained' font-size='3.5'/>
+					<primary-button id="playButton" on-click='Play' text='Play' horizontal-fit='Unconstrained' font-size='3.5'/>
+					<button id="songDetailsButton" on-click='ShowSongDetauls' text='Song Details' horizontal-fit='Unconstrained' font-size='3.5'/>
+				</vertical>
+			</macro.as-host>
+		</vertical>
+	</horizontal>
+	<modal clickerino-offerino-closerino='true' move-to-center='true' show-event='downloadCancelConfirm' hide-event='CloseDownloadCancelConfirm' size-delta-x='80' size-delta-y='40'>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='8' child-expand-width='true' preferred-width='80' preferred-height='40'>
+			<text text='You still have pending downloads which would be stopped by closing Better Song Search. Continue?' word-wrapping='true'></text>
+			<horizontal spacing='10' pad-top='4'>
+				<primary-button text='Yes' on-click='ForcedUIClose' click-event='CloseDownloadCancelConfirm'></primary-button>
+				<button text='Cancel' click-event='CloseDownloadCancelConfirm'></button>
+			</horizontal>
+		</vertical>
+	</modal>
+	<macro.as-host host='selectedSongView'>
+		<modal id='songDetails' clickerino-offerino-closerino='true' hide-event='CloseSongDetails' size-delta-x='90' size-delta-y='75'>
+			<vertical pad='3' child-expand-height='false' vertical-fit='Unconstrained' preferred-width='90' preferred-height='85'>
+				<horizontal vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
+					<vertical child-expand-height='false' min-width='30'>
+						<text text="Song Key" align="Center" color='#7CF'></text>
+						<vertical>
+							<text id="selectedSongKey" align="Center" all-uppercase='true'/>
+							<text text="BeatSaver Rating" align="Center" color='#7CF'></text>
+							<text id="selectedRating" align="Center"/>
+							<text text="Downloads" align="Center" color='#7CF'></text>
+							<text id="selectedDownloadCount" align="Center"/>
+							<text text="Characteristics" align="Center" color='#7CF'></text>
+							<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
+						</vertical>
+					</vertical>
+					<vertical child-expand-height="false" horizontal-fit="Unconstrained" vertical-fit="Unconstrained">
+						<text text="Description" align="Center" color='#7CF'></text>
+						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="15"/>
+						<text id="selectedSongDescription" align="Center" word-wrapping="true" font-size="2.5" overflow-mode="Ellipsis"/>
+					</vertical>
+				</horizontal>
+				<button event-click='CloseSongDetails' text='Close Details'/>
+			</vertical>
+		</modal>
+	</macro.as-host>
+</vertical>
