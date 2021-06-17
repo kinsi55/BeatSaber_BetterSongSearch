@@ -38,14 +38,17 @@ namespace BetterSongSearch.UI {
 		public void _UpdateSearchedSongsList() {
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => searchInProgress.gameObject.SetActive(true));
 
-			var _newSearchedSongsList = filteredSongsList.OrderBy(sortModes[opt_sort]).AsEnumerable();
+			IEnumerable<SongSearchSong> _newSearchedSongsList;
 
-			if(songSearchInput != null && songSearchInput.text.Length > 0)
-				_newSearchedSongsList = WeightedSongSearch.Search(_newSearchedSongsList, songSearchInput.text);
+			if(songSearchInput != null && songSearchInput.text.Length > 0) {
+				_newSearchedSongsList = WeightedSongSearch.Search(filteredSongsList, songSearchInput.text, sortModes[opt_sort]);
+			} else {
+				_newSearchedSongsList = filteredSongsList.OrderByDescending(sortModes[opt_sort]);
+			}
 
 			var newSearchedSongsList = _newSearchedSongsList.Cast<object>().ToList();
 
-			var songToSelect = _newSearchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong?.detailsSong.mapId);
+			var songToSelect = (SongSearchSong)newSearchedSongsList.FirstOrDefault(x => ((SongSearchSong)x).detailsSong.mapId == selectedSongView.selectedSong?.detailsSong.mapId);
 
 			if(newSearchedSongsList.Count > 0 && songToSelect == null)
 				songToSelect = (SongSearchSong)newSearchedSongsList[0];
@@ -161,14 +164,15 @@ namespace BetterSongSearch.UI {
 
 		// While not the best for readability you have to agree this is a neat implementation!
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
-			{ "New first", x => -x.detailsSong.uploadTimeUnix },
-			{ "Old first", x => x.detailsSong.uploadTimeUnix },
-			{ "Most Stars first", x => -x.diffs.Select(x => !x.passesFilter || !x.detailsDiff.ranked ? float.MinValue : x.detailsDiff.stars).Max() },
-			{ "Best rated first", x => x.detailsSong.upvotes + x.detailsSong.downvotes != 0 ? -x.detailsSong.rating : float.MaxValue },
-			{ "Most Downloads first", x => -x.detailsSong.downloadCount },
-			{ "Worst rated first", x => x.detailsSong.upvotes + x.detailsSong.downvotes != 0 ? x.detailsSong.rating : float.MinValue },
-			{ "Least Stars first", x => x.diffs.Select(x => !x.passesFilter || !x.detailsDiff.ranked ? float.MaxValue : x.detailsDiff.stars).Min() }
+			{ "New first", x => x.detailsSong.uploadTimeUnix },
+			{ "Old first", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
+			{ "Most Stars first", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
+			{ "Best rated first", x => x.detailsSong.rating },
+			{ "Most Downloads first", x => x.detailsSong.downloadCount },
+			{ "Worst rated first", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
+			{ "Least Stars first", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) }
 		};
+
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).Cast<object>().ToList();
 
 		static string opt_sort = sortModes.First().Key;
@@ -179,8 +183,6 @@ namespace BetterSongSearch.UI {
 
 		public readonly Song detailsSong;
 		public SongSearchDiff[] _diffs;
-
-		public int searchResultWeight = 0;
 
 		#region BSML stuffs
 		// This makes sure to always have a |ranked matching > standard matching > ranked unmatching > standard unmatching > everything else| sort for the difficulties!
@@ -206,7 +208,7 @@ namespace BetterSongSearch.UI {
 		}
 
 		public string fullFormattedSongName => $"<color=#{(CheckIsDownloaded() ? "888" : "FFF")}>{detailsSong.songAuthorName} - {detailsSong.songName}</color>";
-		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
+		public string uploadDateFormatted => detailsSong.uploadTime.ToString(" dd. MMM yyyy", new CultureInfo("en-US"));
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
 		public string songRating => showVotesInsteadOfRating ? $"👍 {detailsSong.upvotes} 👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
 

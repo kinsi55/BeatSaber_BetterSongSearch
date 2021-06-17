@@ -15,37 +15,33 @@ namespace BetterSongSearch.Util {
 			this.limit = limit;
 		}
 
-		bool isLimited = false;
+		bool wasRecentlyExecuted = false;
 		bool queuedFallingEdge = false;
 
-		public IEnumerator Call() => Call(false);
-
-		public IEnumerator CallNextFrame() {
-			if(!isLimited) {
-				isLimited = true;
-				yield return 0;
-				isLimited = false;
+		public IEnumerator Call() {
+			if(!wasRecentlyExecuted) {
+				wasRecentlyExecuted = true;
+				yield return CallNow();
+			} else {
+				queuedFallingEdge = true;
 			}
-			yield return Call(false);
 		}
 
-		IEnumerator Call(bool isFallingEdge = false) {
-			if(isLimited && !isFallingEdge) {
-				queuedFallingEdge = true;
-				yield break;
-			}
+		public IEnumerator CallNextFrame() {
+			yield return 0;
+			yield return Call();
+		}
 
-			isLimited = true;
-
+		IEnumerator CallNow() {
 			exitfn();
 
 			yield return new WaitForSeconds(limit);
 
 			if(queuedFallingEdge) {
 				queuedFallingEdge = false;
-				yield return Call(true);
+				yield return CallNow();
 			} else {
-				isLimited = false;
+				wasRecentlyExecuted = false;
 			}
 		}
 	}
