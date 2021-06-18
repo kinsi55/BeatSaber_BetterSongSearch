@@ -27,7 +27,7 @@ namespace BetterSongSearch.UI {
 
 		public bool hasUnloadedDownloads => downloadList.Any(x => x.status == Entry.DownloadStatus.Downloaded);
 
-		const int RETRY_COUNT = 1;
+		const int RETRY_COUNT = 3;
 
 		public bool TryAddDownload(SongSearchSong song) {
 			var existingDLHistoryEntry = downloadList.FirstOrDefault(x => x.key == song.detailsSong.key);
