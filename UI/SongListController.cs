@@ -195,10 +195,11 @@ namespace BetterSongSearch.UI {
 		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);
 
 		public bool CheckIsDownloaded() {
-			if(BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key)?.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded)
-				return true;
-
-			return CheckIsDownloadedAndLoaded();
+			return 
+				BSSFlowCoordinator.downloadHistoryView.downloadList.Any(
+					x => x.key == detailsSong.key && 
+					x.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded
+				) || CheckIsDownloadedAndLoaded();
 		}
 
 		public bool CheckIsDownloadable() {
