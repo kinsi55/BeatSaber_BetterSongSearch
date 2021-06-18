@@ -6,9 +6,9 @@ Searching, downloading and playing songs, now with 100% less annoying!
 
 Currently compatible game versions: **1.16 and up**
 
-### Install
+## Install
 
-## Requirements
+### Requirements
 
 - BeatSaberMarkupLanguage (Available in ModAssistant)
 - SongCore (Available in ModAssistant)
@@ -16,7 +16,7 @@ Currently compatible game versions: **1.16 and up**
 
 #### You can always find the latest download in [the releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases)
 
-### Features
+## Features
 
 - Wide variety of [filtering / searching and sorting options](#Screenshots)
 - Absolute banger of a UI that gives you as much information as possible at a single glance
@@ -27,13 +27,13 @@ Currently compatible game versions: **1.16 and up**
 - Download queue / history which is kept until the game is closed
 - Songs can directly be played from the search, no need to manually look for them after downloading
 
-### Screenshots
+## Screenshots
 
 Main Screen | Filters | Download History
 :-------------------------:|:-------------------------:|:-------------------------:
 ![Main UI](Screenshots/main.jpg) | ![Main UI](Screenshots/filters.jpg)  |  ![Main UI](Screenshots/dlhistory.jpg)
 
-### Planned Features
+## Planned Features
 
 - Filtering / Sorting by Ranked / Qualified date
 - Possibly persisting the download history across game restarts? Not sure if really necessary
