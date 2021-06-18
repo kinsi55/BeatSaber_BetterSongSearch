@@ -80,7 +80,7 @@ namespace BetterSongSearch.UI {
 			if(selectInTable) {
 				var idx = SongListController.searchedSongsList.IndexOf(song);
 				if(idx != -1) {
-					var tb = UIMainFlowCoordinator.songListView.songList;
+					var tb = BSSFlowCoordinator.songListView.songList;
 
 					tb.ScrollToCellWithIdx(idx, TableView.ScrollPositionType.Center, false);
 					tb.SelectCellWithIdx(idx);
@@ -97,7 +97,7 @@ namespace BetterSongSearch.UI {
 
 			if(!song.CheckIsDownloadedAndLoaded()) {
 				songPreviewPlayer?.CrossfadeToDefault();
-				coverImage.sprite = await UIMainFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
+				coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
 
@@ -143,7 +143,7 @@ namespace BetterSongSearch.UI {
 			Task.Run(async () => {
 				string desc = "Failed to load description";
 				try {
-					desc = await SongDownloader.GetSongDescription(selectedSong.detailsSong.key, UIMainFlowCoordinator.closeCancelSource.Token);
+					desc = await SongDownloader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
 				} catch {
 				} finally {
 					_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
@@ -174,7 +174,7 @@ namespace BetterSongSearch.UI {
 			if(songToPlay == null)
 				songToPlay = selectedSong;
 
-			if(UIMainFlowCoordinator.downloadHistoryView.hasUnloadedDownloads) {
+			if(BSSFlowCoordinator.downloadHistoryView.hasUnloadedDownloads) {
 				songToPlayAfterLoading = songToPlay;
 				SongCore.Loader.Instance.RefreshSongs();
 				return;
@@ -187,7 +187,7 @@ namespace BetterSongSearch.UI {
 			if(level == null)
 				return;
 
-			UIMainFlowCoordinator.Close(true);
+			BSSFlowCoordinator.Close(true);
 
 			Manager.goToSongSelect.Invoke();
 
@@ -214,7 +214,7 @@ namespace BetterSongSearch.UI {
 		}
 
 		[UIAction("Download")] void DownloadButton() {
-			if(UIMainFlowCoordinator.downloadHistoryView.TryAddDownload(selectedSong))
+			if(BSSFlowCoordinator.downloadHistoryView.TryAddDownload(selectedSong))
 				downloadButton.interactable = false;
 		}
 	}

@@ -16,7 +16,7 @@ namespace BetterSongSearch.UI {
 		}
 
 		internal static FlowCoordinator _parentFlow { get; private set; }
-		internal static UIMainFlowCoordinator _flow { get; private set; }
+		internal static BSSFlowCoordinator _flow { get; private set; }
 		internal static Button.ButtonClickedEvent goToSongSelect { get; private set; } = null;
 
 		public static void ShowFlow() {
@@ -25,7 +25,7 @@ namespace BetterSongSearch.UI {
 				?.GetComponent<NoTransitionsButton>()?.onClick;
 
 			if(_flow == null)
-				_flow = BeatSaberUI.CreateFlowCoordinator<UIMainFlowCoordinator>();
+				_flow = BeatSaberUI.CreateFlowCoordinator<BSSFlowCoordinator>();
 
 			_parentFlow = BeatSaberUI.MainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
 

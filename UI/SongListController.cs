@@ -29,7 +29,7 @@ namespace BetterSongSearch.UI {
 		[UIParams] readonly BSMLParserParams parserParams = null;
 
 		public void ShowCloseConfirmation() => parserParams.EmitEvent("downloadCancelConfirm");
-		[UIAction("ForcedUIClose")] void ForcedUIClose() => UIMainFlowCoordinator.Close(false, false);
+		[UIAction("ForcedUIClose")] void ForcedUIClose() => BSSFlowCoordinator.Close(false, false);
 
 
 		RatelimitCoroutine limitedUpdateSearchedSongsList;
@@ -194,14 +194,14 @@ namespace BetterSongSearch.UI {
 		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);
 
 		public bool CheckIsDownloaded() {
-			if(UIMainFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key)?.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded)
+			if(BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key)?.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded)
 				return true;
 
 			return CheckIsDownloadedAndLoaded();
 		}
 
 		public bool CheckIsDownloadable() {
-			var dlElem = UIMainFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key);
+			var dlElem = BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key);
 			return dlElem == null || (
 				(dlElem.retries == 3 && dlElem.status == DownloadHistoryView.Entry.DownloadStatus.Failed) ||
 				(dlElem.status != DownloadHistoryView.Entry.DownloadStatus.Downloading && !CheckIsDownloaded())
@@ -227,13 +227,13 @@ namespace BetterSongSearch.UI {
 
 			// detailsSong.difficulties has an overhead of creating the ArraySegment - This doesnt 👍;
 			for(int i = 0; i < diffs.Length; i++)
-				diffs[i] = new SongSearchDiff(in UIMainFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
+				diffs[i] = new SongSearchDiff(in BSSFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
 		}
 
 		public class SongSearchDiff {
 			internal readonly SongDifficulty detailsDiff;
 			internal bool? _passesFilter = null;
-			internal bool passesFilter => _passesFilter ??= UIMainFlowCoordinator.filterView.DifficultyCheck(in detailsDiff);
+			internal bool passesFilter => _passesFilter ??= BSSFlowCoordinator.filterView.DifficultyCheck(in detailsDiff);
 
 			string GetCombinedShortDiffName() {
 				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";

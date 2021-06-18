@@ -51,8 +51,8 @@ namespace BetterSongSearch.UI {
 		}
 
 		void SelectSong(TableView _, Entry row) {
-			if(UIMainFlowCoordinator.songDetails.songs.FindByMapId(row.key, out var song))
-				UIMainFlowCoordinator.songListView.selectedSongView.SetSelectedSong(new SongSearchSong(song));
+			if(BSSFlowCoordinator.songDetails.songs.FindByMapId(row.key, out var song))
+				BSSFlowCoordinator.songListView.selectedSongView.SetSelectedSong(BSSFlowCoordinator.songsList[song.index]);
 		}
 
 		public async void ProcessDownloads() {
@@ -80,7 +80,7 @@ namespace BetterSongSearch.UI {
 
 				await Task.Run(async () => {
 					try {
-						await SongDownloader.BeatmapDownload(firstEntry, UIMainFlowCoordinator.closeCancelSource.Token, (float progress) => {
+						await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
 							firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries}");
 							firstEntry.downloadProgress = progress;
 
@@ -100,10 +100,10 @@ namespace BetterSongSearch.UI {
 				});
 
 				if(firstEntry.status == Entry.DownloadStatus.Downloaded) {
-					UIMainFlowCoordinator.songListView.RefreshTable();
+					BSSFlowCoordinator.songListView.RefreshTable();
 
 					// NESTING HELLLL
-					var selectedSongView = UIMainFlowCoordinator.songListView.selectedSongView;
+					var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
 					if(selectedSongView.selectedSong.detailsSong.key == firstEntry.key)
 						selectedSongView.SetIsDownloaded(true);
 				}

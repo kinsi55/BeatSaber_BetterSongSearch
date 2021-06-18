@@ -14,7 +14,7 @@ using IPA.Utilities;
 using System.Threading;
 
 namespace BetterSongSearch.UI {
-	class UIMainFlowCoordinator : FlowCoordinator {
+	class BSSFlowCoordinator : FlowCoordinator {
 		internal static FilterView filterView;
 		internal static SongListController songListView;
 		internal static DownloadHistoryView downloadHistoryView;
@@ -22,11 +22,11 @@ namespace BetterSongSearch.UI {
 		internal static CoverImageAsyncLoader coverLoader = null;
 		static internal SongDetails songDetails = null;
 
-		static UIMainFlowCoordinator instance = null;
+		static BSSFlowCoordinator instance = null;
 
 		public static CancellationTokenSource closeCancelSource;
 
-		static SongSearchSong[] songsList = null;
+		public static SongSearchSong[] songsList { get; private set; } = null;
 
 		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
 			instance = this;

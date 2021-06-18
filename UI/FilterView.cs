@@ -176,7 +176,7 @@ namespace BetterSongSearch.UI {
 		}
 		#endregion
 
-		static RatelimitCoroutine limitedUpdateData = new RatelimitCoroutine(UIMainFlowCoordinator.FilterSongs, 0.3f);
+		static RatelimitCoroutine limitedUpdateData = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.3f);
 
 		[UIAction("UpdateData")] static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(limitedUpdateData.Call());
 
