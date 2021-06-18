@@ -10,18 +10,19 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BetterSongSearch.Util {
-	class MultithreadedDownloader {
+	class MultithreadedBeatsaverDownloader {
         const int BATCHSIZE = 1048576;
         readonly HttpClient client;
         readonly string url;
         Action<float> progressCb;
 
-        public MultithreadedDownloader(HttpClient client, string url, Action<float> progressCb) {
+        public MultithreadedBeatsaverDownloader(HttpClient client, string url, Action<float> progressCb) {
             this.client = client;
             this.url = url;
             this.progressCb = progressCb;
         }
 
+        bool isDownloadingFromCDN = false;
         int downloadSize = 0;
         int downloadedBytes = 0;
         float progress = 0f;
@@ -52,6 +53,8 @@ namespace BetterSongSearch.Util {
             HttpResponseMessage resp = null;
 
             void cleanup(Exception ex = null) {
+                Plugin.Log.Debug(string.Format("[{0}-{1}] Cleanup: {2}", start, start + length, ex));
+
                 resp?.Dispose();
                 req.Dispose();
 
@@ -60,7 +63,9 @@ namespace BetterSongSearch.Util {
             }
 
             try {
+                Plugin.Log.Debug(string.Format("Opening connection for {0}-{1}", start, start + length));
                 resp = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, token);
+                Plugin.Log.Debug(string.Format("[{0}-{1}] Opened connection: {2}", start, start + length, resp.StatusCode));
 
                 if((int)resp.StatusCode == 429 || resp.ReasonPhrase == "Too Many Requests")
                     throw new Exception("Ratelimited, retry later");
@@ -86,9 +91,18 @@ namespace BetterSongSearch.Util {
                                     downloadSize = (int)resp.Content.Headers.ContentRange.Length;
 
                                 fileOut = new byte[downloadSize];
+
+                                foreach(var x in resp.Headers) {
+                                    if(x.Key.ToLower() == "cf-cache-status") {
+                                        isDownloadingFromCDN = x.Value.FirstOrDefault() == "HIT";
+                                        break;
+									}
+                                }
+
+                                Plugin.Log.Debug(string.Format("downloadSize: {0}, isDownloadingFromCache: {1}", downloadSize, isDownloadingFromCDN));
                             }
 
-                            stream.ReadTimeout = 5000;
+                            stream.ReadTimeout = 3000;
 
                             int pos = start;
 
@@ -107,6 +121,8 @@ namespace BetterSongSearch.Util {
 
                                 AddDownloadedBytes(read);
                             }
+
+                            Plugin.Log.Debug(string.Format("[{0}-{1}] Downloaded {2} bytes ({3} left)", start, start + length, pos, end - pos));
 
                             if(pos != end)
                                 throw new Exception("Response was incomplete");
@@ -133,11 +149,11 @@ namespace BetterSongSearch.Util {
 
                 if(leftover > 0) {
                     // Chunks should be at least 3M in size
-                    var connections = (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 3f), 1, 3));
+                    var connections = !isDownloadingFromCDN ? 1 : (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 3f), 1, 3));
                     var bytesPerConnection = (int)Math.Floor((float)leftover / connections);
                     var offs = downloadedBytes;
 
-                    Plugin.Log.Debug(string.Format("Downloading song with {0} connections", connections));
+                    Plugin.Log.Debug(string.Format("Downloading song with {0} connection(s)", connections));
 
                     // Open connections in parallel
                     var connectingRequests = new List<Task<Task>>() { };
@@ -154,8 +170,10 @@ namespace BetterSongSearch.Util {
                         offs += bytesPerConnection;
                     }
 
+                    Plugin.Log.Debug("Waiting for all connections to open...");
                     // Wait for all connections to open
                     await Task.WhenAll(connectingRequests);
+                    Plugin.Log.Debug("Waiting for all chunks to download...");
                     // Now that all connections exist wait for them to finish downloading their chunk
                     await Task.WhenAll(connectingRequests.Select(x => x.Result));
                 }

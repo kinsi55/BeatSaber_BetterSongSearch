@@ -69,49 +69,50 @@ namespace BetterSongSearch.UI {
 				.OrderBy(x => x.retries)
 				.FirstOrDefault(x => x.status != Entry.DownloadStatus.Downloaded && x.status != Entry.DownloadStatus.Loaded);
 
-			if(firstEntry != null) {
-				if(firstEntry.status == Entry.DownloadStatus.Failed)
-					firstEntry.retries++;
+			if(firstEntry == null) {
+				RefreshTable(false);
+				return;
+			}
+				
+			if(firstEntry.status == Entry.DownloadStatus.Failed)
+				firstEntry.retries++;
 
-				firstEntry.downloadProgress = 0f;
-				firstEntry.status = Entry.DownloadStatus.Preparing;
+			firstEntry.downloadProgress = 0f;
+			firstEntry.status = Entry.DownloadStatus.Preparing;
 
-				RefreshTable(true);
+			RefreshTable(true);
 
-				await Task.Run(async () => {
-					try {
-						await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
-							firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries}");
-							firstEntry.downloadProgress = progress;
+			await Task.Run(async () => {
+				try {
+					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
+						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries}");
+						firstEntry.downloadProgress = progress;
 
-							IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgress);
-						});
+						IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgress);
+					});
 
-						firstEntry.status = Entry.DownloadStatus.Downloaded;
-						firstEntry.statusDetails = "";
-					} catch(Exception ex) {
+					firstEntry.status = Entry.DownloadStatus.Downloaded;
+					firstEntry.statusDetails = "";
+				} catch(Exception ex) {
 #if DEBUG
-						Plugin.Log.Critical(ex);
+					Plugin.Log.Critical(ex);
 #endif
 
-						firstEntry.status = Entry.DownloadStatus.Failed;
-						firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: {ex.Message}";
-					}
-				});
-
-				if(firstEntry.status == Entry.DownloadStatus.Downloaded) {
-					BSSFlowCoordinator.songListView.RefreshTable();
-
-					// NESTING HELLLL
-					var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
-					if(selectedSongView.selectedSong.detailsSong.key == firstEntry.key)
-						selectedSongView.SetIsDownloaded(true);
+					firstEntry.status = Entry.DownloadStatus.Failed;
+					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: {ex.Message}";
 				}
+			});
 
-				RefreshTable(true);
+			if(firstEntry.status == Entry.DownloadStatus.Downloaded) {
+				BSSFlowCoordinator.songListView.RefreshTable();
 
-				ProcessDownloads();
+				// NESTING HELLLL
+				var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
+				if(selectedSongView.selectedSong.detailsSong.key == firstEntry.key)
+					selectedSongView.SetIsDownloaded(true);
 			}
+
+			ProcessDownloads();
 		}
 
 		public void RefreshTable(bool fullReload = true) {
@@ -147,7 +148,7 @@ namespace BetterSongSearch.UI {
 			}
 
 			public DownloadStatus status = DownloadStatus.Queued;
-			public string statusMessage => $"{status}{statusDetails}";
+			public string statusMessage => $"{status} {statusDetails}";
 			public string statusDetails = "";
 			public float downloadProgress = 1f;
 

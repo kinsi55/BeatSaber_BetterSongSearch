@@ -32,7 +32,7 @@ namespace BetterSongSearch.Util {
             });
 
             client.DefaultRequestHeaders.Add("User-Agent", "BetterSongSearch/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromSeconds(10);
         }
 
         public static async Task<string> GetSongDescription(string key, CancellationToken token) {
@@ -56,15 +56,17 @@ namespace BetterSongSearch.Util {
 
             var folderName = $"{entry.key} ({entry.songName} - {entry.levelAuthorName})";
             
-            var dl = new MultithreadedDownloader(client, $"https://beatsaver.com/cdn/{entry.key}/{entry.hash}.zip".ToLower(), (p) => {
+            var dl = new MultithreadedBeatsaverDownloader(client, $"https://beatsaver.com/cdn/{entry.key}/{entry.hash}.zip".ToLower(), (p) => {
                 entry.status = DownloadHistoryView.Entry.DownloadStatus.Downloading;
                 progressCb(p);
             });
             byte[] res;
+            var t = new CancellationTokenSource();
+            token.Register(t.Cancel);
             try {
-                res = await dl.Load(token);
+                res = await dl.Load(t.Token);
             } catch(Exception ex) {
-                client.CancelPendingRequests();
+                t.Cancel();
                 throw ex;
             }
 
@@ -73,7 +75,7 @@ namespace BetterSongSearch.Util {
                 progressCb(0);
 
                 // Not async'ing this as BeatmapDownload() is supposed to be called in a task
-                ExtractZip(s, folderName, token, progressCb);
+                ExtractZip(s, folderName, t.Token, progressCb);
             }
         }
 
@@ -115,7 +117,7 @@ namespace BetterSongSearch.Util {
 
                             files.Add(entry.Name, ms.ToArray());
                         }
-						progressCb((float)steps / ++progress);
+						progressCb((float)++progress / steps);
                         ms.SetLength(0);
                     }
                 }
@@ -132,7 +134,7 @@ namespace BetterSongSearch.Util {
                 if(overwrite || !File.Exists(entryPath))
                     File.WriteAllBytes(entryPath, e.Value);
 
-                progressCb((float)steps / ++progress);
+                progressCb((float)++progress / steps);
 
                 // Dont think cancelling here is smart, might as well finish writing this song to not have a corrupted download
                 // if(token.IsCancellationRequested)
