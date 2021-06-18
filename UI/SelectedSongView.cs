@@ -96,6 +96,7 @@ namespace BetterSongSearch.UI {
 			coverLoadCancel = new CancellationTokenSource();
 
 			if(!song.CheckIsDownloadedAndLoaded()) {
+				songPreviewPlayer?.CrossfadeToDefault();
 				coverImage.sprite = await UIMainFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
