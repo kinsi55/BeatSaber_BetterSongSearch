@@ -66,7 +66,7 @@ namespace BetterSongSearch.UI {
 
 				DataUpdated();
 			} else {
-				FilterSongs();
+				DataUpdated();
 
 				downloadHistoryView.RefreshTable();
 			}
