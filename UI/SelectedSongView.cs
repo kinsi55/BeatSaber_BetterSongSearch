@@ -48,7 +48,7 @@ namespace BetterSongSearch.UI {
 
 
 		static internal CancellationTokenSource coverLoadCancel { get; private set; } = null;
-		internal async void SetSelectedSong(SongSearchSong song, bool selectInTable = false) {
+		internal async void SetSelectedSong(SongSearchSong song, bool selectInTableIfPossible = false) {
 			if(song == null || songToPlayAfterLoading != null)
 				return;
 
@@ -77,7 +77,7 @@ namespace BetterSongSearch.UI {
 				);
 			}
 
-			if(selectInTable) {
+			if(selectInTableIfPossible) {
 				var idx = SongListController.searchedSongsList.IndexOf(song);
 				if(idx != -1) {
 					var tb = BSSFlowCoordinator.songListView.songList;

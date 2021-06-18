@@ -182,6 +182,7 @@ namespace BetterSongSearch.UI {
 		const bool showVotesInsteadOfRating = true;
 
 		public readonly Song detailsSong;
+
 		public SongSearchDiff[] diffs { get; private set; }
 		public SongSearchDiff[] _sortedDiffsCache;
 
@@ -248,7 +249,7 @@ namespace BetterSongSearch.UI {
 				this.detailsDiff = diff;
 			}
 
-			static readonly Dictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {
+			static readonly IReadOnlyDictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {
 				{ MapDifficulty.Easy, "E" },
 				{ MapDifficulty.Normal, "N" },
 				{ MapDifficulty.Hard, "H" },
@@ -256,7 +257,7 @@ namespace BetterSongSearch.UI {
 				{ MapDifficulty.ExpertPlus, "E+" }
 			};
 
-			static readonly Dictionary<MapCharacteristic, string> customCharNames = new Dictionary<MapCharacteristic, string> {
+			static readonly IReadOnlyDictionary<MapCharacteristic, string> customCharNames = new Dictionary<MapCharacteristic, string> {
 				{ MapCharacteristic.NinetyDegree, "90" },
 				{ MapCharacteristic.ThreeSixtyDegree, "360" },
 				{ MapCharacteristic.Lawless, "☠" },
