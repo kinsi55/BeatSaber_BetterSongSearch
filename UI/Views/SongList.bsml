@@ -25,7 +25,7 @@
 						<text text='~songLengthAndRating' align='MidlineRight' font-size='2.5' font-color='#CCC' word-wrapping='false'/>
 					</horizontal>
 					<horizontal bg='round-rect-panel' background-color='black' preferred-height='3.9'>
-						<macro.for-each items='diffs'>
+						<macro.for-each items='sortedDiffs'>
 							<text text='~formattedDiffDisplay' font-size='2.5' align='Center' overflow-mode='Truncate'/>
 						</macro.for-each>
 					</horizontal>

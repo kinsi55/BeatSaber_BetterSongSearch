@@ -182,11 +182,12 @@ namespace BetterSongSearch.UI {
 		const bool showVotesInsteadOfRating = true;
 
 		public readonly Song detailsSong;
-		public SongSearchDiff[] _diffs;
+		public SongSearchDiff[] diffs { get; private set; }
+		public SongSearchDiff[] _sortedDiffsCache;
 
 		#region BSML stuffs
 		// This makes sure to always have a |ranked matching > standard matching > ranked unmatching > standard unmatching > everything else| sort for the difficulties!
-		public SongSearchDiff[] diffs => _diffs ??= detailsSong.difficulties.Select(x => new SongSearchDiff(in x)).OrderByDescending(x =>
+		public SongSearchDiff[] sortedDiffs => _sortedDiffsCache ??= diffs.OrderByDescending(x =>
 			(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0) + (x.detailsDiff.ranked ? 2 : 0)
 		).ToArray();
 
@@ -218,12 +219,22 @@ namespace BetterSongSearch.UI {
 
 		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpper()}";
 		public SongSearchDiff GetFirstPassingDifficulty() {
-			return _diffs.OrderByDescending(x => (x.passesFilter ? 2 : 0) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : -1)).First();
+			return diffs.OrderByDescending(x => (x.passesFilter ? 2 : 0) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : -1)).First();
+		}
+		public SongSearchSong(in Song song) {
+			detailsSong = song;
+			diffs = new SongSearchDiff[song.diffCount];
+
+			// detailsSong.difficulties has an overhead of creating the ArraySegment - This doesnt 👍;
+			for(int i = 0; i < diffs.Length; i++)
+				diffs[i] = new SongSearchDiff(in UIMainFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
 		}
 
 		public class SongSearchDiff {
 			internal readonly SongDifficulty detailsDiff;
-			internal bool passesFilter { get; private set; } = false;
+			internal bool? _passesFilter = null;
+			internal bool passesFilter => _passesFilter ??= UIMainFlowCoordinator.filterView.DifficultyCheck(in detailsDiff);
+
 			string GetCombinedShortDiffName() {
 				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
 
@@ -235,29 +246,25 @@ namespace BetterSongSearch.UI {
 			string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{(detailsDiff.ranked ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "")}";
 			public SongSearchDiff(in SongDifficulty diff) {
 				this.detailsDiff = diff;
-				passesFilter = UIMainFlowCoordinator.filterView.DifficultyCheck(in diff);
 			}
 
 			static readonly Dictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {
-					{ MapDifficulty.Easy, "E" },
-					{ MapDifficulty.Normal, "N" },
-					{ MapDifficulty.Hard, "H" },
-					{ MapDifficulty.Expert, "Ex" },
-					{ MapDifficulty.ExpertPlus, "E+" }
-				};
+				{ MapDifficulty.Easy, "E" },
+				{ MapDifficulty.Normal, "N" },
+				{ MapDifficulty.Hard, "H" },
+				{ MapDifficulty.Expert, "Ex" },
+				{ MapDifficulty.ExpertPlus, "E+" }
+			};
 
 			static readonly Dictionary<MapCharacteristic, string> customCharNames = new Dictionary<MapCharacteristic, string> {
-					{ MapCharacteristic.NinetyDegree, "90" },
-					{ MapCharacteristic.ThreeSixtyDegree, "360" },
-					{ MapCharacteristic.Lawless, "☠" },
-					{ MapCharacteristic.Custom, "?" },
-					{ MapCharacteristic.Lightshow, "💡" }
-				};
+				{ MapCharacteristic.NinetyDegree, "90" },
+				{ MapCharacteristic.ThreeSixtyDegree, "360" },
+				{ MapCharacteristic.Lawless, "☠" },
+				{ MapCharacteristic.Custom, "?" },
+				{ MapCharacteristic.Lightshow, "💡" }
+			};
 		}
 
-		public SongSearchSong(in Song song) {
-			detailsSong = song;
-		}
 
 		[UIComponent("bgContainer")] ImageView bg = null;
 		[UIAction("refresh-visuals")]

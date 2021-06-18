@@ -26,6 +26,8 @@ namespace BetterSongSearch.UI {
 
 		public static CancellationTokenSource closeCancelSource;
 
+		static SongSearchSong[] songsList = null;
+
 		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
 			instance = this;
 
@@ -33,7 +35,12 @@ namespace BetterSongSearch.UI {
 
 			coverLoader ??= new CoverImageAsyncLoader();
 
-			void dataUpdated() { 
+			void DataUpdated() {
+				songsList = new SongSearchSong[songDetails.songs.Length];
+
+				for(var i = 0; i < songsList.Length; i++)
+					songsList[i] = new SongSearchSong(songDetails.songs[i]);
+
 				FilterSongs();
 
 				IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
@@ -51,13 +58,13 @@ namespace BetterSongSearch.UI {
 				ProvideInitialViewControllers(songListView, filterView, downloadHistoryView);
 
 				SongCore.Loader.SongsLoadedEvent += SongcoreSongsLoaded;
-				SongDetailsContainer.dataAvailableOrUpdated += dataUpdated;
+				SongDetailsContainer.dataAvailableOrUpdated += DataUpdated;
 
 				showBackButton = true;
 
 				songDetails ??= await SongDetails.Init();
 
-				dataUpdated();
+				DataUpdated();
 			} else {
 				FilterSongs();
 
@@ -102,6 +109,7 @@ namespace BetterSongSearch.UI {
 				SongCore.Loader.Instance.RefreshSongs();
 
 			if(instance != null) Manager._parentFlow.DismissFlowCoordinator(instance, () => {
+				songsList = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;
 
@@ -121,13 +129,49 @@ namespace BetterSongSearch.UI {
 				return;
 
 			await Task.Run(() => {
-				// Debating if its worth to pre-create an array of SongSearchSong's and filtering those, probably not.
-				SongListController.filteredSongsList =
-					songDetails.FindSongs((in SongDifficulty diff) =>
-						filterView.DifficultyCheck(in diff) &&
-						filterView.SongCheck(in diff.song)
-					)
-					.Select(x => new SongSearchSong(in x));
+				var nl = new List<SongSearchSong>();
+				SongListController.filteredSongsList = nl;
+
+				// Loop through our (custom) songdetails array
+				for(var i = 0; i < songsList.Length; i++) {
+					/*
+					 * Since our custom array is recreated whenever songDetails updates we can
+					 * get the song directly by ref from songdetails as the index matches
+					 */
+					ref var val = ref songDetails.songs[i];
+
+					// Check if the song itself passes the filter
+					if(!filterView.SongCheck(in val))
+						continue;
+
+					bool hasAnyValid = false;
+
+					/*
+					 * loop all diffs of this song to see if any diff matches our filter.
+					 * for those diffs that we checked we pre-set passesFilter so that it
+					 * doesnt need to get (re)checked later whenever the diffs array is accessed
+					 */
+					ref var theThing = ref songsList[i];
+
+					for(var iDiff = 0; iDiff < val.diffCount; iDiff++) {
+						ref var theDiff = ref theThing.diffs[iDiff];
+
+						if(!hasAnyValid) {
+							var doesPass = filterView.DifficultyCheck(in theDiff.detailsDiff);
+							theDiff._passesFilter = hasAnyValid = doesPass;
+						} else {
+							// Defer checking further diffs until later (See passesFilter getter)
+							theDiff._passesFilter = null;
+						}
+					}
+
+					if(!hasAnyValid)
+						continue;
+
+					songsList[i]._sortedDiffsCache = null;
+
+					nl.Add(songsList[i]);
+				}
 			});
 
 			songListView.UpdateSearchedSongsList();
