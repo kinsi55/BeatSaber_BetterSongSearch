@@ -1,16 +1,11 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 using HMUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BetterSongSearch.UI {
-	public static class Manager {
+	static class Manager {
 		public static void Init() {
 			MenuButtons.instance.RegisterButton(new MenuButton("Better Song Search", "Search songs, but better", ShowFlow, true));
 		}
@@ -20,7 +15,7 @@ namespace BetterSongSearch.UI {
 		internal static Button.ButtonClickedEvent goToSongSelect { get; private set; } = null;
 
 		public static void ShowFlow() {
-			goToSongSelect = 
+			goToSongSelect =
 				(GameObject.Find("SoloButton") ?? GameObject.Find("Wrapper/BeatmapWithModifiers/BeatmapSelection/EditButton"))
 				?.GetComponent<NoTransitionsButton>()?.onClick;
 

@@ -14,7 +14,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace BetterSongSearch.UI {
@@ -110,7 +109,8 @@ namespace BetterSongSearch.UI {
 
 		[UIAction("UpdateData")] void UpdateData(object _) => UpdateSearchedSongsList();
 
-		[UIAction("SelectRandom")] void SelectRandom() {
+		[UIAction("SelectRandom")]
+		void SelectRandom() {
 			if(searchedSongsList.Count > 0)
 				selectedSongView.SetSelectedSong((SongSearchSong)searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
 		}
@@ -126,7 +126,7 @@ namespace BetterSongSearch.UI {
 		[UIAction("SelectSong")] void _SelectSong(TableView _, SongSearchSong row) => selectedSongView.SetSelectedSong(row);
 
 		[UIComponent("songList")] public CustomCellListTableData songListData = null;
-		public TableView songList => songListData?.tableView; 
+		public TableView songList => songListData?.tableView;
 		[UIComponent("searchBoxContainer")] private VerticalLayoutGroup _searchBoxContainer = null;
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
 
@@ -178,7 +178,7 @@ namespace BetterSongSearch.UI {
 		static string opt_sort = sortModes.First().Key;
 	}
 
-	public class SongSearchSong {
+	class SongSearchSong {
 		const bool showVotesInsteadOfRating = true;
 
 		public readonly Song detailsSong;
@@ -195,9 +195,9 @@ namespace BetterSongSearch.UI {
 		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);
 
 		public bool CheckIsDownloaded() {
-			return 
+			return
 				BSSFlowCoordinator.downloadHistoryView.downloadList.Any(
-					x => x.key == detailsSong.key && 
+					x => x.key == detailsSong.key &&
 					x.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded
 				) || CheckIsDownloadedAndLoaded();
 		}

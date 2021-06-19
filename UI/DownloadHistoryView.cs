@@ -7,9 +7,6 @@ using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -73,7 +70,7 @@ namespace BetterSongSearch.UI {
 				RefreshTable(false);
 				return;
 			}
-				
+
 			if(firstEntry.status == Entry.DownloadStatus.Failed)
 				firstEntry.retries++;
 
@@ -194,7 +191,7 @@ namespace BetterSongSearch.UI {
 
 				if((bgProgressRect = bgProgress.gameObject.GetComponent<RectTransform>()) == null)
 					return;
-					
+
 				bgProgressRect.anchorMax = new Vector2(downloadProgress, 1);
 				bgProgressRect.ForceUpdateRectTransforms();
 			}

@@ -1,27 +1,19 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.Util;
-using HMUI;
 using SongDetailsCache.Structs;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 namespace BetterSongSearch.UI {
 
 	[HotReload(RelativePathToLayout = @"Views\FilterView.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.FilterView.bsml")]
-	public class FilterView : BSMLAutomaticViewController {
+	class FilterView : BSMLAutomaticViewController {
 		static List<DateTime> hideOlderThanOptions;
 
 		public void Awake() {
@@ -79,7 +71,7 @@ namespace BetterSongSearch.UI {
 		public int opt_minimumPP { get; private set; } = 0;
 
 		public float opt_minimumStars { get; private set; } = 0f;
-		
+
 		static float _opt_maximumStars = STAR_FILTER_MAX;
 		public float opt_maximumStars {
 			get => _opt_maximumStars >= STAR_FILTER_MAX ? float.MaxValue : _opt_maximumStars;
@@ -105,7 +97,7 @@ namespace BetterSongSearch.UI {
 
 
 		public float opt_minimumNjs = 0;
-		
+
 		public float _opt_maximumNjs = NJS_FILTER_MAX;
 		public float opt_maximumNjs {
 			get => _opt_maximumNjs >= NJS_FILTER_MAX ? float.MaxValue : _opt_maximumNjs;
@@ -114,7 +106,7 @@ namespace BetterSongSearch.UI {
 
 
 		public float opt_minimumNps = 0;
-		
+
 		public float _opt_maximumNps = NPS_FILTER_MAX;
 		public float opt_maximumNps {
 			get => _opt_maximumNps >= NPS_FILTER_MAX ? float.MaxValue : _opt_maximumNps;

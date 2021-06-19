@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BetterSongSearch.UI;
 using HarmonyLib;
 using HMUI;
-using UnityEngine;
-using BetterSongSearch.UI;
 using IPA.Utilities;
+using System.Linq;
+using UnityEngine;
 
 namespace BetterSongSearch.HarmonyPatches {
 	[HarmonyPatch(typeof(GameplaySetupViewController), nameof(GameplaySetupViewController.RefreshContent))]

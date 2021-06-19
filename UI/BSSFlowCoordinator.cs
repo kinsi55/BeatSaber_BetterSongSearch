@@ -1,17 +1,12 @@
 ﻿using BeatSaberMarkupLanguage;
+using BetterSongSearch.Util;
 using HMUI;
+using SongDetailsCache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SongDetailsCache;
-using SongDetailsCache.Structs;
-using System.Diagnostics;
-using BetterSongSearch.Util;
-using UnityEngine;
-using IPA.Utilities;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace BetterSongSearch.UI {
 	class BSSFlowCoordinator : FlowCoordinator {

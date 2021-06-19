@@ -1,11 +1,7 @@
 ﻿using BetterSongSearch.UI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BetterSongSearch.Util {
 	static class WeightedSongSearch {
@@ -94,7 +90,7 @@ namespace BetterSongSearch.Util {
 				}
 
 				if(resultWeight > 0) {
-					prefiltered.Add(new xd() { 
+					prefiltered.Add(new xd() {
 						song = x,
 						searchWeight = resultWeight,
 						sortWeight = ordersort(x)

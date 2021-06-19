@@ -1,11 +1,8 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BetterSongSearch.Util;
 using HMUI;
-using IPA.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -129,7 +126,8 @@ namespace BetterSongSearch.UI {
 		[UIComponent("selectedDownloadCount")] TextMeshProUGUI selectedDownloadCount = null;
 		[UIComponent("songDetailsLoading")] ImageView songDetailsLoading = null;
 
-		[UIAction("ShowSongDetauls")] void ShowSongDetauls() {
+		[UIAction("ShowSongDetauls")]
+		void ShowSongDetauls() {
 			selectedCharacteristics.text = String.Join(", ", selectedSong.detailsSong.difficulties.GroupBy(x => x.characteristic).Select(x => $"{x.Count()}x {x.Key}"));
 			selectedSongKey.text = selectedSong.detailsSong.key;
 			selectedDownloadCount.text = selectedSong.detailsSong.downloadCount.ToString("N0");
@@ -193,17 +191,17 @@ namespace BetterSongSearch.UI {
 
 			if(levelFilteringNavigationController == null)
 				return;
-				
+
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
 			if(songToPlay.diffs.Any(x => !x.passesFilter)) try {
-				var diffToSelect = songToPlay.GetFirstPassingDifficulty();
-				var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
-				var pData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault()?.playerData;
-				if(targetChar != null && pData != null) {
-					pData.SetLastSelectedBeatmapCharacteristic(targetChar);
-					pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
-				}
-			} catch { }
+					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
+					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
+					var pData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault()?.playerData;
+					if(targetChar != null && pData != null) {
+						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
+						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
+					}
+				} catch { }
 
 			// 4 LOC basegame method of selecting a song that works always I LOST
 			levelSearchViewController?.ResetCurrentFilterParams();
@@ -213,7 +211,8 @@ namespace BetterSongSearch.UI {
 			levelCollectionNavigationController?.SelectLevel(level);
 		}
 
-		[UIAction("Download")] void DownloadButton() {
+		[UIAction("Download")]
+		void DownloadButton() {
 			if(BSSFlowCoordinator.downloadHistoryView.TryAddDownload(selectedSong))
 				downloadButton.interactable = false;
 		}
