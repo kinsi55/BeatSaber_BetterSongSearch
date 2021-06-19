@@ -2,7 +2,7 @@
 
 Searching, downloading and playing songs, now with 100% less annoying!
 
-This is not meant to be a replacement for SongBrowser or the Standard BeatSaver Downloader as some use cases cant be accomplished, it is merely an addition.
+### This is not meant to be a replacement for SongBrowser or the Standard BeatSaver Downloader as some use cases cant be accomplished, it is merely an addition.
 
 ---
 
@@ -12,11 +12,11 @@ Currently compatible game versions: **1.16 and up**
 
 ### Requirements
 
+#### You can always find the latest download in [The Releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases)
+
 - BeatSaberMarkupLanguage (Available in ModAssistant)
 - SongCore (Available in ModAssistant)
 - [SongDetailsCache](https://github.com/kinsi55/BeatSaber_SongDetails/releases/latest) (not yet in ModAssistant, requires protobuf-net (Available in ModAssistant))
-
-#### You can always find the latest download in [the releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases)
 
 ## Features
 
