@@ -22,17 +22,17 @@
 		</vertical>
 		<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-left='2'>
 			<horizontal>
-				<text text='Characteristic / Difficulty' align='Center' underlined='true' font-size='3.5'/>
-			</horizontal>
-			<dropdown-list-setting text='Characteristic' value="opt_characteristic" apply-on-change="true" choices='characteristics' on-change="UpdateData"/>
-			<dropdown-list-setting text='Difficulty' value="opt_difficulty" apply-on-change="true" choices='difficulties' on-change="UpdateData"/>
-			<horizontal pad-top="2">
 				<text text='Mapping' align='Center' underlined='true' font-size='3.5'/>
 			</horizontal>
 			<slider-setting text='Minimum NJS' value="opt_minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' on-change="UpdateData"/>
 			<slider-setting text='Maximum NJS' value="opt_maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
 			<slider-setting text='Min. Notes/s' value="opt_minimumNps" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.5' on-change="UpdateData"/>
 			<slider-setting text='Max. Notes/s' value="opt_maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
+			<horizontal pad-top="2">
+				<text text='Characteristic / Difficulty' align='Center' underlined='true' font-size='3.5'/>
+			</horizontal>
+			<dropdown-list-setting text='Characteristic' value="opt_characteristic" apply-on-change="true" choices='characteristics' on-change="UpdateData"/>
+			<dropdown-list-setting text='Difficulty' value="opt_difficulty" apply-on-change="true" choices='difficulties' on-change="UpdateData"/>
 			<horizontal pad-top="2">
 				<text text='BeatSaver Rating' align='Center' underlined='true' font-size='3.5'/>
 			</horizontal>
