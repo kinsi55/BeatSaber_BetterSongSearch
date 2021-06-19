@@ -10,9 +10,9 @@ Currently compatible game versions: **1.16 and up**
 
 ## Install
 
-### Requirements
-
 #### You can always find the latest download in [The Releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases)
+
+### Requirements
 
 - BeatSaberMarkupLanguage (Available in ModAssistant)
 - SongCore (Available in ModAssistant)
