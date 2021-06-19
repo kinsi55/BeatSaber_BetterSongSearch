@@ -92,7 +92,7 @@ namespace BetterSongSearch.UI {
 			closeCancelSource?.Cancel();
 
 			SelectedSongView.coverLoadCancel?.Cancel();
-			SelectedSongView.songPreviewPlayer?.CrossfadeToDefault();
+			XD.FunnyMono(SelectedSongView.songPreviewPlayer)?.CrossfadeToDefault();
 
 			foreach(var x in filterView.GetComponentsInChildren<ModalView>())
 				x.enabled = false;
