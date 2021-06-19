@@ -93,7 +93,7 @@ namespace BetterSongSearch.UI {
 			coverLoadCancel = new CancellationTokenSource();
 
 			if(!song.CheckIsDownloadedAndLoaded()) {
-				songPreviewPlayer?.CrossfadeToDefault();
+				XD.FunnyMono(songPreviewPlayer)?.CrossfadeToDefault();
 				coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
