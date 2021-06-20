@@ -57,15 +57,14 @@ namespace BetterSongSearch.UI {
 				SongDetailsContainer.dataAvailableOrUpdated += DataUpdated;
 
 				showBackButton = true;
-
-				songDetails ??= await SongDetails.Init();
-
-				DataUpdated();
-			} else {
-				DataUpdated();
-
-				downloadHistoryView.RefreshTable();
 			}
+			// Re-Init every time incase its time to download a new database
+			songDetails = await SongDetails.Init();
+
+			DataUpdated();
+
+			if(!firstActivation)
+				downloadHistoryView.RefreshTable();
 		}
 
 		void SongcoreSongsLoaded(object a, object b) {
