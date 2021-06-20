@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 
 namespace BetterSongSearch.UI {
@@ -176,6 +177,7 @@ namespace BetterSongSearch.UI {
 		[UIValue("characteristics")] private static readonly List<object> characteristics = new object[] { "Any" }.AsEnumerable().Concat(Enum.GetNames(typeof(MapCharacteristic))).ToList();
 		[UIValue("downloadedFilterOptions")] private static readonly List<object> downloadedFilterOptions = new List<object> { "Show All", "Show downloaded", "Hide downloaded" };
 
+		readonly string version = $" BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
 		[UIComponent("datasetInfoLabel")] private TextMeshProUGUI _datasetInfoLabel = null;
 		public TextMeshProUGUI datasetInfoLabel => _datasetInfoLabel;
 

@@ -42,7 +42,7 @@
 	</horizontal>
 
 	<horizontal>
-		<text text="BetterSongSearch by Kinsi55" font-size="3" font-color="#CC6E3B" align="Center"/>
+		<text text="~version" font-size="3" font-color="#CC6E3B" align="Center"/>
 		<text id="datasetInfoLabel" font-size="3" font-color="#CCC" text="Loading dataset..." align="Center"/>
 	</horizontal>
 </vertical>
