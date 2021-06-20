@@ -96,7 +96,7 @@ namespace BetterSongSearch.UI {
 				songList.RefreshCells(false, true);
 			}
 
-			var gap = Math.Max(0.1f, (s.ElapsedMilliseconds / 1000f) * 3);
+			var gap = Math.Min(0.1f, (s.ElapsedMilliseconds / 1000f) * 4);
 
 			yield return new WaitForSeconds(gap);
 			setH(11.7f * 2);
