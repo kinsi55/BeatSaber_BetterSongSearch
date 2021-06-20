@@ -76,11 +76,13 @@ namespace BetterSongSearch.UI {
 
 			if(selectInTableIfPossible) {
 				var idx = SongListController.searchedSongsList.IndexOf(song);
-				if(idx != -1) {
-					var tb = BSSFlowCoordinator.songListView.songList;
+				var tb = BSSFlowCoordinator.songListView.songList;
 
+				if(idx != -1) {
 					tb.ScrollToCellWithIdx(idx, TableView.ScrollPositionType.Center, false);
 					tb.SelectCellWithIdx(idx);
+				} else {
+					tb.ClearSelection();
 				}
 			}
 
