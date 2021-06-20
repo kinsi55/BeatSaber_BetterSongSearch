@@ -112,8 +112,6 @@ namespace BetterSongSearch.UI {
 				coverLoader = null;
 
 				instance = null;
-
-				GC.Collect();
 			}, ViewController.AnimationDirection.Horizontal, immediately);
 		}
 
