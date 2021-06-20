@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static BetterSongSearch.UI.DownloadHistoryView;
 
 namespace BetterSongSearch.UI {
 	class BSSFlowCoordinator : FlowCoordinator {
@@ -69,8 +70,8 @@ namespace BetterSongSearch.UI {
 
 		void SongcoreSongsLoaded(object a, object b) {
 			foreach(var x in downloadHistoryView.downloadList)
-				if(x.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded)
-					x.status = DownloadHistoryView.Entry.DownloadStatus.Loaded;
+				if(x.status == DownloadHistoryEntry.DownloadStatus.Downloaded)
+					x.status = DownloadHistoryEntry.DownloadStatus.Loaded;
 
 			downloadHistoryView.RefreshTable(false);
 
@@ -83,7 +84,7 @@ namespace BetterSongSearch.UI {
 		/// <param name="immediately">True = Close immediately without transition</param>
 		/// <param name="downloadAbortConfim">True = Confirm closing if there is pending downloads</param>
 		public static void Close(bool immediately = false, bool downloadAbortConfim = true) {
-			if(downloadAbortConfim && downloadHistoryView.downloadList.Any(x => x.status == DownloadHistoryView.Entry.DownloadStatus.Downloading)) {
+			if(downloadAbortConfim && downloadHistoryView.downloadList.Any(x => x.status == DownloadHistoryEntry.DownloadStatus.Downloading)) {
 				songListView.ShowCloseConfirmation();
 
 				return;

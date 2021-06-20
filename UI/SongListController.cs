@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using static BetterSongSearch.UI.DownloadHistoryView;
 
 namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
@@ -198,15 +199,15 @@ namespace BetterSongSearch.UI {
 			return
 				BSSFlowCoordinator.downloadHistoryView.downloadList.Any(
 					x => x.key == detailsSong.key &&
-					x.status == DownloadHistoryView.Entry.DownloadStatus.Downloaded
+					x.status == DownloadHistoryEntry.DownloadStatus.Downloaded
 				) || CheckIsDownloadedAndLoaded();
 		}
 
 		public bool CheckIsDownloadable() {
 			var dlElem = BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key);
 			return dlElem == null || (
-				(dlElem.retries == 3 && dlElem.status == DownloadHistoryView.Entry.DownloadStatus.Failed) ||
-				(dlElem.status != DownloadHistoryView.Entry.DownloadStatus.Downloading && !CheckIsDownloaded())
+				(dlElem.retries == 3 && dlElem.status == DownloadHistoryEntry.DownloadStatus.Failed) ||
+				(!dlElem.IsInAnyOfStates(DownloadHistoryEntry.DownloadStatus.Preparing | DownloadHistoryEntry.DownloadStatus.Downloading) && !CheckIsDownloaded())
 			);
 		}
 

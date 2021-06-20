@@ -11,11 +11,9 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static BetterSongSearch.UI.DownloadHistoryView;
 
 namespace BetterSongSearch.Util {
-	/// <summary>
-	/// Not meant to download multiple songs in parallel!!
-	/// </summary>
 	static class SongDownloader {
 		private static HttpClient client = null;
 
@@ -49,13 +47,13 @@ namespace BetterSongSearch.Util {
 			}
 		}
 
-		public static async Task BeatmapDownload(DownloadHistoryView.Entry entry, CancellationToken token, Action<float> progressCb) {
+		public static async Task BeatmapDownload(DownloadHistoryEntry entry, CancellationToken token, Action<float> progressCb) {
 			InitClientIfNecessary();
 
 			var folderName = $"{entry.key} ({entry.songName} - {entry.levelAuthorName})";
 
 			var dl = new MultithreadedBeatsaverDownloader(client, $"https://beatsaver.com/cdn/{entry.key}/{entry.hash}.zip".ToLower(), (p) => {
-				entry.status = DownloadHistoryView.Entry.DownloadStatus.Downloading;
+				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
 				progressCb(p);
 			});
 			byte[] res;
@@ -69,7 +67,7 @@ namespace BetterSongSearch.Util {
 			}
 
 			using(var s = new MemoryStream(res)) {
-				entry.status = DownloadHistoryView.Entry.DownloadStatus.Extracting;
+				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
 				// Not async'ing this as BeatmapDownload() is supposed to be called in a task
