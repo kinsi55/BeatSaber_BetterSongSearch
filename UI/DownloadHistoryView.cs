@@ -20,7 +20,6 @@ namespace BetterSongSearch.UI {
 		[UIComponent("downloadList")] CustomCellListTableData downloadHistoryData = null;
 		TableView downloadHistoryTable => downloadHistoryData?.tableView;
 		public readonly List<Entry> downloadList = new List<Entry>();
-		List<object> downloadListEntries = new List<object>();
 
 		public bool hasUnloadedDownloads => downloadList.Any(x => x.status == Entry.DownloadStatus.Downloaded);
 

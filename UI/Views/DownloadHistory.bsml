@@ -4,7 +4,7 @@
 	</horizontal>
 	<horizontal preferred-height='88' pad-top='5' pad-bottom='2' preferred-width='80'>
 		<vertical preferred-width='70'>
-			<custom-list id='downloadList' contents='downloadListEntries' select-cell='SelectSong' cell-size='9' visible-cells='9'>
+			<custom-list id='downloadList' select-cell='SelectSong' cell-size='9' visible-cells='9'>
 				<vertical id='bgContainer' bg='round-rect-panel' horizontal-fit='Unconstrained' preferred-height='7' vertical-fit='PreferredSize'/>
 				<vertical id='bgProgress' horizontal-fit='Unconstrained' preferred-height='1' vertical-fit='PreferredSize' background='panel-fade-gradient' anchor-pos-y='-2.875'/>
 				<vertical horizontal-fit='Unconstrained' pad='1' preferred-height='8' vertical-fit='PreferredSize'>
