@@ -10,7 +10,7 @@ Currently compatible game versions: **1.16 and up**
 
 ## Install
 
-#### You can always find the latest download in [The Releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases)
+#### You can always find the latest download in [The Releases](https://github.com/kinsi55/BeatSaber_BetterSongSearch/releases), simply drag the files into the respective folders
 
 ### Requirements
 
