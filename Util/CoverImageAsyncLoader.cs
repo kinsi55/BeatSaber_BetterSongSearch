@@ -33,7 +33,7 @@ namespace BetterSongSearch.Util {
 				return sprite;
 
 			try {
-				using(var resp = await client.GetAsync(path, HttpCompletionOption.ResponseHeadersRead, token)) {
+				using(var resp = await client.GetAsync(path, HttpCompletionOption.ResponseContentRead, token)) {
 					if(resp.StatusCode == HttpStatusCode.OK) {
 						var imageBytes = await resp.Content.ReadAsByteArrayAsync();
 
