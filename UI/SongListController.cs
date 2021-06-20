@@ -48,23 +48,18 @@ namespace BetterSongSearch.UI {
 
 			var newSearchedSongsList = _newSearchedSongsList.Cast<object>().ToList();
 
-			var songToSelect = (SongSearchSong)newSearchedSongsList.FirstOrDefault(x => ((SongSearchSong)x).detailsSong.mapId == selectedSongView.selectedSong?.detailsSong.mapId);
-
-			if(newSearchedSongsList.Count > 0 && songToSelect == null)
-				songToSelect = (SongSearchSong)newSearchedSongsList[0];
-
 			if(songListData == null)
 				return;
 
-			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-				songListData.data = newSearchedSongsList;
-				searchedSongsList = newSearchedSongsList;
+			songListData.data = searchedSongsList = newSearchedSongsList;
 
+			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 				StartCoroutine(_AntiLagRefreshTable(true));
 
 				songSearchPlaceholder.text = $"Search {searchedSongsList.Count()} songs";
 
-				selectedSongView.SetSelectedSong(songToSelect, false);
+				if(selectedSongView.selectedSong == null)
+					selectedSongView.SetSelectedSong((SongSearchSong)newSearchedSongsList.FirstOrDefault(), false);
 
 				// Required as otherwise the first cell could be selected eventho its not
 				songList.ClearSelection();
@@ -119,7 +114,6 @@ namespace BetterSongSearch.UI {
 		internal SelectedSongView selectedSongView;
 
 		void Awake() {
-			searchedSongsList ??= new List<object>();
 			selectedSongView = gameObject.AddComponent<SelectedSongView>();
 			limitedUpdateSearchedSongsList = new RatelimitCoroutine(() => Task.Run(_UpdateSearchedSongsList), 0.5f);
 		}
