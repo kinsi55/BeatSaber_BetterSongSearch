@@ -10,6 +10,7 @@ using UnityEngine;
 namespace BetterSongSearch.Util {
 	class MultithreadedBeatsaverDownloader {
 		const int BATCHSIZE = 1048576;
+		const int MAX_CDN_CONNECTIONS = 3;
 		readonly HttpClient client;
 		readonly string url;
 		Action<float> progressCb;
@@ -147,7 +148,7 @@ namespace BetterSongSearch.Util {
 
 				if(leftover > 0) {
 					// Chunks should be at least 3M in size
-					var connections = !isDownloadingFromCDN ? 1 : (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 3f), 1, 3));
+					var connections = !isDownloadingFromCDN ? 1 : (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 2f), 1, MAX_CDN_CONNECTIONS));
 					var bytesPerConnection = (int)Math.Floor((float)leftover / connections);
 					var offs = downloadedBytes;
 
