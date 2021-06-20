@@ -98,6 +98,9 @@ namespace BetterSongSearch.Util {
 				}
 			}
 
+			if(prefiltered.Count == 0)
+				return new List<SongSearchSong>();
+
 			var maxSearchWeight = prefiltered.Max(x => x.searchWeight);
 			var maxSortWeight = prefiltered.Max(x => x.sortWeight);
 
