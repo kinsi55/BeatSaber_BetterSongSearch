@@ -51,6 +51,8 @@ namespace BetterSongSearch.UI {
 			if(songListData == null)
 				return;
 
+			var wasEmpty = searchedSongsList == null;
+
 			songListData.data = searchedSongsList = newSearchedSongsList;
 
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
@@ -58,11 +60,14 @@ namespace BetterSongSearch.UI {
 
 				songSearchPlaceholder.text = $"Search {searchedSongsList.Count()} songs";
 
-				if(selectedSongView.selectedSong == null)
-					selectedSongView.SetSelectedSong((SongSearchSong)newSearchedSongsList.FirstOrDefault(), false);
-
-				// Required as otherwise the first cell could be selected eventho its not
-				songList.ClearSelection();
+				if(selectedSongView.selectedSong == null) {
+					selectedSongView.SetSelectedSong((SongSearchSong)newSearchedSongsList.FirstOrDefault(), true);
+				} else if(wasEmpty) {
+					selectedSongView.SetSelectedSong(_newSearchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
+				} else {
+					// Required as otherwise the first cell could be selected eventho its not
+					songList.ClearSelection();
+				}
 
 				searchInProgress.gameObject.SetActive(false);
 			});
