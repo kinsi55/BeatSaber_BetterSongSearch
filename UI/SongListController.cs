@@ -61,7 +61,7 @@ namespace BetterSongSearch.UI {
 				songSearchPlaceholder.text = $"Search {searchedSongsList.Count()} songs";
 
 				if(selectedSongView.selectedSong == null) {
-					selectedSongView.SetSelectedSong((SongSearchSong)newSearchedSongsList.FirstOrDefault(), true);
+					selectedSongView.SetSelectedSong(_newSearchedSongsList.FirstOrDefault(), true);
 				} else if(wasEmpty) {
 					selectedSongView.SetSelectedSong(_newSearchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
 				} else {
