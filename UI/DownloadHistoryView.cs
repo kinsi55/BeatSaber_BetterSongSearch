@@ -135,8 +135,8 @@ namespace BetterSongSearch.UI {
 		public class DownloadHistoryEntry {
 			[Flags]
 			public enum DownloadStatus : byte {
-				Preparing = 1,
-				Downloading = 2,
+				Downloading = 1,
+				Preparing = 2,
 				Extracting = 4,
 				Queued = 8,
 				Failed = 16,
