@@ -12,7 +12,7 @@
 	</horizontal>
 	<horizontal preferred-height='75' pad-top='3' pad-bottom='2' preferred-width='80'>
 		<vertical preferred-width='70'>
-			<custom-list id='songList' contents='searchedSongsList' visible-cells='6' cell-size='11.7' select-cell='SelectSong'>
+			<custom-list id='songList' visible-cells='6' cell-size='11.7' select-cell='SelectSong'>
 				<vertical id='bgContainer' bg='round-rect-panel' pad='1' pad-bottom='2' horizontal-fit='Unconstrained'>
 					<horizontal spacing='3'>
 						<text text='~fullFormattedSongName' align='MidlineLeft' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false'/>

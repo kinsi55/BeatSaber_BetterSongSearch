@@ -11,7 +11,7 @@ namespace BetterSongSearch.Util {
 			public float sortWeight;
 		}
 
-		public static IEnumerable<SongSearchSong> Search(IEnumerable<SongSearchSong> inList, string filter, Func<SongSearchSong, float> ordersort) {
+		public static IEnumerable<SongSearchSong> Search(IList<SongSearchSong> inList, string filter, Func<SongSearchSong, float> ordersort) {
 			var words = filter.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
 			var possibleSongKey = 0u;

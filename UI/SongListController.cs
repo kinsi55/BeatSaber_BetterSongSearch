@@ -21,8 +21,8 @@ namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.SongList.bsml")]
 	class SongListController : BSMLAutomaticViewController {
-		static internal IEnumerable<SongSearchSong> filteredSongsList = new List<SongSearchSong>();
-		static internal List<object> searchedSongsList = new List<object>();
+		static internal List<SongSearchSong> filteredSongsList = null;
+		static internal List<SongSearchSong> searchedSongsList = null;
 
 		[UIComponent("searchInProgress")] readonly ImageView searchInProgress = null;
 
@@ -36,6 +36,9 @@ namespace BetterSongSearch.UI {
 		public void UpdateSearchedSongsList() => StartCoroutine(limitedUpdateSearchedSongsList.CallNextFrame());
 
 		public void _UpdateSearchedSongsList() {
+			if(filteredSongsList == null)
+				return;
+
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => searchInProgress.gameObject.SetActive(true));
 
 			IEnumerable<SongSearchSong> _newSearchedSongsList;
@@ -46,24 +49,23 @@ namespace BetterSongSearch.UI {
 				_newSearchedSongsList = filteredSongsList.OrderByDescending(sortModes[opt_sort]);
 			}
 
-			var newSearchedSongsList = _newSearchedSongsList.Cast<object>().ToList();
-
 			if(songListData == null)
 				return;
 
 			var wasEmpty = searchedSongsList == null;
 
-			songListData.data = searchedSongsList = newSearchedSongsList;
+			searchedSongsList = _newSearchedSongsList.ToList();
+			songListData.data = searchedSongsList.Cast<object>().ToList();
 
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 				StartCoroutine(_AntiLagRefreshTable(true));
 
-				songSearchPlaceholder.text = $"Search {searchedSongsList.Count()} songs";
+				songSearchPlaceholder.text = $"Search {searchedSongsList.Count} songs";
 
 				if(selectedSongView.selectedSong == null) {
-					selectedSongView.SetSelectedSong(_newSearchedSongsList.FirstOrDefault(), true);
+					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(), true);
 				} else if(wasEmpty) {
-					selectedSongView.SetSelectedSong(_newSearchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
+					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
 				} else {
 					// Required as otherwise the first cell could be selected eventho its not
 					songList.ClearSelection();
@@ -112,8 +114,8 @@ namespace BetterSongSearch.UI {
 
 		[UIAction("SelectRandom")]
 		void SelectRandom() {
-			if(searchedSongsList.Count > 0)
-				selectedSongView.SetSelectedSong((SongSearchSong)searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
+			if(searchedSongsList?.Count != 0)
+				selectedSongView.SetSelectedSong(searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
 		}
 
 		internal SelectedSongView selectedSongView;
