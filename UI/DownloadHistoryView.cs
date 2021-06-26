@@ -6,6 +6,7 @@ using HMUI;
 using IPA.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
@@ -80,9 +81,16 @@ namespace BetterSongSearch.UI {
 
 			await Task.Run(async () => {
 				try {
+					var updateRateLimiter = new Stopwatch();
+					updateRateLimiter.Start();
+
 					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
 						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / ");
 						firstEntry.downloadProgress = progress;
+
+						if(updateRateLimiter.ElapsedMilliseconds < 0.05)
+							return;
+						updateRateLimiter.Restart();
 
 						IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgress);
 					});
@@ -100,7 +108,7 @@ namespace BetterSongSearch.UI {
 			});
 
 			if(firstEntry.status == DownloadHistoryEntry.DownloadStatus.Downloaded) {
-				BSSFlowCoordinator.songListView.RefreshTable();
+				BSSFlowCoordinator.songListView.songList.RefreshCells(false, true);
 
 				// NESTING HELLLL
 				var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
@@ -111,14 +119,22 @@ namespace BetterSongSearch.UI {
 			ProcessDownloads(true);
 		}
 
-		public void RefreshTable(bool fullReload = true) {
-			BSMLStuff.UnleakTable(downloadHistoryTable.gameObject);
+		RatelimitCoroutine limitedFullTableReload;
 
-			downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).Cast<object>().ToList();
+		void Awake() {
+			limitedFullTableReload = new RatelimitCoroutine(() => {
+				BSMLStuff.UnleakTable(downloadHistoryTable.gameObject);
 
-			if(fullReload) {
+				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).Cast<object>().ToList();
+
 				downloadHistoryTable.ReloadData();
 				downloadHistoryTable.ScrollToCellWithIdx(0, TableView.ScrollPositionType.Beginning, false);
+			}, 0.2f);
+		}
+
+		public void RefreshTable(bool fullReload = true) {
+			if(fullReload) {
+				StartCoroutine(limitedFullTableReload.Call());
 			} else {
 				downloadHistoryTable.RefreshCells(false, true);
 			}
