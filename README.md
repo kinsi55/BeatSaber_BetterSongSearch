@@ -16,7 +16,7 @@ Currently compatible game versions: **1.16 and up**
 
 - BeatSaberMarkupLanguage (Available in ModAssistant)
 - SongCore (Available in ModAssistant)
-- [SongDetailsCache](https://github.com/kinsi55/BeatSaber_SongDetails/releases/latest) (not yet in ModAssistant, requires protobuf-net (Available in ModAssistant))
+- [SongDetailsCache](https://github.com/kinsi55/BeatSaber_SongDetails/releases/latest) (Available in ModAssistant, requires protobuf-net, also available in ModAssistant)
 
 ## Features
 
