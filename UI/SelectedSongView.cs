@@ -176,7 +176,7 @@ namespace BetterSongSearch.UI {
 
 			if(BSSFlowCoordinator.downloadHistoryView.hasUnloadedDownloads) {
 				songToPlayAfterLoading = songToPlay;
-				SongCore.Loader.Instance.RefreshSongs();
+				SongCore.Loader.Instance.RefreshSongs(false);
 				return;
 			}
 

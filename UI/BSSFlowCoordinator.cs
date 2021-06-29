@@ -101,7 +101,7 @@ namespace BetterSongSearch.UI {
 				x.enabled = false;
 
 			if(downloadHistoryView.hasUnloadedDownloads)
-				SongCore.Loader.Instance.RefreshSongs();
+				SongCore.Loader.Instance.RefreshSongs(false);
 
 			if(instance != null) Manager._parentFlow.DismissFlowCoordinator(instance, () => {
 				songsList = null;
