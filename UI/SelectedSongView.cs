@@ -198,7 +198,7 @@ namespace BetterSongSearch.UI {
 			if(songToPlay.diffs.Any(x => !x.passesFilter)) try {
 					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
 					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
-					var pData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault()?.playerData;
+					var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
 					if(targetChar != null && pData != null) {
 						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
 						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);

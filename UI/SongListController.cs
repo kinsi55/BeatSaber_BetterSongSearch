@@ -185,6 +185,9 @@ namespace BetterSongSearch.UI {
 
 		public readonly Song detailsSong;
 
+		string _hash = null;
+		public string hash => _hash ?? (_hash = detailsSong.hash);
+
 		public SongSearchDiff[] diffs { get; private set; }
 		public SongSearchDiff[] _sortedDiffsCache;
 
@@ -231,13 +234,14 @@ namespace BetterSongSearch.UI {
 
 			// detailsSong.difficulties has an overhead of creating the ArraySegment - This doesnt 👍;
 			for(int i = 0; i < diffs.Length; i++)
-				diffs[i] = new SongSearchDiff(in BSSFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
+				diffs[i] = new SongSearchDiff(this, in BSSFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
 		}
 
 		public class SongSearchDiff {
+			internal readonly SongSearchSong songSearchSong;
 			internal readonly SongDifficulty detailsDiff;
 			internal bool? _passesFilter = null;
-			internal bool passesFilter => _passesFilter ??= BSSFlowCoordinator.filterView.DifficultyCheck(in detailsDiff);
+			internal bool passesFilter => _passesFilter ??= BSSFlowCoordinator.filterView.DifficultyCheck(in detailsDiff) && BSSFlowCoordinator.filterView.SearchDifficultyCheck(this);
 
 			string GetCombinedShortDiffName() {
 				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
@@ -248,8 +252,9 @@ namespace BetterSongSearch.UI {
 				return retVal;
 			}
 			string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{(detailsDiff.ranked ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "")}";
-			public SongSearchDiff(in SongDifficulty diff) {
+			public SongSearchDiff(SongSearchSong songSearchSong, in SongDifficulty diff) {
 				this.detailsDiff = diff;
+				this.songSearchSong = songSearchSong;
 			}
 
 			static readonly IReadOnlyDictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {

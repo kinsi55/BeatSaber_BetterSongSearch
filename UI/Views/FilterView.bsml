@@ -8,6 +8,7 @@
 				<text text='General' align='Center' underlined='true' font-size='3.5'/>
 			</horizontal>
 			<list-setting text='Downloaded' value="opt_existingSongs" choices='downloadedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
+			<list-setting text='Local score' value="opt_existingScore" choices='scoreFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
 			<!--<dropdown-list-setting text='Min upload date' value="opt_hideOlderThan" apply-on-change="true" choices='hideOlderThanOptions' formatter='DateTimeToStr' on-change="UpdateData"/>-->
 			<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_opt_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
 			<slider-setting text='Minimum length' value="opt_minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>

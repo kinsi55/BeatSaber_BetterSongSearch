@@ -48,6 +48,7 @@ namespace BetterSongSearch.UI {
 
 		#region uiproperties
 		public string opt_existingSongs { get; private set; } = (string)downloadedFilterOptions[0];
+		public string opt_existingScore { get; private set; } = (string)scoreFilterOptions[0];
 		public DateTime opt_hideOlderThan { get; private set; } = DateTime.MinValue;
 		public int _opt_hideOlderThan {
 			get => hideOlderThanOptions.IndexOf(opt_hideOlderThan);
@@ -145,6 +146,18 @@ namespace BetterSongSearch.UI {
 			return true;
 		}
 
+		public bool SearchDifficultyCheck(SongSearchSong.SongSearchDiff diff) {
+			if(opt_existingScore != (string)scoreFilterOptions[0]) {
+				bool hasScore = BSSFlowCoordinator.songsWithScores.ContainsKey(diff.songSearchSong.hash) && 
+					BSSFlowCoordinator.songsWithScores[diff.songSearchSong.hash].Contains($"{diff.detailsDiff.characteristic}_{diff.detailsDiff.difficulty}");
+
+				if(hasScore == (opt_existingScore == (string)scoreFilterOptions[2]))
+					return false;
+			}
+
+			return true;
+		}
+
 		public bool SongCheck(in Song song) {
 			if(song.uploadTime < opt_hideOlderThan)
 				return false;
@@ -160,8 +173,17 @@ namespace BetterSongSearch.UI {
 			if(opt_minimumRating > 0f && (opt_minimumRating > song.rating || voteCount == 0))
 				return false;
 
+			return true;
+		}
+
+		public bool SearchSongCheck(SongSearchSong song) {
 			if(opt_existingSongs != (string)downloadedFilterOptions[0]) {
 				if(SongCore.Collections.songWithHashPresent(song.hash) == (opt_existingSongs == (string)downloadedFilterOptions[2]))
+					return false;
+			}
+
+			if(opt_existingScore != (string)scoreFilterOptions[0]) {
+				if(BSSFlowCoordinator.songsWithScores.ContainsKey(song.hash) == (opt_existingScore == (string)scoreFilterOptions[2]))
 					return false;
 			}
 
@@ -175,7 +197,8 @@ namespace BetterSongSearch.UI {
 
 		[UIValue("difficulties")] private static readonly List<object> difficulties = new object[] { "Any" }.AsEnumerable().Concat(Enum.GetNames(typeof(MapDifficulty))).ToList();
 		[UIValue("characteristics")] private static readonly List<object> characteristics = new object[] { "Any" }.AsEnumerable().Concat(Enum.GetNames(typeof(MapCharacteristic))).ToList();
-		[UIValue("downloadedFilterOptions")] private static readonly List<object> downloadedFilterOptions = new List<object> { "Show All", "Show downloaded", "Hide downloaded" };
+		[UIValue("downloadedFilterOptions")] private static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Show downloaded", "Hide downloaded" };
+		[UIValue("scoreFilterOptions")] private static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Hide unplayed" };
 
 		readonly string version = $" BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
 		[UIComponent("datasetInfoLabel")] private TextMeshProUGUI _datasetInfoLabel = null;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 using static BetterSongSearch.UI.DownloadHistoryView;
 
 namespace BetterSongSearch.UI {
@@ -24,12 +25,34 @@ namespace BetterSongSearch.UI {
 
 		public static SongSearchSong[] songsList { get; private set; } = null;
 
+		public static PlayerDataModel playerDataModel = null;
+		public static Dictionary<string, HashSet<string>> songsWithScores = null;
+
 		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
 			instance = this;
 
 			closeCancelSource = new CancellationTokenSource();
 
 			coverLoader ??= new CoverImageAsyncLoader();
+
+			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault();
+
+			if(playerDataModel != null) _ = Task.Run(() => {
+				songsWithScores = new Dictionary<string, HashSet<string>>();
+
+				foreach(var x in playerDataModel.playerData.levelsStatsData) {
+					if(!x.validScore || !x.levelID.StartsWith("custom_level_"))
+						continue;
+
+					HashSet<string> h = null;
+					var sh = x.levelID.Substring(13);
+
+					if(!songsWithScores.TryGetValue(sh, out h))
+						songsWithScores.Add(sh, h = new HashSet<string>());
+
+					h.Add($"{x.beatmapCharacteristic.serializedName}_{x.difficulty}");
+				}
+			});
 
 			void DataUpdated() {
 				songsList = new SongSearchSong[songDetails.songs.Length];
@@ -134,7 +157,7 @@ namespace BetterSongSearch.UI {
 					ref var val = ref songDetails.songs[i];
 
 					// Check if the song itself passes the filter
-					if(!filterView.SongCheck(in val))
+					if(!filterView.SongCheck(in val) || !filterView.SearchSongCheck(songsList[i]))
 						continue;
 
 					bool hasAnyValid = false;
@@ -147,15 +170,11 @@ namespace BetterSongSearch.UI {
 					ref var theThing = ref songsList[i];
 
 					for(var iDiff = 0; iDiff < val.diffCount; iDiff++) {
-						ref var theDiff = ref theThing.diffs[iDiff];
+						var theDiff = theThing.diffs[iDiff];
 
-						if(!hasAnyValid) {
-							var doesPass = filterView.DifficultyCheck(in theDiff.detailsDiff);
-							theDiff._passesFilter = hasAnyValid = doesPass;
-						} else {
-							// Defer checking further diffs until later (See passesFilter getter)
-							theDiff._passesFilter = null;
-						}
+						theDiff._passesFilter = null;
+						if(!hasAnyValid)
+							hasAnyValid = theDiff.passesFilter;
 					}
 
 					if(!hasAnyValid)
