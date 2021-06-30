@@ -23,7 +23,7 @@ namespace BetterSongSearch.UI {
 
 		[UIComponent("downloadButton")] NoTransitionsButton downloadButton = null;
 		[UIComponent("playButton")] NoTransitionsButton playButton = null;
-		//[UIComponent("songDetailsButton")] NoTransitionsButton songDetailsButton = null;
+		[UIComponent("songDetailsButton")] NoTransitionsButton songDetailsButton = null;
 
 		static Material lol = null;
 		[UIAction("#post-parse")]
@@ -32,7 +32,8 @@ namespace BetterSongSearch.UI {
 		}
 
 		void ShowCoverLoader(bool show) {
-			coverImage.gameObject.SetActive(!show);
+			if(show)
+				coverImage.sprite = SongCore.Loader.defaultCoverImage;
 			coverLoading.gameObject.SetActive(show);
 		}
 
@@ -57,6 +58,8 @@ namespace BetterSongSearch.UI {
 
 			selectedSongAuthor.text = song.detailsSong.songAuthorName;
 			selectedSongName.text = song.detailsSong.songName;
+
+			songDetailsButton.gameObject.SetActive(true);
 
 			if(song.diffs.Length > 1) {
 				selectedSongDiffInfo.text = string.Format(

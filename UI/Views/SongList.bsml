@@ -2,8 +2,8 @@
 	<horizontal id='filterContainer' preferred-height='10' child-control-width='false' child-expand-width='false' pad-left='1'>
 		<button on-click='SelectRandom' text='Select random'/>
 		<vertical id='searchBoxContainer' preferred-width='44' pad-left='2'/>
-		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pref-height='1' preferred-width='1'>
-			<loading id="searchInProgress" preserve-aspect="true" min-width="5" min-height="5"/>
+		<vertical vertical-fit='PreferredSize' pref-height='7' ignore-layout='true' pad-right='53'>
+			<loading id="searchInProgress" preserve-aspect="true"/>
 		</vertical>
 		
 		<vertical preferred-width='48' pad-left='2'>
@@ -36,20 +36,20 @@
 		<vertical preferred-width='40' bg='round-rect-panel' pad='2' child-expand-height='false'>
 			<macro.as-host host='selectedSongView'>
 				<vertical vertical-fit="PreferredSize" horizontal-fit="Unconstrained">
-					<text id="selectedSongAuthor" align='Center' font-size='3.2' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC'/>
-					<text id="selectedSongName" align='Center' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false'/>
+					<text id="selectedSongAuthor" align='Center' font-size='3.2' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC' text='Loading...'/>
+					<text id="selectedSongName" align='Center' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false' text='Please wait'/>
 				</vertical>
-				<horizontal child-align='MiddleCenter' preferred-height="28" child-expand-height="true" pad-bottom="2">
+				<horizontal child-align='MiddleCenter' vertical-fit="PreferredSize" preferred-height="28">
 					<image id="coverImage" preserve-aspect="true"/>
-					<loading id="coverLoading" preserve-aspect="true"/>
+					<loading id="coverLoading" preserve-aspect="true" ignore-layout="true"/>
 				</horizontal>
-				<horizontal horizontal-fit="Unconstrained">
-					<text id="selectedSongDiffInfo" align='Center' font-size='2.5' word-wrapping='false' color='#CCC'/>
+				<horizontal horizontal-fit="Unconstrained" pad-top="2">
+					<text id="selectedSongDiffInfo" align='Center' font-size='2.5' word-wrapping='false' color='#CCC' text=''/>
 				</horizontal>
 				<vertical vertical-fit="PreferredSize">
-					<primary-button id="downloadButton" on-click='Download' text='Download' horizontal-fit='Unconstrained' font-size='3.5'/>
-					<primary-button id="playButton" on-click='Play' text='Play' horizontal-fit='Unconstrained' font-size='3.5'/>
-					<button id="songDetailsButton" on-click='ShowSongDetauls' text='Song Details' horizontal-fit='Unconstrained' font-size='3.5'/>
+					<primary-button id="downloadButton" on-click='Download' text='Download' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
+					<primary-button id="playButton" on-click='Play' text='Play' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
+					<button id="songDetailsButton" on-click='ShowSongDetauls' text='Song Details' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
 				</vertical>
 			</macro.as-host>
 		</vertical>
