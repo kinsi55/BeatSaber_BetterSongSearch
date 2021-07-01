@@ -46,7 +46,7 @@ namespace BetterSongSearch.UI {
 			currentFilter.hideOlderThanSlider.Value = 0;
 			currentFilter.hideOlderThanSlider.ReceiveValue();
 
-			(gameObject.transform as RectTransform).offsetMax = new Vector2(0, 22);
+			(gameObject.transform as RectTransform).offsetMax = new Vector2(20, 22);
 
 			BSMLStuff.GetScrollbarForTable(presetList.tableView.gameObject, _presetScrollbarContainer.transform);
 
