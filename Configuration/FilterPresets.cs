@@ -140,6 +140,9 @@ namespace BetterSongSearch.Configuration {
 
 			name = presets.Keys.FirstOrDefault(x => x.ToLower() == name.ToLower()) ?? name;
 
+			if(name.Length == 0)
+				name = "Unnamed";
+
 			presets[name] = FilterView.currentFilter.Clone();
 
 			File.WriteAllText(ConfigUtil.GetPresetPath(name), JsonConvert.SerializeObject(FilterView.currentFilter, Formatting.Indented));
