@@ -55,7 +55,7 @@ namespace BetterSongSearch.UI {
 			var wasEmpty = searchedSongsList == null;
 
 			searchedSongsList = _newSearchedSongsList.ToList();
-			songListData.data = searchedSongsList.Cast<object>().ToList();
+			songListData.data = searchedSongsList.ToList<object>();
 
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 				StartCoroutine(_AntiLagRefreshTable(true));
@@ -175,7 +175,7 @@ namespace BetterSongSearch.UI {
 			{ "Least Stars first", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) }
 		};
 
-		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).Cast<object>().ToList();
+		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
 
 		static string opt_sort = sortModes.First().Key;
 	}

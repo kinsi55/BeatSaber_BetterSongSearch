@@ -125,7 +125,7 @@ namespace BetterSongSearch.UI {
 			limitedFullTableReload = new RatelimitCoroutine(() => {
 				BSMLStuff.UnleakTable(downloadHistoryTable.gameObject);
 
-				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).Cast<object>().ToList();
+				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).ToList<object>();
 
 				downloadHistoryTable.ReloadData();
 				downloadHistoryTable.ScrollToCellWithIdx(0, TableView.ScrollPositionType.Beginning, false);
