@@ -1,5 +1,7 @@
-﻿using HMUI;
+﻿using HarmonyLib;
+using HMUI;
 using IPA.Utilities;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,8 +30,9 @@ namespace BetterSongSearch.Util {
 				return null;
 
 			var listScrollBar = GameObject.Instantiate(scrollBar, targetContainer, false);
+			var vsi = listScrollBar.GetComponentInChildren<VerticalScrollIndicator>();
 
-			ReflectionUtil.SetField(sw, "_verticalScrollIndicator", listScrollBar.GetComponentInChildren<VerticalScrollIndicator>());
+			ReflectionUtil.SetField(sw, "_verticalScrollIndicator", vsi);
 
 			var buttoneZ = listScrollBar.GetComponentsInChildren<NoTransitionsButton>().OrderByDescending(x => x.gameObject.name == "UpButton").ToArray();
 			if(buttoneZ.Length == 2) {
@@ -47,8 +50,18 @@ namespace BetterSongSearch.Util {
 			}
 
 			sw.Update();
+			sw.gameObject.AddComponent<RefreshScrolbarOnFirstLoad>();
 
 			return scrollBar;
+		}
+
+		class RefreshScrolbarOnFirstLoad : MonoBehaviour {
+			void OnEnable() => StartCoroutine(dorefresh());
+
+			IEnumerator dorefresh() {
+				yield return 0;
+				ReflectionUtil.GetField<VerticalScrollIndicator, ScrollView>(gameObject.GetComponent<ScrollView>(), "_verticalScrollIndicator").RefreshHandle();
+			}
 		}
 	}
 }
