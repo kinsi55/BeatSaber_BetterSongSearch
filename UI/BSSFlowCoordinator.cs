@@ -100,6 +100,8 @@ namespace BetterSongSearch.UI {
 			songListView.selectedSongView.PlayQueuedSongToPlay();
 		}
 
+		static internal int lastVisibleTableRowIdx { get; private set; } = 0;
+
 		/// <summary>
 		/// Cloases the BetterSongSearch Flow
 		/// </summary>
@@ -127,6 +129,7 @@ namespace BetterSongSearch.UI {
 				SongCore.Loader.Instance.RefreshSongs(false);
 
 			if(instance != null) Manager._parentFlow.DismissFlowCoordinator(instance, () => {
+				lastVisibleTableRowIdx = songListView.songList.GetVisibleCellsIdRange().Item1;
 				songsList = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;

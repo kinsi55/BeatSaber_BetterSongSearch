@@ -65,7 +65,8 @@ namespace BetterSongSearch.UI {
 				if(selectedSongView.selectedSong == null) {
 					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(), true);
 				} else if(wasEmpty) {
-					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
+					//selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
+					songList.ScrollToCellWithIdx(BSSFlowCoordinator.lastVisibleTableRowIdx, TableView.ScrollPositionType.Beginning, false);
 				} else {
 					// Required as otherwise the first cell could be selected eventho its not
 					songList.ClearSelection();
