@@ -1,21 +1,29 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
+using HarmonyLib;
+using HMUI;
+using IPA.Utilities;
 using SongDetailsCache.Structs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace BetterSongSearch.UI {
 
 	[HotReload(RelativePathToLayout = @"Views\FilterView.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.FilterView.bsml")]
-	class FilterView : BSMLAutomaticViewController {
-		static List<DateTime> hideOlderThanOptions;
+	class FilterView : BSMLAutomaticViewController, INotifyPropertyChanged {
+		public static List<DateTime> hideOlderThanOptions { get; private set; }
 
 		public void Awake() {
 			if(hideOlderThanOptions != null)
@@ -23,135 +31,140 @@ namespace BetterSongSearch.UI {
 
 			hideOlderThanOptions = new List<DateTime>();
 
-			var x = new DateTime(2018, 5, 1);
-
-			while(x < DateTime.Now) {
+			for(var x = new DateTime(2018, 5, 1); x < DateTime.Now; x = x.AddMonths(1))
 				hideOlderThanOptions.Add(x);
 
-				x = x.AddMonths(1);
-			}
+			FilterPresets.Init();
 		}
 
-		[UIComponent("hideOlderThanSlider")] SliderSetting hideOlderThanSlider = null;
+		public static FilterOptions currentFilter = new FilterOptions();
 
+		[UIComponent("dontScuffBg")] ModalView dontScuffBg = null;
 		[UIAction("#post-parse")]
 		void Parsed() {
-			hideOlderThanSlider.slider.maxValue = hideOlderThanOptions.Count - 1;
-			hideOlderThanSlider.Value = 0;
-			hideOlderThanSlider.ReceiveValue();
+			currentFilter.hideOlderThanSlider.slider.maxValue = hideOlderThanOptions.Count - 1;
+			currentFilter.hideOlderThanSlider.Value = 0;
+			currentFilter.hideOlderThanSlider.ReceiveValue();
+
+			(gameObject.transform as RectTransform).offsetMax = new Vector2(0, 22);
+
+			BSMLStuff.GetScrollbarForTable(presetList.tableView.gameObject, _presetScrollbarContainer.transform);
+
+			// BSML / HMUI my beloved
+			ReflectionUtil.SetField(dontScuffBg, "_animateParentCanvas", false);
+			ReflectionUtil.SetField(newPresetName.modalKeyboard.modalView, "_animateParentCanvas", false);
 		}
 
-		const float SONG_LENGTH_FILTER_MAX = 15f;
-		const float STAR_FILTER_MAX = 14f;
-		const float NJS_FILTER_MAX = 25f;
-		const float NPS_FILTER_MAX = 10f;
+		#region PresetStuff
+		class FilterPresetRow {
+			public readonly string name;
+			[UIComponent("label")] TextMeshProUGUI label = null;
 
-		#region uiproperties
-		public string opt_existingSongs { get; private set; } = (string)downloadedFilterOptions[0];
-		public string opt_existingScore { get; private set; } = (string)scoreFilterOptions[0];
-		public DateTime opt_hideOlderThan { get; private set; } = DateTime.MinValue;
-		public int _opt_hideOlderThan {
-			get => hideOlderThanOptions.IndexOf(opt_hideOlderThan);
-			set {
-				opt_hideOlderThan = hideOlderThanOptions[value];
+			public FilterPresetRow(string name) => this.name = name;
+
+			[UIAction("refresh-visuals")]
+			public void Refresh(bool selected, bool highlighted) {
+				label.color = new UnityEngine.Color(
+					selected ? 0 : 255,
+					selected ? 128 : 255,
+					selected ? 128 : 255,
+					highlighted ? 0.9f : 0.6f
+				);
 			}
 		}
 
+		[UIComponent("loadButton")] private NoTransitionsButton loadButton = null;
+		[UIComponent("deleteButton")] private NoTransitionsButton deleteButton = null;
+		[UIComponent("presetList")] private CustomCellListTableData presetList = null;
+		[UIComponent("newPresetName")] private StringSetting newPresetName = null;
+		[UIComponent("presetScrollbarContainer")] private VerticalLayoutGroup _presetScrollbarContainer = null;
+		void ClearFilters() => SetFilter();
 
-		public float opt_minimumSongLength { get; private set; } = 0f;
+		void ReloadPresets() {
+			presetList.data = FilterPresets.presets.Select(x => new FilterPresetRow(x.Key)).ToList<object>();
+			presetList.tableView.ReloadData();
+			presetList.tableView.ClearSelection();
 
-		public float _opt_maximumSongLength { get; private set; } = 20f;
-		public float opt_maximumSongLength {
-			get => _opt_maximumSongLength >= SONG_LENGTH_FILTER_MAX ? float.MaxValue : _opt_maximumSongLength;
-			private set => _opt_maximumSongLength = value;
+			loadButton.interactable = false;
+			deleteButton.interactable = false;
+
+			newPresetName.Text = "";
 		}
 
-
-		public bool opt_hideUnranked { get; private set; } = false;
-
-
-		public int opt_minimumPP { get; private set; } = 0;
-
-		public float opt_minimumStars { get; private set; } = 0f;
-
-		static float _opt_maximumStars = STAR_FILTER_MAX;
-		public float opt_maximumStars {
-			get => _opt_maximumStars >= STAR_FILTER_MAX ? float.MaxValue : _opt_maximumStars;
-			private set => _opt_maximumStars = value;
+		string curSelected;
+		void PresetSelected(object _, FilterPresetRow row) {
+			loadButton.interactable = true;
+			deleteButton.interactable = true;
+			newPresetName.Text = curSelected = row.name;
 		}
 
+		void SetFilter(FilterOptions filter = null) {
+			filter ??= new FilterOptions();
+			foreach(var x in AccessTools.GetDeclaredProperties(typeof(FilterOptions)))
+				x.SetValue(currentFilter, x.GetValue(filter));
 
-		public float opt_minimumRating { get; private set; } = 0f;
-		public int opt_minimumVotes { get; private set; } = 0;
-
-
-		public int opt_difficulty_int = -1;
-		public string opt_difficulty {
-			get => opt_difficulty_int == -1 ? "Any" : ((MapDifficulty)opt_difficulty_int).ToString();
-			private set => opt_difficulty_int = Enum.TryParse<MapDifficulty>(value, out var pDiff) ? (int)pDiff : -1;
+			currentFilter.NotifyPropertiesChanged();
+			/*
+			 * This is a massive hack and I have NO IDEA why I need to do this. If I dont do this, or
+			 * the FilterSongs() method NEVER ends up being called, not even if I manually invoke 
+			 * limitedUpdateData.Call[NextFrame]() OR EVEN BSSFlowCoordinator.FilterSongs() DIRECTLY
+			 * Seems like there is SOMETHING broken with how input changes are handled, something to do
+			 * with nested coroutines or whatever. I have no idea. For now I spent enough time trying to fix this
+			 */
+			currentFilter.hideOlderThanSlider.onChange.Invoke(currentFilter.hideOlderThanSlider.Value);
 		}
 
-		public int opt_characteristic_int = -1;
-		public string opt_characteristic {
-			get => opt_characteristic_int == -1 ? "Any" : ((MapCharacteristic)opt_characteristic_int).ToString();
-			private set => opt_characteristic_int = Enum.TryParse<MapCharacteristic>(value, out var pChar) ? (int)pChar : -1;
+		void AddPreset() {
+			FilterPresets.Save(newPresetName.Text);
+			ReloadPresets();
 		}
 
-
-		public float opt_minimumNjs = 0;
-
-		public float _opt_maximumNjs = NJS_FILTER_MAX;
-		public float opt_maximumNjs {
-			get => _opt_maximumNjs >= NJS_FILTER_MAX ? float.MaxValue : _opt_maximumNjs;
-			private set => _opt_maximumNjs = value;
+		void LoadPreset() {
+			SetFilter(FilterPresets.presets[curSelected]);
 		}
-
-
-		public float opt_minimumNps = 0;
-
-		public float _opt_maximumNps = NPS_FILTER_MAX;
-		public float opt_maximumNps {
-			get => _opt_maximumNps >= NPS_FILTER_MAX ? float.MaxValue : _opt_maximumNps;
-			private set => _opt_maximumNps = value;
+		void DeletePreset() {
+			FilterPresets.Delete(curSelected);
+			ReloadPresets();
 		}
 		#endregion
 
+
 		#region filters
 		public bool DifficultyCheck(in SongDifficulty diff) {
-			if(opt_hideUnranked && !diff.ranked)
+			if(currentFilter.hideUnranked && !diff.ranked)
 				return false;
 
-			if(diff.stars < opt_minimumStars || diff.stars > opt_maximumStars)
+			if(diff.stars < currentFilter.minimumStars || diff.stars > currentFilter.maximumStars)
 				return false;
 
-			if(opt_difficulty_int != -1 && (int)diff.difficulty != opt_difficulty_int)
+			if(currentFilter.difficulty_int != -1 && (int)diff.difficulty != currentFilter.difficulty_int)
 				return false;
 
-			if(opt_characteristic_int != -1 && (int)diff.characteristic != opt_characteristic_int)
+			if(currentFilter.characteristic_int != -1 && (int)diff.characteristic != currentFilter.characteristic_int)
 				return false;
 
-			if(diff.njs < opt_minimumNjs || diff.njs > opt_maximumNjs)
+			if(diff.njs < currentFilter.minimumNjs || diff.njs > currentFilter.maximumNjs)
 				return false;
 
 			if(diff.song.songDurationSeconds > 0) {
 				var nps = diff.notes / (float)diff.song.songDurationSeconds;
 
-				if(nps < opt_minimumNps || nps > opt_maximumNps)
+				if(nps < currentFilter.minimumNps || nps > currentFilter.maximumNps)
 					return false;
 			}
 
-			if(opt_minimumPP != 0 && opt_minimumPP > diff.approximatePpValue)
+			if(currentFilter.minimumPP != 0 && currentFilter.minimumPP > diff.approximatePpValue)
 				return false;
 
 			return true;
 		}
 
 		public bool SearchDifficultyCheck(SongSearchSong.SongSearchDiff diff) {
-			if(opt_existingScore != (string)scoreFilterOptions[0]) {
+			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
 				bool hasScore = BSSFlowCoordinator.songsWithScores.ContainsKey(diff.songSearchSong.hash) && 
 					BSSFlowCoordinator.songsWithScores[diff.songSearchSong.hash].Contains($"{diff.detailsDiff.characteristic}_{diff.detailsDiff.difficulty}");
 
-				if(hasScore == (opt_existingScore == (string)scoreFilterOptions[2]))
+				if(hasScore != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
 					return false;
 			}
 
@@ -159,31 +172,31 @@ namespace BetterSongSearch.UI {
 		}
 
 		public bool SongCheck(in Song song) {
-			if(song.uploadTime < opt_hideOlderThan)
+			if(song.uploadTime < currentFilter.hideOlderThan)
 				return false;
 
-			if(song.songDurationSeconds > 0f && (song.songDurationSeconds < opt_minimumSongLength * 60 || song.songDurationSeconds > opt_maximumSongLength * 60))
+			if(song.songDurationSeconds > 0f && (song.songDurationSeconds < currentFilter.minimumSongLength * 60 || song.songDurationSeconds > currentFilter.maximumSongLength * 60))
 				return false;
 
 			var voteCount = song.downvotes + song.upvotes;
 
-			if(voteCount < opt_minimumVotes)
+			if(voteCount < currentFilter.minimumVotes)
 				return false;
 
-			if(opt_minimumRating > 0f && (opt_minimumRating > song.rating || voteCount == 0))
+			if(currentFilter.minimumRating > 0f && (currentFilter.minimumRating > song.rating || voteCount == 0))
 				return false;
 
 			return true;
 		}
 
 		public bool SearchSongCheck(SongSearchSong song) {
-			if(opt_existingSongs != (string)downloadedFilterOptions[0]) {
-				if(SongCore.Collections.songWithHashPresent(song.hash) == (opt_existingSongs == (string)downloadedFilterOptions[2]))
+			if(currentFilter.existingSongs != (string)FilterOptions.downloadedFilterOptions[0]) {
+				if(SongCore.Collections.songWithHashPresent(song.hash) == (currentFilter.existingSongs == (string)FilterOptions.downloadedFilterOptions[2]))
 					return false;
 			}
 
-			if(opt_existingScore != (string)scoreFilterOptions[0]) {
-				if(BSSFlowCoordinator.songsWithScores.ContainsKey(song.hash) == (opt_existingScore == (string)scoreFilterOptions[2]))
+			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
+				if(BSSFlowCoordinator.songsWithScores.ContainsKey(song.hash) != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
 					return false;
 			}
 
@@ -191,27 +204,13 @@ namespace BetterSongSearch.UI {
 		}
 		#endregion
 
-		static RatelimitCoroutine limitedUpdateData = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.3f);
 
-		[UIAction("UpdateData")] static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(limitedUpdateData.Call());
 
-		[UIValue("difficulties")] private static readonly List<object> difficulties = new object[] { "Any" }.AsEnumerable().Concat(Enum.GetNames(typeof(MapDifficulty))).ToList();
-		[UIValue("characteristics")] private static readonly List<object> characteristics = new object[] { "Any" }.AsEnumerable().Concat(Enum.GetNames(typeof(MapCharacteristic))).ToList();
-		[UIValue("downloadedFilterOptions")] private static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Show downloaded", "Hide downloaded" };
-		[UIValue("scoreFilterOptions")] private static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Hide unplayed" };
+
+		public static RatelimitCoroutine limitedUpdateData { get; private set; } = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.3f);
 
 		readonly string version = $" BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
 		[UIComponent("datasetInfoLabel")] private TextMeshProUGUI _datasetInfoLabel = null;
 		public TextMeshProUGUI datasetInfoLabel => _datasetInfoLabel;
-
-		#region uiformatters
-		static string DateTimeToStr(int d) => hideOlderThanOptions[d].ToString("MMM yy", new CultureInfo("en-US"));
-		static string FormatSongLengthLimitFloat(float d) => d >= SONG_LENGTH_FILTER_MAX ? "Unlimited" : TimeSpan.FromMinutes(d).ToString("mm\\:ss");
-		static string FormatMaxStarsFloat(float d) => d >= STAR_FILTER_MAX ? "Unlimited" : d.ToString("0.0");
-		static string FormatPP(int d) => $"~{d} PP";
-		static string PercentFloat(float d) => d.ToString("0.0%");
-		static string FormatMaxNjs(float d) => d >= NJS_FILTER_MAX ? "Unlimited" : d.ToString();
-		static string FormatMaxNps(float d) => d >= NPS_FILTER_MAX ? "Unlimited" : d.ToString();
-		#endregion
 	}
 }
