@@ -98,7 +98,9 @@ namespace BetterSongSearch.UI {
 			coverLoadCancel = new CancellationTokenSource();
 
 			if(!song.CheckIsDownloadedAndLoaded()) {
-				XD.FunnyMono(songPreviewPlayer)?.CrossfadeToDefault();
+				try {
+					XD.FunnyMono(songPreviewPlayer)?.CrossfadeToDefault();
+				} catch(Exception ex) { }
 				coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
@@ -106,8 +108,9 @@ namespace BetterSongSearch.UI {
 				songPreviewPlayer = XD.FunnyMono(songPreviewPlayer) ?? Resources.FindObjectsOfTypeAll<SongPreviewPlayer>().FirstOrDefault();
 
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
-				if(preview != null)
+				if(preview != null) try {
 					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
+				} catch(Exception ex) { }
 
 				coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
 			}
