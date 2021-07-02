@@ -19,7 +19,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		public static GameObject GetScrollbarForTable(GameObject table, Transform targetContainer) {
-			var scrollBar = Resources.FindObjectsOfTypeAll<VerticalScrollIndicator>().FirstOrDefault()?.transform.parent?.gameObject;
+			var scrollBar = Resources.FindObjectsOfTypeAll<VerticalScrollIndicator>().FirstOrDefault(x => x.enabled)?.transform.parent?.gameObject;
 
 			if(scrollBar == null)
 				return null;
@@ -30,6 +30,7 @@ namespace BetterSongSearch.Util {
 				return null;
 
 			var listScrollBar = GameObject.Instantiate(scrollBar, targetContainer, false);
+			listScrollBar.SetActive(true);
 			var vsi = listScrollBar.GetComponentInChildren<VerticalScrollIndicator>();
 
 			ReflectionUtil.SetField(sw, "_verticalScrollIndicator", vsi);
@@ -60,7 +61,11 @@ namespace BetterSongSearch.Util {
 
 			IEnumerator dorefresh() {
 				yield return 0;
-				ReflectionUtil.GetField<VerticalScrollIndicator, ScrollView>(gameObject.GetComponent<ScrollView>(), "_verticalScrollIndicator").RefreshHandle();
+				var sv = gameObject.GetComponent<ScrollView>();
+
+				if(sv == null)
+					yield break;
+				ReflectionUtil.GetField<VerticalScrollIndicator, ScrollView>(sv, "_verticalScrollIndicator")?.RefreshHandle();
 			}
 		}
 	}
