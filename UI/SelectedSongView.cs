@@ -100,7 +100,7 @@ namespace BetterSongSearch.UI {
 			if(!song.CheckIsDownloadedAndLoaded()) {
 				try {
 					XD.FunnyMono(songPreviewPlayer)?.CrossfadeToDefault();
-				} catch(Exception ex) { }
+				} catch { }
 				coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
@@ -110,7 +110,7 @@ namespace BetterSongSearch.UI {
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
 				if(preview != null) try {
 					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-				} catch(Exception ex) { }
+				} catch { }
 
 				coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
 			}
@@ -150,14 +150,13 @@ namespace BetterSongSearch.UI {
 				string desc = "Failed to load description";
 				try {
 					desc = await SongDownloader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
-				} catch {
-				} finally {
-					_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-						songDetailsLoading.gameObject.SetActive(false);
-						// If we dont do that, the description is long and contains unicode the game crashes. Fun.
-						selectedSongDescription.text = Regex.Replace(desc, @"\p{Cs}", "?");
-					});
-				}
+				} catch { }
+
+				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
+					songDetailsLoading.gameObject.SetActive(false);
+					// If we dont do that, the description is long and contains unicode the game crashes. Fun.
+					selectedSongDescription.text = Regex.Replace(desc, @"\p{Cs}", "?");
+				});
 			}).ConfigureAwait(false);
 		}
 

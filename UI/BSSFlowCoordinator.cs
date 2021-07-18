@@ -119,7 +119,7 @@ namespace BetterSongSearch.UI {
 			SelectedSongView.coverLoadCancel?.Cancel();
 			try {
 				XD.FunnyMono(SelectedSongView.songPreviewPlayer)?.CrossfadeToDefault();
-			} catch(Exception ex) { }
+			} catch { }
 
 			foreach(var x in filterView.GetComponentsInChildren<ModalView>())
 				x.enabled = false;
