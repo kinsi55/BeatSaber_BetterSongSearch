@@ -103,7 +103,7 @@ namespace BetterSongSearch.UI {
 #endif
 
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: {ex.Message}";
+					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: {ex.GetType()} (More details in log)";
 				}
 			});
 
