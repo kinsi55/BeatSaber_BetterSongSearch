@@ -216,6 +216,8 @@ namespace BetterSongSearch.UI {
 			);
 		}
 
+		public bool CheckHasScore() => BSSFlowCoordinator.songsWithScores.ContainsKey(hash);
+
 		public string fullFormattedSongName => $"<color=#{(CheckIsDownloaded() ? "888" : "FFF")}>{detailsSong.songAuthorName} - {detailsSong.songName}</color>";
 		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");

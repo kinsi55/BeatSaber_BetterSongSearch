@@ -161,7 +161,7 @@ namespace BetterSongSearch.UI {
 
 		public bool SearchDifficultyCheck(SongSearchSong.SongSearchDiff diff) {
 			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
-				bool hasScore = BSSFlowCoordinator.songsWithScores.ContainsKey(diff.songSearchSong.hash) && 
+				bool hasScore = diff.songSearchSong.CheckHasScore() && 
 					BSSFlowCoordinator.songsWithScores[diff.songSearchSong.hash].Contains($"{diff.detailsDiff.characteristic}_{diff.detailsDiff.difficulty}");
 
 				if(hasScore != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
@@ -196,7 +196,7 @@ namespace BetterSongSearch.UI {
 			}
 
 			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
-				if(BSSFlowCoordinator.songsWithScores.ContainsKey(song.hash) != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
+				if(song.CheckHasScore() != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
 					return false;
 			}
 
