@@ -114,6 +114,14 @@ namespace BetterSongSearch.UI {
 				return;
 			}
 
+			foreach(var x in downloadHistoryView.downloadList) {
+				if(!x.IsInAnyOfStates(DownloadHistoryEntry.DownloadStatus.Queued | DownloadHistoryEntry.DownloadStatus.Downloading))
+					continue;
+				
+				x.retries = int.MaxValue;
+				x.status = DownloadHistoryEntry.DownloadStatus.Failed;
+			}
+
 			closeCancelSource?.Cancel();
 
 			SelectedSongView.coverLoadCancel?.Cancel();
