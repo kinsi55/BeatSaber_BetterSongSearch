@@ -137,7 +137,7 @@ namespace BetterSongSearch.UI {
 
 		public void RefreshTable(bool fullReload = true) {
 			if(fullReload) {
-				StartCoroutine(limitedFullTableReload.Call());
+				SharedCoroutineStarter.instance.StartCoroutine(limitedFullTableReload.Call());
 			} else {
 				downloadHistoryTable.RefreshCells(false, true);
 			}
