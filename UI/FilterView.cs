@@ -24,6 +24,7 @@ namespace BetterSongSearch.UI {
 	[ViewDefinition("BetterSongSearch.UI.Views.FilterView.bsml")]
 	class FilterView : BSMLAutomaticViewController, INotifyPropertyChanged {
 		public static List<DateTime> hideOlderThanOptions { get; private set; }
+		public static PluginConfig cfgInstance;
 
 		public void Awake() {
 			if(hideOlderThanOptions != null)

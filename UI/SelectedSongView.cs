@@ -1,4 +1,5 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using BetterSongSearch.HarmonyPatches;
 using BetterSongSearch.Util;
 using HMUI;
 using System;
@@ -216,6 +217,8 @@ namespace BetterSongSearch.UI {
 			levelFilteringNavigationController.UpdateSecondChildControllerContent(LevelCategory.All);
 
 			levelCollectionNavigationController?.SelectLevel(level);
+
+			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 		}
 
 		[UIAction("Download")]

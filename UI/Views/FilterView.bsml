@@ -1,9 +1,12 @@
 ﻿<vertical preferred-width="130" anchor-min-y="1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
 	<horizontal bg='panel-top-gradient'>
+		<horizontal>
+			<button text='Settings' click-event='ShowSettingsModal'/>
+		</horizontal>
 		<horizontal ignore-layout='true' pad-top='1'>
 			<text text='FILTERS' align='Center' font-size='7' italics='true'/>
 		</horizontal>
-		<horizontal horizontal-fit='PreferredSize' pad-left='95' spacing='2'>
+		<horizontal horizontal-fit='PreferredSize' pad-left='77' spacing='2'>
 			<button text='Clear' on-click='ClearFilters'/>
 			<button text='Presets' event-click='OpenPresets' on-click='ReloadPresets'/>
 		</horizontal>
@@ -67,6 +70,20 @@
 				<button text='Load' id='loadButton' event-click='ClosePresets' on-click='LoadPreset'/>
 				<button text='Delete' id='deleteButton' on-click='DeletePreset'/>
 				<button text='Close' click-event='ClosePresets'/>
+			</horizontal>
+		</vertical>
+	</modal>
+
+	<modal move-to-center='true' hide-event='CloseSettingsModal' show-event='ShowSettingsModal' size-delta-x='70' size-delta-y='45' clickerino-offerino-closerino='true'>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='4' child-expand-width='true' preferred-width='70' preferred-height='45'>
+			<horizontal pad-bottom='5'>
+				<text align='Center' text='Settings'/>
+			</horizontal>
+			<macro.as-host host='cfgInstance'>
+				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true"/>
+			</macro.as-host>
+			<horizontal pad-top="5">
+				<button text='Close' click-event='CloseSettingsModal'/>
 			</horizontal>
 		</vertical>
 	</modal>

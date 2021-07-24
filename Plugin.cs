@@ -2,6 +2,9 @@
 using IPA;
 using System.Reflection;
 using IPALogger = IPA.Logging.Logger;
+using IPA.Config;
+using IPA.Config.Stores;
+using BetterSongSearch.UI;
 
 namespace BetterSongSearch {
 	[Plugin(RuntimeOptions.SingleStartInit)]
@@ -14,26 +17,15 @@ namespace BetterSongSearch {
 		/// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
 		/// Only use [Init] with one Constructor.
 		/// </summary>
-		public void Init(IPALogger logger) {
+		public void Init(IPALogger logger, Config conf) {
 			Log = logger;
 			Log.Info("BetterSongSearch initialized.");
+			FilterView.cfgInstance =  PluginConfig.Instance = conf.Generated<PluginConfig>();
 
 			UI.Manager.Init();
 
 			new Harmony("Kinsi55.BeatSaber.BetterSongSearch").PatchAll(Assembly.GetExecutingAssembly());
 		}
-
-		#region BSIPA Config
-		//Uncomment to use BSIPA's config
-		/*
-        [Init]
-        public void InitWithConfig(Config conf)
-        {
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            Log.Debug("Config loaded");
-        }
-        */
-		#endregion
 
 		[OnStart]
 		public void OnApplicationStart() {
