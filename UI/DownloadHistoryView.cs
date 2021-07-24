@@ -99,11 +99,14 @@ namespace BetterSongSearch.UI {
 					firstEntry.statusDetails = "";
 				} catch(Exception ex) {
 #if DEBUG
-					Plugin.Log.Critical(ex);
+					if(!(ex is TaskCanceledException)) {
+						Plugin.Log.Warn("Download failed:");
+						Plugin.Log.Warn(ex);
+					}
 #endif
 
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: {ex.GetType()} (More details in log)";
+					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: More details in log, {ex.GetType().Name}";
 				}
 			});
 
