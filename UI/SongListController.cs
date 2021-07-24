@@ -1,5 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.Util;
@@ -117,6 +118,25 @@ namespace BetterSongSearch.UI {
 		void SelectRandom() {
 			if(searchedSongsList?.Count != 0)
 				selectedSongView.SetSelectedSong(searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
+		}
+
+		[UIComponent("multiDlCountSlider")] internal SliderSetting multiDlCountSlider = null;
+		[UIAction("StartMultiDownload")]
+		void StartMultiDownload() {
+			for(int i = songList.GetVisibleCellsIdRange().Item1, downloaded = 0; ; i++) {
+				if(i > filteredSongsList.Count)
+					break;
+
+				if(!filteredSongsList[i].CheckIsDownloadable())
+					continue;
+
+				BSSFlowCoordinator.downloadHistoryView.TryAddDownload(filteredSongsList[i], true);
+
+				if(++downloaded >= multiDlCountSlider.Value)
+					break;
+			}
+
+			BSSFlowCoordinator.downloadHistoryView.RefreshTable(true);
 		}
 
 		internal SelectedSongView selectedSongView;

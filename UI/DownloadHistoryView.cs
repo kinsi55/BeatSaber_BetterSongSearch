@@ -27,7 +27,7 @@ namespace BetterSongSearch.UI {
 		const int RETRY_COUNT = 3;
 		const int MAX_PARALLEL_DOWNLOADS = 2;
 
-		public bool TryAddDownload(SongSearchSong song) {
+		public bool TryAddDownload(SongSearchSong song, bool isBatch = false) {
 			var existingDLHistoryEntry = downloadList.FirstOrDefault(x => x.key == song.detailsSong.key);
 
 			existingDLHistoryEntry?.ResetIfFailed();
@@ -41,7 +41,7 @@ namespace BetterSongSearch.UI {
 				existingDLHistoryEntry.status = DownloadHistoryEntry.DownloadStatus.Queued;
 			}
 
-			ProcessDownloads(true);
+			ProcessDownloads(!isBatch);
 
 			return true;
 		}
