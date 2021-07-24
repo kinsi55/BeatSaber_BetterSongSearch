@@ -17,14 +17,17 @@
         <RepositoryType></RepositoryType>
         <RepositoryUrl></RepositoryUrl>
         <Description></Description>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <DebugType>portable</DebugType>
+      <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DebugType>none</DebugType>
+      <OutputPath>bin\Release\</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
@@ -36,7 +39,7 @@
         <DisableZipRelease>True</DisableZipRelease>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       <DefineConstants>DEBUG;TRACE</DefineConstants>
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
