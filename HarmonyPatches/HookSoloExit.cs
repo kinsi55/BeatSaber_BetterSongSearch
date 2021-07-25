@@ -15,8 +15,10 @@ namespace BetterSongSearch.HarmonyPatches {
 			if(!returnTobss)
 				return;
 
-			if(!(flowCoordinator is SoloFreePlayFlowCoordinator))
+			if(!(flowCoordinator is SoloFreePlayFlowCoordinator)) {
+				returnTobss = false;
 				return;
+			}
 
 			immediately = true;
 		}
