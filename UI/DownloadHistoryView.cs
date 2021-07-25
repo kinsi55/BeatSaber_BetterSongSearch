@@ -185,7 +185,7 @@ namespace BetterSongSearch.UI {
 			}
 
 			public void ResetIfFailed() {
-				if(status != DownloadStatus.Failed || retries != RETRY_COUNT)
+				if(status != DownloadStatus.Failed || retries < RETRY_COUNT)
 					return;
 
 				status = DownloadStatus.Queued;
