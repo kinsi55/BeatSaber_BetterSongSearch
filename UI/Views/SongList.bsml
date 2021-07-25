@@ -60,7 +60,7 @@
 			<text text='You still have pending downloads which would be stopped by closing Better Song Search. Continue?' word-wrapping='true'></text>
 			<horizontal spacing='10' pad-top='4'>
 				<primary-button text='Yes' on-click='ForcedUIClose' click-event='CloseDownloadCancelConfirm'></primary-button>
-				<button text='Cancel' click-event='CloseDownloadCancelConfirm'></button>
+				<button text='Cancel' on-click='ForcedUICloseCancel' click-event='CloseDownloadCancelConfirm'></button>
 			</horizontal>
 		</vertical>
 	</modal>

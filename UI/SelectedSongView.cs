@@ -180,6 +180,9 @@ namespace BetterSongSearch.UI {
 			if(songToPlay == null)
 				songToPlay = selectedSong;
 
+			if(BSSFlowCoordinator.ConfirmCancelOfPending(() => PlaySong(songToPlay)))
+				return;
+
 			if(BSSFlowCoordinator.downloadHistoryView.hasUnloadedDownloads) {
 				songToPlayAfterLoading = songToPlay;
 				SongCore.Loader.Instance.RefreshSongs(false);

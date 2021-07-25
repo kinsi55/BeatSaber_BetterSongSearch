@@ -163,6 +163,9 @@ namespace BetterSongSearch.UI {
 				Loaded = 64
 			}
 
+			public bool isDownloading => status == DownloadStatus.Downloading || status == DownloadStatus.Preparing || status == DownloadStatus.Extracting;
+			public bool isQueued => status == DownloadStatus.Queued || (status == DownloadStatus.Failed && retries < RETRY_COUNT);
+
 			public DownloadStatus status = DownloadStatus.Queued;
 			public string statusMessage => $"{status} {statusDetails}";
 			public string statusDetails = "";

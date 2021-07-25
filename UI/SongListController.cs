@@ -30,7 +30,8 @@ namespace BetterSongSearch.UI {
 		[UIParams] readonly BSMLParserParams parserParams = null;
 
 		public void ShowCloseConfirmation() => parserParams.EmitEvent("downloadCancelConfirm");
-		[UIAction("ForcedUIClose")] void ForcedUIClose() => BSSFlowCoordinator.Close(false, false);
+		[UIAction("ForcedUIClose")] void ForcedUIClose() => BSSFlowCoordinator.ConfirmCancelCallback(true);
+		[UIAction("ForcedUICloseCancel")] void ForcedUICloseCancel() => BSSFlowCoordinator.ConfirmCancelCallback(false);
 
 
 		RatelimitCoroutine limitedUpdateSearchedSongsList;

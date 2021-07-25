@@ -102,28 +102,44 @@ namespace BetterSongSearch.UI {
 
 		static internal int lastVisibleTableRowIdx { get; private set; } = 0;
 
+		static Action cancelConfirmCallback = null;
+		public static bool ConfirmCancelOfPending(Action confirmCallback) {
+			if(downloadHistoryView.downloadList.Any(x => x.isDownloading || x.isQueued)) {
+				cancelConfirmCallback = confirmCallback;
+				songListView.ShowCloseConfirmation();
+
+				return true;
+			}
+			return false;
+		}
+
+		public static void ConfirmCancelCallback(bool doCancel = true) {
+			if(doCancel) {
+				foreach(var x in downloadHistoryView.downloadList) {
+					if(!x.isDownloading && !x.isQueued)
+						continue;
+
+					x.retries = int.MaxValue;
+					x.status = DownloadHistoryEntry.DownloadStatus.Failed;
+				}
+				closeCancelSource?.Cancel();
+
+				cancelConfirmCallback?.Invoke();
+			}
+
+			cancelConfirmCallback = null;
+		}
+
 		/// <summary>
 		/// Cloases the BetterSongSearch Flow
 		/// </summary>
 		/// <param name="immediately">True = Close immediately without transition</param>
 		/// <param name="downloadAbortConfim">True = Confirm closing if there is pending downloads</param>
 		public static void Close(bool immediately = false, bool downloadAbortConfim = true) {
-			if(downloadAbortConfim && downloadHistoryView.downloadList.Any(x => x.status == DownloadHistoryEntry.DownloadStatus.Downloading)) {
-				songListView.ShowCloseConfirmation();
-
+			if(downloadAbortConfim && ConfirmCancelOfPending(() => Close(immediately, false)))
 				return;
-			}
 
-			foreach(var x in downloadHistoryView.downloadList) {
-				if(!x.IsInAnyOfStates(DownloadHistoryEntry.DownloadStatus.Queued | DownloadHistoryEntry.DownloadStatus.Downloading))
-					continue;
-				
-				x.retries = int.MaxValue;
-				x.status = DownloadHistoryEntry.DownloadStatus.Failed;
-			}
-
-			closeCancelSource?.Cancel();
-
+			cancelConfirmCallback = null;
 			SelectedSongView.coverLoadCancel?.Cancel();
 			try {
 				XD.FunnyMono(SelectedSongView.songPreviewPlayer)?.CrossfadeToDefault();
