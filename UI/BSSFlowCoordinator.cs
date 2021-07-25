@@ -130,10 +130,10 @@ namespace BetterSongSearch.UI {
 			} catch { }
 
 			foreach(var x in filterView.GetComponentsInChildren<ModalView>())
-				x.enabled = false;
+				x.Hide(false);
 
 			foreach(var x in songListView.GetComponentsInChildren<ModalView>())
-				x.enabled = false;
+				x.Hide(false);
 
 			if(downloadHistoryView.hasUnloadedDownloads)
 				SongCore.Loader.Instance.RefreshSongs(false);

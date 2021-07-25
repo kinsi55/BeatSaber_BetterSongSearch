@@ -171,12 +171,12 @@ namespace BetterSongSearch.UI {
 			if(songToPlayAfterLoading == null)
 				return;
 
-			PlaySelectedSong(songToPlayAfterLoading);
+			PlaySong(songToPlayAfterLoading);
 			songToPlayAfterLoading = null;
 		}
 
-		[UIAction("Play")] void _Play() => PlaySelectedSong();
-		internal void PlaySelectedSong(SongSearchSong songToPlay = null) {
+		[UIAction("Play")] void _Play() => PlaySong();
+		internal void PlaySong(SongSearchSong songToPlay = null) {
 			if(songToPlay == null)
 				songToPlay = selectedSong;
 
@@ -201,7 +201,7 @@ namespace BetterSongSearch.UI {
 				return;
 
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
-			if(songToPlay.diffs.Any(x => !x.passesFilter)) try {
+			if(songToPlay.diffs.Any(x => x.passesFilter)) try {
 					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
 					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
 					var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;

@@ -9,6 +9,10 @@ using UnityEngine;
 
 namespace BetterSongSearch.Util {
 	class MultithreadedBeatsaverDownloader {
+#if DEBUG
+		bool MAKE_SLOW = true;
+#endif
+
 		const int BATCHSIZE = 1048576;
 		const int MAX_CDN_CONNECTIONS = 3;
 		readonly HttpClient client;
@@ -119,6 +123,15 @@ namespace BetterSongSearch.Util {
 								pos += read;
 
 								AddDownloadedBytes(read);
+
+#if DEBUG
+								if(!MAKE_SLOW || start == 0)
+									continue;
+
+								var x = new SpinWait();
+								for(var i = 0; i < 4; i++)
+									x.SpinOnce();
+#endif
 							}
 
 							Plugin.Log.Debug(string.Format("[{0}-{1}] Downloaded {2} bytes ({3} left)", start, start + length, pos, end - pos));
