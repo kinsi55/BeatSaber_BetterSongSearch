@@ -125,13 +125,13 @@ namespace BetterSongSearch.UI {
 		[UIAction("StartMultiDownload")]
 		void StartMultiDownload() {
 			for(int i = songList.GetVisibleCellsIdRange().Item1, downloaded = 0; ; i++) {
-				if(i > filteredSongsList.Count)
+				if(i > searchedSongsList.Count)
 					break;
 
-				if(!filteredSongsList[i].CheckIsDownloadable())
+				if(searchedSongsList[i].CheckIsDownloaded() || !searchedSongsList[i].CheckIsDownloadable())
 					continue;
 
-				BSSFlowCoordinator.downloadHistoryView.TryAddDownload(filteredSongsList[i], true);
+				BSSFlowCoordinator.downloadHistoryView.TryAddDownload(searchedSongsList[i], true);
 
 				if(++downloaded >= multiDlCountSlider.Value)
 					break;
