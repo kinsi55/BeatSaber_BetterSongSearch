@@ -40,4 +40,3 @@ Main Screen | Filters | Download History
 
 - Filtering / Sorting by Ranked / Qualified date
 - Possibly persisting the download history across game restarts? Not sure if really necessary
-- Possibly persisting the filter settings?
