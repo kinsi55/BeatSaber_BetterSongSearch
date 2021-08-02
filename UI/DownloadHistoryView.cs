@@ -85,7 +85,7 @@ namespace BetterSongSearch.UI {
 					updateRateLimiter.Start();
 
 					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
-						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / ");
+						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / {RETRY_COUNT}");
 						firstEntry.downloadProgress = progress;
 
 						if(updateRateLimiter.ElapsedMilliseconds < 0.05)
