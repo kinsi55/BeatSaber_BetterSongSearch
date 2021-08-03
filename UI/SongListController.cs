@@ -189,7 +189,7 @@ namespace BetterSongSearch.UI {
 		// While not the best for readability you have to agree this is a neat implementation!
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
 			{ "Newest", x => x.detailsSong.uploadTimeUnix },
-			{ "Olddest", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
+			{ "Oldest", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
 			{ "Most Stars", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
 			{ "Best rated", x => x.detailsSong.rating },
 			{ "Worst local score", x => {
