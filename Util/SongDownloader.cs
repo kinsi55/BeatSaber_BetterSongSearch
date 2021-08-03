@@ -52,7 +52,7 @@ namespace BetterSongSearch.Util {
 
 			var folderName = $"{entry.key} ({entry.songName} - {entry.levelAuthorName})";
 
-			var dl = new MultithreadedBeatsaverDownloader(client, $"https://beatsaver.com/cdn/{entry.key}/{entry.hash}.zip".ToLower(), (p) => {
+			var dl = new MultithreadedBeatsaverDownloader(client, $"https://cdn.beatmaps.io/{entry.hash}.zip".ToLower(), (p) => {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
 				progressCb(p);
 			});
