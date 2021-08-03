@@ -105,7 +105,7 @@ namespace BetterSongSearch.Util {
 								Plugin.Log.Debug(string.Format("downloadSize: {0}, isDownloadingFromCache: {1}", downloadSize, isDownloadingFromCDN));
 							}
 
-							stream.ReadTimeout = 3000;
+							stream.ReadTimeout = 7000;
 
 							int pos = start;
 
