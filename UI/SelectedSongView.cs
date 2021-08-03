@@ -38,6 +38,10 @@ namespace BetterSongSearch.UI {
 			coverLoading.gameObject.SetActive(show);
 		}
 
+		void Awake() {
+			if(playButton != null) playButton.interactable = true;
+		}
+
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
 		static BeatmapLevelsModel _beatmapLevelsModel = null;
 		static BeatmapLevelsModel beatmapLevelsModel => XD.FunnyMono(_beatmapLevelsModel) ?? (_beatmapLevelsModel = Resources.FindObjectsOfTypeAll<BeatmapLevelsModel>().FirstOrDefault(x => x.customLevelPackCollection != null));
