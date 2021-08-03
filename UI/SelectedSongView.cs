@@ -38,8 +38,9 @@ namespace BetterSongSearch.UI {
 			coverLoading.gameObject.SetActive(show);
 		}
 
-		void Awake() {
-			if(playButton != null) playButton.interactable = true;
+		void OnEnable() {
+			if(playButton != null)
+				playButton.interactable = true;
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
