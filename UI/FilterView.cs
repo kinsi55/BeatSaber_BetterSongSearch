@@ -131,6 +131,8 @@ namespace BetterSongSearch.UI {
 
 
 		#region filters
+		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.opt_sort == "Worst local score";
+
 		public bool DifficultyCheck(in SongDifficulty diff) {
 			if(currentFilter.hideUnranked && !diff.ranked)
 				return false;
@@ -161,11 +163,8 @@ namespace BetterSongSearch.UI {
 		}
 
 		public bool SearchDifficultyCheck(SongSearchSong.SongSearchDiff diff) {
-			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
-				bool hasScore = diff.songSearchSong.CheckHasScore() && 
-					BSSFlowCoordinator.songsWithScores[diff.songSearchSong.hash].Contains($"{diff.detailsDiff.characteristic}_{diff.detailsDiff.difficulty}");
-
-				if(hasScore != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
+			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0] || requiresScore) {
+				if(diff.CheckHasScore() != requiresScore)
 					return false;
 			}
 
@@ -196,8 +195,8 @@ namespace BetterSongSearch.UI {
 					return false;
 			}
 
-			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0]) {
-				if(song.CheckHasScore() != (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]))
+			if(currentFilter.existingScore != (string)FilterOptions.scoreFilterOptions[0] || requiresScore) {
+				if(song.CheckHasScore() != requiresScore)
 					return false;
 			}
 

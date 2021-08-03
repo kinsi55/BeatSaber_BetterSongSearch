@@ -188,18 +188,33 @@ namespace BetterSongSearch.UI {
 
 		// While not the best for readability you have to agree this is a neat implementation!
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
-			{ "New first", x => x.detailsSong.uploadTimeUnix },
-			{ "Old first", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
-			{ "Most Stars first", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
-			{ "Best rated first", x => x.detailsSong.rating },
-			{ "Most Downloads first", x => x.detailsSong.downloadCount },
-			{ "Worst rated first", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
-			{ "Least Stars first", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) }
+			{ "Newest", x => x.detailsSong.uploadTimeUnix },
+			{ "Olddest", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
+			{ "Most Stars", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
+			{ "Best rated", x => x.detailsSong.rating },
+			{ "Worst local score", x => {
+				var returnVal = -420f;
+
+				if(x.CheckHasScore()) {
+					foreach(var diff in x.diffs) {
+						if(!diff.passesFilter || !diff.CheckHasScore())
+							continue;
+
+						if(-diff.localScore > returnVal)
+							returnVal = -diff.localScore;
+					}
+				}
+
+				return returnVal;
+			} },
+			{ "Most Downloads", x => x.detailsSong.downloadCount },
+			{ "Worst rated", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
+			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) }
 		};
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
 
-		static string opt_sort = sortModes.First().Key;
+		internal static string opt_sort { get; private set; } = sortModes.First().Key;
 	}
 
 	class SongSearchSong {
@@ -266,6 +281,11 @@ namespace BetterSongSearch.UI {
 			internal readonly SongDifficulty detailsDiff;
 			internal bool? _passesFilter = null;
 			internal bool passesFilter => _passesFilter ??= BSSFlowCoordinator.filterView.DifficultyCheck(in detailsDiff) && BSSFlowCoordinator.filterView.SearchDifficultyCheck(this);
+
+			internal string serializedDiff => $"{detailsDiff.characteristic}_{detailsDiff.difficulty}";
+
+			public bool CheckHasScore() => songSearchSong.CheckHasScore() && BSSFlowCoordinator.songsWithScores[songSearchSong.hash].ContainsKey(serializedDiff);
+			internal float localScore => BSSFlowCoordinator.songsWithScores[songSearchSong.hash][serializedDiff];
 
 			string GetCombinedShortDiffName() {
 				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";

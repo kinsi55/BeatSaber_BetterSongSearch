@@ -26,7 +26,7 @@ namespace BetterSongSearch.UI {
 		public static SongSearchSong[] songsList { get; private set; } = null;
 
 		public static PlayerDataModel playerDataModel = null;
-		public static Dictionary<string, HashSet<string>> songsWithScores = null;
+		public static Dictionary<string, Dictionary<string, float>> songsWithScores = null;
 
 		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
 			instance = this;
@@ -36,23 +36,6 @@ namespace BetterSongSearch.UI {
 			coverLoader ??= new CoverImageAsyncLoader();
 
 			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault();
-
-			if(playerDataModel != null) _ = Task.Run(() => {
-				songsWithScores = new Dictionary<string, HashSet<string>>();
-
-				foreach(var x in playerDataModel.playerData.levelsStatsData) {
-					if(!x.validScore || !x.levelID.StartsWith("custom_level_"))
-						continue;
-
-					HashSet<string> h = null;
-					var sh = x.levelID.Substring(13);
-
-					if(!songsWithScores.TryGetValue(sh, out h))
-						songsWithScores.Add(sh, h = new HashSet<string>());
-
-					h.Add($"{x.beatmapCharacteristic.serializedName}_{x.difficulty}");
-				}
-			});
 
 			void DataUpdated() {
 				songsList = new SongSearchSong[songDetails.songs.Length];
@@ -64,6 +47,30 @@ namespace BetterSongSearch.UI {
 
 				IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime:d\\. MMM yy - HH:mm}");
+				});
+
+				if(playerDataModel != null) _ = Task.Run(() => {
+					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
+
+					foreach(var x in playerDataModel.playerData.levelsStatsData) {
+						if(!x.validScore || x.highScore == 0 || !x.levelID.StartsWith("custom_level_") || x.levelID.Length < 13 + 40)
+							continue;
+
+						var sh = x.levelID.Substring(13, 40);
+
+						if(!songDetails.songs.FindByHash(sh, out var song))
+							continue;
+
+						if(!song.GetDifficulty(out var diff, (SongDetailsCache.Structs.MapDifficulty)x.difficulty))
+							continue;
+
+						if(!songsWithScores.TryGetValue(sh, out var h))
+							songsWithScores.Add(sh, h = new Dictionary<string, float>());
+
+						var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
+
+						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
+					}
 				});
 			};
 
