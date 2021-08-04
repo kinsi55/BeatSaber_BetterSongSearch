@@ -113,7 +113,7 @@ namespace BetterSongSearch.UI {
 			songList.RefreshCells(false, false);
 		}
 
-		[UIAction("UpdateData")] void UpdateData(object _) => UpdateSearchedSongsList();
+		[UIAction("UpdateDataAndFilters")] void UpdateDataAndFilters(object _) => StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
 
 		[UIAction("SelectRandom")]
 		void SelectRandom() {
