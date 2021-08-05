@@ -66,13 +66,15 @@ namespace BetterSongSearch.UI {
 
 				if(selectedSongView.selectedSong == null) {
 					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(), true);
-				} else if(wasEmpty) {
-					//selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
-					songList.ScrollToCellWithIdx(BSSFlowCoordinator.lastVisibleTableRowIdx, TableView.ScrollPositionType.Beginning, false);
 				} else {
-					// Required as otherwise the first cell could be selected eventho its not
+					if(wasEmpty) {
+						//selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(x => x.detailsSong.mapId == selectedSongView.selectedSong.detailsSong.mapId), true);
+						songList.ScrollToCellWithIdx(BSSFlowCoordinator.lastVisibleTableRowIdx, TableView.ScrollPositionType.Beginning, false);
+					}
+					// Always un-select in the list to prevent wrong-selections on resorting, etc.
 					songList.ClearSelection();
 				}
+
 
 				searchInProgress.gameObject.SetActive(false);
 			});
