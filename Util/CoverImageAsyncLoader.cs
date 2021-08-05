@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -16,18 +17,18 @@ namespace BetterSongSearch.Util {
 
 			client = new HttpClient(new HttpClientHandler() {
 				AutomaticDecompression = DecompressionMethods.GZip,
-				AllowAutoRedirect = false
+				AllowAutoRedirect = true
 			}) {
 				Timeout = TimeSpan.FromSeconds(5)
 			};
 
-			client.DefaultRequestHeaders.Add("User-Agent", "BetterSongSearch Plugin");
+			client.DefaultRequestHeaders.Add("User-Agent", "BetterSongSearch/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
 		}
 
 		static HttpClient client = null;
 
 		public async Task<Sprite> LoadAsync(Song song, CancellationToken token) {
-			var path = $"https://cdn.beatmaps.io/{song.hash.ToLower()}.jpg"; // song.coverURL;
+			var path = $"https://cdn.beatsaver.com/{song.hash.ToLower()}.jpg"; // song.coverURL;
 
 			if(_spriteCache.TryGetValue(path, out Sprite sprite))
 				return sprite;
