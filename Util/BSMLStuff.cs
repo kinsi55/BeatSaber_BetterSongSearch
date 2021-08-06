@@ -1,6 +1,8 @@
-﻿using HarmonyLib;
+﻿using BeatSaberMarkupLanguage.Components.Settings;
+using HarmonyLib;
 using HMUI;
 using IPA.Utilities;
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -18,7 +20,7 @@ namespace BetterSongSearch.Util {
 			}
 		}
 
-		public static IEnumerator MergeSliders(GameObject container) {
+		public static IEnumerator MergeSliders(GameObject container, bool constrictValuesMinMax = true) {
 			yield return 0;
 			foreach(var x in container.GetComponentsInChildren<CurvedTextMeshPro>().Where(x => x.text == "MERGE_TO_PREV")) {
 				yield return new WaitForEndOfFrame();
@@ -29,11 +31,37 @@ namespace BetterSongSearch.Util {
 				(ourContainer.Find("BSMLSlider").transform as RectTransform).offsetMin = new Vector2(-20, 0);
 				ourContainer.position = prevContainer.position;
 
-				prevContainer.GetComponentInChildren<TimeSlider>().valueSize /= 2.1f;
-				ourContainer.GetComponentInChildren<TimeSlider>().valueSize = 9;
+				var minTimeSlider = prevContainer.GetComponentInChildren<TimeSlider>();
+				var maxTimeSlider = ourContainer.GetComponentInChildren<TimeSlider>();
+
+				maxTimeSlider.valueSize = minTimeSlider.valueSize /= 2.1f;
 
 				ourContainer.GetComponentInChildren<LayoutElement>().ignoreLayout = true;
 				x.text = "";
+
+				// I tried to get this to work for an hour, cba for now
+				//if(!constrictValuesMinMax)
+				//	continue;
+
+				//var minTimeSliderBsml = minTimeSlider.GetComponentInParent<SliderSetting>();
+				//var maxTimeSliderBsml = maxTimeSlider.GetComponentInParent<SliderSetting>();
+
+				//var originalMinMax = minTimeSlider.maxValue;
+				//var originalMaxMin = maxTimeSlider.minValue;
+
+				//minTimeSlider.normalizedValueDidChangeEvent += (slider, value) => {
+				//	var m = ReflectionUtil.GetField<float, TextSlider>(maxTimeSlider, "_normalizedValue");
+				//	var limit = Math.Min(originalMaxMin, maxTimeSlider.value);
+				//	ReflectionUtil.SetField((RangeValuesTextSlider)maxTimeSlider, "_minValue", limit);
+				//	maxTimeSlider.value = value;
+				//};
+
+				//maxTimeSlider.normalizedValueDidChangeEvent += (slider, value) => {
+				//	var m = ReflectionUtil.GetField<float, TextSlider>(minTimeSlider, "_normalizedValue");
+				//	var limit = Math.Max(originalMinMax, maxTimeSlider.value);
+				//	ReflectionUtil.SetField((RangeValuesTextSlider)slider, "_maxValue", limit);
+				//	minTimeSlider.value = value;
+				//};
 			}
 		}
 
