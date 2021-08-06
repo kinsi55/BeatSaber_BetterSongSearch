@@ -12,7 +12,7 @@
 		</horizontal>
 	</horizontal>
 	<macro.as-host host='currentFilter'>
-		<horizontal horizontal-fit='PreferredSize' child-expand-width='true' preferred-height='80' pad-top='3' pad-bottom='3'>
+		<horizontal horizontal-fit='PreferredSize' child-expand-width='true' preferred-height='80' pad-top='3' pad-bottom='1'>
 			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-right='2'>
 				<horizontal>
 					<text text='[ General ]' align='Center' underlined='true' font-size='3.5'/>
@@ -21,14 +21,14 @@
 				<list-setting text='Local score' value="existingScore" choices='scoreFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
 				<slider-setting text='Length' value="minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
 				<slider-setting text='MERGE_TO_PREV' value="maximumSongLength" bind-value="true" apply-on-change="true" min='0' max='~SONG_LENGTH_FILTER_MAX' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
-				<horizontal pad-top="2">
+				<horizontal pad-top="3">
 					<text text='[ Mapping ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<slider-setting text='NJS' value="minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
 				<slider-setting text='MERGE_TO_PREV' value="maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
 				<slider-setting text='Notes/s' value="minimumNps" bind-value="true" apply-on-change="true" min='0' max='15' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
 				<slider-setting text='MERGE_TO_PREV' value="maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
-				<horizontal pad-top="2">
+				<horizontal pad-top="3">
 					<text text='[ ScoreSaber ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<list-setting text='Ranked Status' value="rankedState" choices='rankedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
@@ -42,12 +42,12 @@
 				<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
 				<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
 				<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
-				<horizontal pad-top="2">
+				<horizontal pad-top="3">
 					<text text='[ Characteristic / Difficulty ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<dropdown-list-setting text='Characteristic' value="characteristic" apply-on-change="true" bind-value="true" choices='characteristics' on-change="UpdateData"/>
 				<dropdown-list-setting text='Difficulty' value="difficulty" apply-on-change="true" bind-value="true" choices='difficulties' on-change="UpdateData"/>
-				<horizontal pad-top="2">
+				<horizontal pad-top="3">
 					<text text='[ Mods ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<dropdown-list-setting text='Requirement' value="mods" apply-on-change="true" bind-value="true" choices='modOptions' on-change="UpdateData"/>
