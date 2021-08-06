@@ -3,6 +3,7 @@ using BetterSongSearch.HarmonyPatches;
 using BetterSongSearch.Util;
 using HMUI;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -210,23 +211,29 @@ namespace BetterSongSearch.UI {
 
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
 			if(songToPlay.diffs.Any(x => x.passesFilter)) try {
-					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
-					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
-					var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
-					if(targetChar != null && pData != null) {
-						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
-						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
-					}
-				} catch { }
+				var diffToSelect = songToPlay.GetFirstPassingDifficulty();
+				var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
+				var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
+				if(targetChar != null && pData != null) {
+					pData.SetLastSelectedBeatmapCharacteristic(targetChar);
+					pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
+				}
+			} catch { }
 
+			SharedCoroutineStarter.instance.StartCoroutine(SelectLevelNextFrame(level));
+			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
+		}
+
+		IEnumerator SelectLevelNextFrame(IPreviewBeatmapLevel level) {
 			// 4 LOC basegame method of selecting a song that works always I LOST
+			//TODO: remove the delays once SongBrowser bug is fixed where it always defaults to OST tab
+			yield return 0;
 			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();
 			levelFilteringNavigationController.UpdateSecondChildControllerContent(LevelCategory.All);
 
+			yield return 0;
 			levelCollectionNavigationController?.SelectLevel(level);
-
-			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 		}
 
 		[UIAction("Download")]
