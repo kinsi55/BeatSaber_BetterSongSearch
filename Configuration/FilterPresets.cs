@@ -94,8 +94,8 @@ namespace BetterSongSearch.Configuration {
 
 		[UIValue("difficulties")] public static readonly List<object> difficulties = Enum.GetNames(typeof(MapDifficulty)).Prepend("Any").ToList<object>();
 		[UIValue("characteristics")] public static readonly List<object> characteristics = Enum.GetNames(typeof(MapCharacteristic)).Prepend("Any").ToList<object>();
-		[UIValue("downloadedFilterOptions")] public static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Show downloaded", "Hide downloaded" };
-		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Hide unplayed" };
+		[UIValue("downloadedFilterOptions")] public static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Show downloaded", "Only downloaded" };
+		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Only passed" };
 
 		#region uiformatters
 		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yy", new CultureInfo("en-US"));
