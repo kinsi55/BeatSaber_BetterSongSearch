@@ -156,9 +156,6 @@ namespace BetterSongSearch.UI {
 					return false;
 			}
 
-			if(currentFilter.minimumPP != 0 && currentFilter.minimumPP > diff.approximatePpValue)
-				return false;
-
 			return true;
 		}
 

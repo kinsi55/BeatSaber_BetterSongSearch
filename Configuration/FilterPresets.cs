@@ -41,8 +41,6 @@ namespace BetterSongSearch.Configuration {
 
 		[JsonProperty] public bool hideUnranked { get; private set; } = false;
 
-		[JsonProperty] public int minimumPP { get; private set; } = 0;
-
 		[JsonProperty] public float minimumStars { get; private set; } = 0f;
 
 		[JsonProperty("maximumStars")] float _maximumStars = STAR_FILTER_MAX;

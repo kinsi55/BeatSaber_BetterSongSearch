@@ -28,7 +28,6 @@
 				<toggle-setting text='Hide unranked' value="hideUnranked" bind-value="true" apply-on-change="true" on-change="UpdateData" id="rankedToggle"/>
 				<slider-setting text='Minimum stars' value="minimumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' on-change="UpdateData"/>
 				<slider-setting text='Maximum stars' value="maximumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
-				<slider-setting text='Minimum value' value="minimumPP" bind-value="true" apply-on-change="true" min='0' max='600' increment='10' integer-only='true' formatter='FormatPP' on-change="UpdateData"/>
 			</vertical>
 			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-left='2'>
 				<horizontal>
