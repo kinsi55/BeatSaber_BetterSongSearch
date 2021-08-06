@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +15,7 @@ namespace BetterSongSearch.Util {
 #endif
 
 		const int BATCHSIZE = 1048576;
-		const int MAX_CDN_CONNECTIONS = 3;
+		const int MAX_CONNECTIONS = 2;
 		readonly HttpClient client;
 		readonly string url;
 		Action<float> progressCb;
@@ -25,7 +26,7 @@ namespace BetterSongSearch.Util {
 			this.progressCb = progressCb;
 		}
 
-		bool isDownloadingFromCDN = false;
+		const bool doMultiDl = false; // (Current) BeatSaver does not support multiple connections for downloads
 		int downloadSize = 0;
 		int downloadedBytes = 0;
 		float progress = 0f;
@@ -51,13 +52,16 @@ namespace BetterSongSearch.Util {
 
 		async Task<Task> DownloadRange(int start, int length) {
 			var req = new HttpRequestMessage(HttpMethod.Get, url);
-			req.Headers.Add("range", $"bytes={start}-{start + length - 1}");
+			if(length != 0)
+				req.Headers.Add("range", $"bytes={start}-{start + length - 1}");
 
+			Stream stream = null;
 			HttpResponseMessage resp = null;
 
 			void cleanup(Exception ex = null) {
 				Plugin.Log.Debug(string.Format("[{0}-{1}] Cleanup: {2}", start, start + length, ex));
 
+				stream?.Dispose();
 				resp?.Dispose();
 				req.Dispose();
 
@@ -83,62 +87,59 @@ namespace BetterSongSearch.Util {
 
 				int end = len + start;
 
+				stream = await resp.Content.ReadAsStreamAsync();
+				if(fileOut == null && start == 0) {
+					downloadSize = len;
+
+					// If we got a partial response (Requested bytes are less than the total fizesize) get the total fizesize from resp header
+					if(resp.StatusCode == HttpStatusCode.PartialContent)
+						downloadSize = (int)resp.Content.Headers.ContentRange.Length;
+
+					fileOut = new byte[downloadSize];
+
+					//foreach(var x in resp.Headers) {
+					//	if(x.Key.ToLower() == "cf-cache-status") {
+					//		doMultiDl = x.Value.FirstOrDefault() == "HIT";
+					//		break;
+					//	}
+					//}
+
+					Plugin.Log.Debug(string.Format("downloadSize: {0}, isDownloadingFromCache: {1}", downloadSize, doMultiDl));
+				}
+
 				return Task.Run(async () => {
 					try {
-						using(var stream = await resp.Content.ReadAsStreamAsync()) {
-							if(fileOut == null && start == 0) {
-								downloadSize = len;
+						stream.ReadTimeout = 7000;
 
-								// If we got a partial response (Requested bytes are less than the total fizesize) get the total fizesize from resp header
-								if(resp.StatusCode == HttpStatusCode.PartialContent)
-									downloadSize = (int)resp.Content.Headers.ContentRange.Length;
+						int pos = start;
 
-								fileOut = new byte[downloadSize];
+						var buf = new byte[2 ^ 14];
+						while(pos != end) {
+							if(token.IsCancellationRequested)
+								throw new TaskCanceledException();
 
-								foreach(var x in resp.Headers) {
-									if(x.Key.ToLower() == "cf-cache-status") {
-										isDownloadingFromCDN = x.Value.FirstOrDefault() == "HIT";
-										break;
-									}
-								}
+							var read = await stream.ReadAsync(buf, 0, buf.Length, token);
+							if(read == 0)
+								break;
 
-								Plugin.Log.Debug(string.Format("downloadSize: {0}, isDownloadingFromCache: {1}", downloadSize, isDownloadingFromCDN));
-							}
+							Buffer.BlockCopy(buf, 0, fileOut, pos, read); // Faster on Mono than Array.Copy apparently
 
-							stream.ReadTimeout = 7000;
+							pos += read;
 
-							int pos = start;
+							AddDownloadedBytes(read);
 
-							var buf = new byte[2 ^ 14];
-							while(pos != end) {
-								if(token.IsCancellationRequested)
-									throw new TaskCanceledException();
+							//if(!MAKE_SLOW || start == 0)
+							//	continue;
 
-								var read = await stream.ReadAsync(buf, 0, buf.Length, token);
-								if(read == 0)
-									break;
-
-								Buffer.BlockCopy(buf, 0, fileOut, pos, read); // Faster on Mono than Array.Copy apparently
-
-								pos += read;
-
-								AddDownloadedBytes(read);
-
-#if DEBUG
-								if(!MAKE_SLOW || start == 0)
-									continue;
-
-								var x = new SpinWait();
-								for(var i = 0; i < 4; i++)
-									x.SpinOnce();
-#endif
-							}
-
-							Plugin.Log.Debug(string.Format("[{0}-{1}] Downloaded {2} bytes ({3} left)", start, start + length, pos, end - pos));
-
-							if(pos != end)
-								throw new Exception("Response was incomplete");
+							//var x = new SpinWait();
+							//for(var i = 0; i < 4; i++)
+							//	x.SpinOnce();
 						}
+
+						Plugin.Log.Debug(string.Format("[{0}-{1}] Downloaded {2} bytes ({3} left)", start, start + length, pos, end - pos));
+
+						if(pos != end)
+							throw new Exception("Response was incomplete");
 					} catch(Exception ex) {
 						cleanup(ex);
 					}
@@ -155,13 +156,13 @@ namespace BetterSongSearch.Util {
 			this.token = token;
 
 			try {
-				await (await DownloadRange(0, BATCHSIZE));
+				var initialDl = new[] { await DownloadRange(0, doMultiDl ? BATCHSIZE : 0) }.AsEnumerable();
 
-				var leftover = downloadSize - downloadedBytes;
+				var leftover = downloadSize - BATCHSIZE;
 
-				if(leftover > 0) {
+				if(doMultiDl && leftover > 0) {
 					// Chunks should be at least 3M in size
-					var connections = !isDownloadingFromCDN ? 1 : (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 2f), 1, MAX_CDN_CONNECTIONS));
+					var connections = !doMultiDl ? 1 : (int)Math.Floor(Mathf.Clamp(leftover / (BATCHSIZE * 2f), 1, MAX_CONNECTIONS));
 					var bytesPerConnection = (int)Math.Floor((float)leftover / connections);
 					var offs = downloadedBytes;
 
@@ -185,10 +186,12 @@ namespace BetterSongSearch.Util {
 					Plugin.Log.Debug("Waiting for all connections to open...");
 					// Wait for all connections to open
 					await Task.WhenAll(connectingRequests);
-					Plugin.Log.Debug("Waiting for all chunks to download...");
-					// Now that all connections exist wait for them to finish downloading their chunk
-					await Task.WhenAll(connectingRequests.Select(x => x.Result));
+					initialDl = initialDl.Concat(connectingRequests.Select(x => x.Result));
 				}
+
+				Plugin.Log.Debug("Waiting for all chunks to download...");
+				// Now that all connections exist wait for them to finish downloading their chunk
+				await Task.WhenAll(initialDl);
 
 				return fileOut;
 			} catch(Exception ex) {
