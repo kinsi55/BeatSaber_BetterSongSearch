@@ -88,7 +88,7 @@ namespace BetterSongSearch.Configuration {
 		[UIComponent("hideOlderThanSlider")] internal SliderSetting hideOlderThanSlider = null;
 		[UIComponent("rankedToggle")] internal ToggleSetting rankedToggle = null;
 
-		[UIAction("UpdateData")] public static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.Call());
+		[UIAction("UpdateData")] public static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
 
 		[UIValue("difficulties")] public static readonly List<object> difficulties = Enum.GetNames(typeof(MapDifficulty)).Prepend("Any").ToList<object>();
 		[UIValue("characteristics")] public static readonly List<object> characteristics = Enum.GetNames(typeof(MapCharacteristic)).Prepend("Any").ToList<object>();
