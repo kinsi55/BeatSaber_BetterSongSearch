@@ -8,7 +8,7 @@
 		</vertical>
 		
 		<vertical preferred-width='44' pad-left='1'>
-			<dropdown-list-setting text='Sort' value="opt_sort" apply-on-change="true" choices='sortModeSelections' on-change='UpdateDataAndFilters'/>
+			<dropdown-list-setting id='sortDropdown' text='Sort' value="opt_sort" apply-on-change="true" choices='sortModeSelections' on-change='UpdateDataAndFilters'/>
 		</vertical>
 	</horizontal>
 	<horizontal preferred-height='75' pad-top='3' pad-bottom='2' preferred-width='80'>

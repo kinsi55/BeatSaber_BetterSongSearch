@@ -159,6 +159,8 @@ namespace BetterSongSearch.UI {
 		InputFieldView songSearchInput = null;
 		CurvedTextMeshPro songSearchPlaceholder = null;
 
+		[UIComponent("sortDropdown")] private DropdownWithTableView _sortDropdown = null;
+
 		[UIAction("#post-parse")]
 		void Parsed() {
 			// Yoink the basegame song filter box for this
@@ -186,6 +188,34 @@ namespace BetterSongSearch.UI {
 
 			//foreach(var g in new MonoBehaviour[] { filterView, songListView, downloadHistoryView })
 			foreach(var x in GetComponentsInChildren<ScrollView>()) ReflectionUtil.SetField(x, "_platformHelper", meWhen);
+
+			// Make the sort list BIGGER
+			ReflectionUtil.SetField(_sortDropdown, "_numberOfVisibleCells", 9);
+			_sortDropdown.ReloadData();
+
+			StartCoroutine(HackDropdown());
+		}
+
+		IEnumerator HackDropdown() {
+			yield return 0;
+			yield return new WaitForEndOfFrame();
+
+			// Offset it far down so that its not sticking up 10 kilometers
+			var l = ReflectionUtil.GetField<Button, DropdownWithTableView>(_sortDropdown, "_button");
+			l.onClick.RemoveAllListeners();
+			l.onClick.AddListener(new UnityEngine.Events.UnityAction(() => {
+				var offsHack = (_sortDropdown.transform as RectTransform);
+
+				offsHack.offsetMin = new Vector2(offsHack.offsetMin.x, offsHack.offsetMin.x - 28);
+
+				_sortDropdown.OnButtonClick();
+
+				offsHack.offsetMin = new Vector2(offsHack.offsetMin.x, 0);
+
+				// We should only do this on the first load because the modified position will stick
+				l.onClick.RemoveAllListeners();
+				l.onClick.AddListener(new UnityEngine.Events.UnityAction(_sortDropdown.OnButtonClick));
+			}));
 		}
 
 		// While not the best for readability you have to agree this is a neat implementation!
