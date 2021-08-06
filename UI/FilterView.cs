@@ -150,7 +150,10 @@ namespace BetterSongSearch.UI {
 
 			if(currentFilter.mods != (string)FilterOptions.modOptions[0]) {
 				if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
-					if((diff.mods & (MapMods.MappingExtensions | MapMods.NoodleExtensions)) == 0)
+					if((diff.mods & MapMods.NoodleExtensions) == 0)
+						return false;
+				} else if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
+					if((diff.mods & MapMods.MappingExtensions) == 0)
 						return false;
 				} else if(currentFilter.mods == (string)FilterOptions.modOptions[2]) {
 					if((diff.mods & MapMods.Chroma) == 0)

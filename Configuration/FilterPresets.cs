@@ -98,7 +98,7 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Only passed" };
 		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show all", "Only Ranked", "Only Qualified" };
 
-		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle / ME", "Chroma", "Cinema" };
+		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema" };
 
 		#region uiformatters
 		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yyyy", new CultureInfo("en-US"));
