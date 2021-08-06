@@ -39,7 +39,7 @@ namespace BetterSongSearch.Configuration {
 			private set => _maximumSongLength = value;
 		}
 
-		[JsonProperty] public bool hideUnranked { get; private set; } = false;
+		[JsonProperty] public string rankedState { get; private set; } = (string)rankedFilterOptions[0];
 
 		[JsonProperty] public float minimumStars { get; private set; } = 0f;
 
@@ -48,6 +48,8 @@ namespace BetterSongSearch.Configuration {
 			get => _maximumStars >= STAR_FILTER_MAX ? float.MaxValue : _maximumStars;
 			private set => _maximumStars = value;
 		}
+
+		[JsonProperty] public string mods { get; private set; } = (string)modOptions[0];
 
 		[JsonProperty] public float minimumRating { get; private set; } = 0f;
 		[JsonProperty] public int minimumVotes { get; private set; } = 0;
@@ -94,15 +96,18 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("characteristics")] public static readonly List<object> characteristics = Enum.GetNames(typeof(MapCharacteristic)).Prepend("Any").ToList<object>();
 		[UIValue("downloadedFilterOptions")] public static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Show downloaded", "Only downloaded" };
 		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Only passed" };
+		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show all", "Only Ranked", "Only Qualified" };
+
+		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle / ME", "Chroma", "Cinema" };
 
 		#region uiformatters
-		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yy", new CultureInfo("en-US"));
+		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yyyy", new CultureInfo("en-US"));
 		static string FormatSongLengthLimitFloat(float d) => d >= SONG_LENGTH_FILTER_MAX ? "Unlimited" : TimeSpan.FromMinutes(d).ToString("mm\\:ss");
 		static string FormatMaxStarsFloat(float d) => d >= STAR_FILTER_MAX ? "Unlimited" : d.ToString("0.0");
-		static string FormatPP(int d) => $"~{d} PP";
 		static string PercentFloat(float d) => d.ToString("0.0%");
 		static string FormatMaxNjs(float d) => d >= NJS_FILTER_MAX ? "Unlimited" : d.ToString();
 		static string FormatMaxNps(float d) => d >= NPS_FILTER_MAX ? "Unlimited" : d.ToString();
+		static string FormatShortFloat(float d) => d.ToString("0.0");
 		#endregion
 
 		public FilterOptions Clone() => (FilterOptions)MemberwiseClone();

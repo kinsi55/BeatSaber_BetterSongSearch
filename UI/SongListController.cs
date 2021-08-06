@@ -222,8 +222,11 @@ namespace BetterSongSearch.UI {
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
 			{ "Newest", x => x.detailsSong.uploadTimeUnix },
 			{ "Oldest", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
+			{ "Ranked/Qualified time", x => (x.detailsSong.rankedStatus != RankedStatus.Unranked ? x.detailsSong.rankedChangeUnix : 0f) },
 			{ "Most Stars", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
+			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) },
 			{ "Best rated", x => x.detailsSong.rating },
+			{ "Worst rated", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
 			{ "Worst local score", x => {
 				var returnVal = -420f;
 
@@ -239,9 +242,7 @@ namespace BetterSongSearch.UI {
 
 				return returnVal;
 			} },
-			{ "Most Downloads", x => x.detailsSong.downloadCount },
-			{ "Worst rated", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
-			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) }
+			{ "Most Downloads", x => x.detailsSong.downloadCount }
 		};
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
@@ -286,12 +287,14 @@ namespace BetterSongSearch.UI {
 
 		public bool CheckHasScore() => BSSFlowCoordinator.songsWithScores.ContainsKey(hash);
 
+		bool isQualified => detailsSong.rankedStatus == RankedStatus.Qualified;
+
 		public string fullFormattedSongName => $"<color=#{(CheckIsDownloaded() ? "888" : "FFF")}>{detailsSong.songAuthorName} - {detailsSong.songName}</color>";
 		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
 		public string songRating => showVotesInsteadOfRating ? $"👍 {detailsSong.upvotes} 👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
 
-		public string songLengthAndRating => $"⏲ {songLength}  {songRating}";
+		public string songLengthAndRating => $"{(isQualified ? "<color=#96C>🚩 Qualified</color> " : "")}⏲ {songLength}  {songRating}";
 		//public string levelAuthorName => song.levelAuthorName;
 		#endregion
 

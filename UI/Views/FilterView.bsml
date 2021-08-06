@@ -15,38 +15,42 @@
 		<horizontal horizontal-fit='PreferredSize' child-expand-width='true' preferred-height='80' pad-top='3' pad-bottom='3'>
 			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-right='2'>
 				<horizontal>
-					<text text='General' align='Center' underlined='true' font-size='3.5'/>
+					<text text='[ General ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<list-setting text='Downloaded' value="existingSongs" choices='downloadedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
 				<list-setting text='Local score' value="existingScore" choices='scoreFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
-				<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
-				<slider-setting text='Minimum length' value="minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
-				<slider-setting text='Maximum length' value="maximumSongLength" bind-value="true" apply-on-change="true" min='0' max='~SONG_LENGTH_FILTER_MAX' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
+				<slider-setting text='Length' value="minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
+				<slider-setting text='MERGE_TO_PREV' value="maximumSongLength" bind-value="true" apply-on-change="true" min='0' max='~SONG_LENGTH_FILTER_MAX' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
 				<horizontal pad-top="2">
-					<text text='ScoreSaber' align='Center' underlined='true' font-size='3.5'/>
+					<text text='[ Mapping ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
-				<toggle-setting text='Hide unranked' value="hideUnranked" bind-value="true" apply-on-change="true" on-change="UpdateData" id="rankedToggle"/>
-				<slider-setting text='Minimum stars' value="minimumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' on-change="UpdateData"/>
-				<slider-setting text='Maximum stars' value="maximumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
+				<slider-setting text='NJS' value="minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
+				<slider-setting text='MERGE_TO_PREV' value="maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
+				<slider-setting text='Notes/s' value="minimumNps" bind-value="true" apply-on-change="true" min='0' max='15' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
+				<slider-setting text='MERGE_TO_PREV' value="maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
+				<horizontal pad-top="2">
+					<text text='[ ScoreSaber ]' align='Center' underlined='true' font-size='3.5'/>
+				</horizontal>
+				<list-setting text='Ranked Status' value="rankedState" choices='rankedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
+				<slider-setting text='Stars' value="minimumStars" bind-value="true" apply-on-change="true" min='0' max='13' increment='0.2' formatter='FormatShortFloat' on-change="UpdateData"/>
+				<slider-setting text='MERGE_TO_PREV' value="maximumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
 			</vertical>
 			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-left='2'>
 				<horizontal>
-					<text text='Mapping' align='Center' underlined='true' font-size='3.5'/>
+					<text text='[ BeatSaver ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
-				<slider-setting text='Minimum NJS' value="minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' on-change="UpdateData"/>
-				<slider-setting text='Maximum NJS' value="maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
-				<slider-setting text='Min. Notes/s' value="minimumNps" bind-value="true" apply-on-change="true" min='0' max='15' increment='0.5' on-change="UpdateData"/>
-				<slider-setting text='Max. Notes/s' value="maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
+				<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
+				<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
+				<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
 				<horizontal pad-top="2">
-					<text text='Characteristic / Difficulty' align='Center' underlined='true' font-size='3.5'/>
+					<text text='[ Characteristic / Difficulty ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
 				<dropdown-list-setting text='Characteristic' value="characteristic" apply-on-change="true" bind-value="true" choices='characteristics' on-change="UpdateData"/>
 				<dropdown-list-setting text='Difficulty' value="difficulty" apply-on-change="true" bind-value="true" choices='difficulties' on-change="UpdateData"/>
 				<horizontal pad-top="2">
-					<text text='BeatSaver Rating' align='Center' underlined='true' font-size='3.5'/>
+					<text text='[ Mods ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>
-				<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
-				<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
+				<dropdown-list-setting text='Requirement' value="mods" apply-on-change="true" bind-value="true" choices='modOptions' on-change="UpdateData"/>
 			</vertical>
 		</horizontal>
 	</macro.as-host>
@@ -79,7 +83,7 @@
 				<text align='Center' text='Settings'/>
 			</horizontal>
 			<macro.as-host host='cfgInstance'>
-				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true"/>
+				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
 			</macro.as-host>
 			<horizontal pad-top="5">
 				<button text='Close' click-event='CloseSettingsModal'/>
