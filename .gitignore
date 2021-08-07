@@ -2,5 +2,7 @@
 bin/*
 obj/*
 *.user
+*.xcf
 HarmonyPatches/RemoveSplashscreen.cs
 HarmonyPatchHelper.cs
+Screenshots/SocialPreview.jpg
