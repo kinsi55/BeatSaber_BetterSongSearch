@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using static BetterSongSearch.UI.DownloadHistoryView;
+using static BetterSongSearch.UI.SongSearchSong;
 
 namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
@@ -232,17 +233,27 @@ namespace BetterSongSearch.UI {
 
 				if(x.CheckHasScore()) {
 					foreach(var diff in x.diffs) {
-						if(!diff.passesFilter || !diff.CheckHasScore())
-							continue;
+						var y = -sortModesDiffSort["Worst local score"](diff);
 
-						if(-diff.localScore > returnVal)
-							returnVal = -diff.localScore;
+						if(y > returnVal)
+							returnVal = y;
 					}
 				}
 
 				return returnVal;
 			} },
 			{ "Most Downloads", x => x.detailsSong.downloadCount }
+		};
+
+		internal static readonly IReadOnlyDictionary<string, Func<SongSearchDiff, float>> sortModesDiffSort = new Dictionary<string, Func<SongSearchDiff, float>>() {
+			{ "Most Stars", x => -x.detailsDiff.stars },
+			{ "Least Stars", x => x.detailsDiff.ranked ? x.detailsDiff.stars : -420f },
+			{ "Worst local score", x => {
+				if(x.passesFilter && x.CheckHasScore())
+					return x.localScore;
+
+				return 420;
+			} }
 		};
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
@@ -263,9 +274,23 @@ namespace BetterSongSearch.UI {
 
 		#region BSML stuffs
 		// This makes sure to always have a |ranked matching > standard matching > ranked unmatching > standard unmatching > everything else| sort for the difficulties!
-		public SongSearchDiff[] sortedDiffs => _sortedDiffsCache ??= diffs.OrderByDescending(x =>
-			(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0) + (x.detailsDiff.ranked ? 2 : 0)
-		).ToArray();
+		public SongSearchDiff[] sortedDiffs { 
+			get {
+				if(_sortedDiffsCache == null) {
+					var y = diffs.OrderByDescending(x =>
+						(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0)
+					);
+
+					// If we are sorting by something that is on a diff-level, sort the diffy as well!
+					if(SongListController.sortModesDiffSort.ContainsKey(SongListController.opt_sort))
+						y = y.ThenBy(SongListController.sortModesDiffSort[SongListController.opt_sort]);
+
+					_sortedDiffsCache = y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0).ToArray();
+				}
+
+				return _sortedDiffsCache;
+			} 
+		}
 
 		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);
 
