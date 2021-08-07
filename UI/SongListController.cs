@@ -273,10 +273,10 @@ namespace BetterSongSearch.UI {
 		public SongSearchDiff[] _sortedDiffsCache;
 
 		#region BSML stuffs
-		// This makes sure to always have a |ranked matching > standard matching > ranked unmatching > standard unmatching > everything else| sort for the difficulties!
 		public SongSearchDiff[] sortedDiffs { 
 			get {
 				if(_sortedDiffsCache == null) {
+					// Matching Standard > Matching Non-Standard > Non-Matching Standard > Non-Matching Non-Standard
 					var y = diffs.OrderByDescending(x =>
 						(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0)
 					);
@@ -324,9 +324,7 @@ namespace BetterSongSearch.UI {
 		#endregion
 
 		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpper()}";
-		public SongSearchDiff GetFirstPassingDifficulty() {
-			return diffs.OrderByDescending(x => (x.passesFilter ? 2 : 0) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : -1)).First();
-		}
+		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.First();
 		public SongSearchSong(in Song song) {
 			detailsSong = song;
 			diffs = new SongSearchDiff[song.diffCount];
