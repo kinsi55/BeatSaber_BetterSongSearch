@@ -148,6 +148,9 @@ namespace BetterSongSearch.UI {
 			if(diff.njs < currentFilter.minimumNjs || diff.njs > currentFilter.maximumNjs)
 				return false;
 
+			if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1] && !diff.ranked)
+				return false;
+
 			if(currentFilter.mods != (string)FilterOptions.modOptions[0]) {
 				if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
 					if((diff.mods & MapMods.NoodleExtensions) == 0)
