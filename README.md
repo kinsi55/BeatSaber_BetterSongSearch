@@ -22,7 +22,7 @@ Currently compatible game versions: **1.16 and up**
 
 - Wide variety of [filtering / searching and sorting options](#Screenshots) & the ability to create / load filter presets
 - Absolute banger of a UI that gives you as much information as possible at a single glance
-- Uses a locally cached database (Via SongDetailsCache) so all inputs are reflected instantly-ish at the cost of being **unable to find songs which have been uploaded in the last ~12-24 hours**
+- Uses a locally cached database (Via SongDetailsCache) so all inputs are reflected instantly-ish at the cost of being **unable to find songs which have been uploaded in the last couple of hours**
 - **Accessible while in a Multiplayer lobby!**
 - Button to pick random songs based off your filter settings if you're trying to discover new stuff
 - Download queue / history which is kept until the game is closed
