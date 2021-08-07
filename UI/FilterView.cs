@@ -152,13 +152,13 @@ namespace BetterSongSearch.UI {
 				if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
 					if((diff.mods & MapMods.NoodleExtensions) == 0)
 						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
+				} else if(currentFilter.mods == (string)FilterOptions.modOptions[2]) {
 					if((diff.mods & MapMods.MappingExtensions) == 0)
 						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[2]) {
+				} else if(currentFilter.mods == (string)FilterOptions.modOptions[3]) {
 					if((diff.mods & MapMods.Chroma) == 0)
 						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[3]) {
+				} else if(currentFilter.mods == (string)FilterOptions.modOptions[4]) {
 					if((diff.mods & MapMods.Cinema) == 0)
 						return false;
 				}
