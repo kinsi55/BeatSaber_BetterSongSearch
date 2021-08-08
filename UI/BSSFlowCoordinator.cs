@@ -89,7 +89,7 @@ namespace BetterSongSearch.UI {
 				showBackButton = true;
 			}
 			// Re-Init every time incase its time to download a new database
-			songDetails = await SongDetails.Init();
+			songDetails = await SongDetails.Init(1);
 
 			DataUpdated();
 
