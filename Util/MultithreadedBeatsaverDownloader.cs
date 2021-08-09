@@ -128,12 +128,14 @@ namespace BetterSongSearch.Util {
 
 							AddDownloadedBytes(read);
 
-							//if(!MAKE_SLOW || start == 0)
-							//	continue;
+#if DEBUG
+							if(!MAKE_SLOW)
+								continue;
 
-							//var x = new SpinWait();
-							//for(var i = 0; i < 4; i++)
-							//	x.SpinOnce();
+							var x = new SpinWait();
+							for(var i = 0; i < 8; i++)
+								x.SpinOnce();
+#endif
 						}
 
 						Plugin.Log.Debug(string.Format("[{0}-{1}] Downloaded {2} bytes ({3} left)", start, start + length, pos, end - pos));

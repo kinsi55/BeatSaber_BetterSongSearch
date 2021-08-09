@@ -36,7 +36,8 @@ namespace BetterSongSearch.UI {
 				return false;
 
 			if(existingDLHistoryEntry == null) {
-				downloadList.Insert(0, new DownloadHistoryEntry(song));
+				//var newPos = downloadList.FindLastIndex(x => x.status > DownloadHistoryEntry.DownloadStatus.Queued);
+				downloadList.Add(new DownloadHistoryEntry(song));
 				downloadHistoryTable.ScrollToCellWithIdx(0, TableView.ScrollPositionType.Beginning, false);
 			} else {
 				existingDLHistoryEntry.status = DownloadHistoryEntry.DownloadStatus.Queued;
@@ -59,6 +60,7 @@ namespace BetterSongSearch.UI {
 			if(downloadList.Count(x => x.IsInAnyOfStates(DownloadHistoryEntry.DownloadStatus.Preparing | DownloadHistoryEntry.DownloadStatus.Downloading)) >= MAX_PARALLEL_DOWNLOADS) {
 				if(forceTableReload)
 					RefreshTable(true);
+
 				return;
 			}
 
@@ -80,31 +82,31 @@ namespace BetterSongSearch.UI {
 
 			RefreshTable(true);
 
-			await Task.Run(async () => {
+			await Task.Run(async() => {
 				try {
 					var updateRateLimiter = new Stopwatch();
 					updateRateLimiter.Start();
 
 					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
+						if(updateRateLimiter.ElapsedMilliseconds < 100)
+							return;
+
 						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / {RETRY_COUNT}");
 						firstEntry.downloadProgress = progress;
 
-						if(updateRateLimiter.ElapsedMilliseconds < 0.05)
-							return;
 						updateRateLimiter.Restart();
 
 						IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgress);
 					});
 
+					firstEntry.downloadProgress = 1f;
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Downloaded;
 					firstEntry.statusDetails = "";
 				} catch(Exception ex) {
-#if DEBUG
 					if(!(ex is TaskCanceledException)) {
 						Plugin.Log.Warn("Download failed:");
 						Plugin.Log.Warn(ex);
 					}
-#endif
 
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
 					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: More details in log, {ex.GetType().Name}";
@@ -112,8 +114,6 @@ namespace BetterSongSearch.UI {
 			});
 
 			if(firstEntry.status == DownloadHistoryEntry.DownloadStatus.Downloaded) {
-				BSSFlowCoordinator.songListView.songList.RefreshCells(false, true);
-
 				// NESTING HELLLL
 				var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
 				if(selectedSongView.selectedSong.detailsSong.key == firstEntry.key)
@@ -132,7 +132,7 @@ namespace BetterSongSearch.UI {
 				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).ToList<object>();
 
 				downloadHistoryTable.ReloadData();
-			}, 0.2f);
+			}, 0.5f);
 		}
 
 		public void RefreshTable(bool fullReload = true) {
@@ -202,7 +202,6 @@ namespace BetterSongSearch.UI {
 			[UIComponent("statusLabel")] TextMeshProUGUI statusLabel = null;
 			[UIComponent("bgContainer")] ImageView bg = null;
 			[UIComponent("bgProgress")] ImageView bgProgress = null;
-			RectTransform bgProgressRect = null;
 			[UIAction("refresh-visuals")]
 			public void Refresh(bool selected, bool highlighted) {
 				bg.color = new Color(0, 0, 0, highlighted ? 0.8f : 0.45f);
@@ -217,11 +216,12 @@ namespace BetterSongSearch.UI {
 				clr.a = 0.5f + (downloadProgress * 0.4f);
 				bgProgress.color = clr;
 
-				if((bgProgressRect = bgProgress.gameObject.GetComponent<RectTransform>()) == null)
+				var x = (bgProgress.gameObject.transform as RectTransform);
+				if(x == null)
 					return;
 
-				bgProgressRect.anchorMax = new Vector2(downloadProgress, 1);
-				bgProgressRect.ForceUpdateRectTransforms();
+				x.anchorMax = new Vector2(downloadProgress, 1);
+				x.ForceUpdateRectTransforms();
 			}
 
 			public void UpdateProgress() {
