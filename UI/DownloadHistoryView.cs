@@ -37,6 +37,7 @@ namespace BetterSongSearch.UI {
 
 			if(existingDLHistoryEntry == null) {
 				downloadList.Insert(0, new DownloadHistoryEntry(song));
+				downloadHistoryTable.ScrollToCellWithIdx(0, TableView.ScrollPositionType.Beginning, false);
 			} else {
 				existingDLHistoryEntry.status = DownloadHistoryEntry.DownloadStatus.Queued;
 			}
@@ -131,7 +132,6 @@ namespace BetterSongSearch.UI {
 				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).ToList<object>();
 
 				downloadHistoryTable.ReloadData();
-				downloadHistoryTable.ScrollToCellWithIdx(0, TableView.ScrollPositionType.Beginning, false);
 			}, 0.2f);
 		}
 
