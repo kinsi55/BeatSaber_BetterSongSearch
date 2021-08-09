@@ -46,7 +46,7 @@ namespace BetterSongSearch.UI {
 				FilterSongs();
 
 				IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime:d\\. MMM yy - HH:mm}");
+					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
 				});
 
 				if(playerDataModel != null) _ = Task.Run(() => {
