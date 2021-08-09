@@ -96,28 +96,39 @@ namespace BetterSongSearch.Util {
 
 				using(var ms = new MemoryStream()) {
 					steps = archive.Entries.Count() * 2;
-					files = new Dictionary<string, byte[]>(steps);
+					files = new Dictionary<string, byte[]>();
 
 					foreach(var entry in archive.Entries) {
-						using(var str = entry.Open()) {
-							for(; ; ) {
-								if(token.IsCancellationRequested)
-									throw new TaskCanceledException();
+						// Dont extract directories / sub-files
+						if(!entry.FullName.Contains("/")) {
+							using(var str = entry.Open()) {
+								for(; ; ) {
+									if(token.IsCancellationRequested)
+										throw new TaskCanceledException();
 
-								int read = str.Read(buf, 0, buf.Length);
-								if(read == 0)
-									break;
+									int read = str.Read(buf, 0, buf.Length);
+									if(read == 0)
+										break;
 
-								ms.Write(buf, 0, read);
+									ms.Write(buf, 0, read);
+								}
+
+								files.Add(entry.Name, ms.ToArray());
 							}
-
-							files.Add(entry.Name, ms.ToArray());
+						} else {
+							// As this wont extract anthing further down we need to increase the process for it in advance
+							progress++;
 						}
+
 						progressCb((float)++progress / steps);
 						ms.SetLength(0);
 					}
 				}
 			}
+
+			// Failsafe so we dont break songcore. Info.dat, a diff and the song itself - not sure if the cover is needed
+			if(files.Count < 3 || files.Keys.FirstOrDefault(x => x.ToLowerInvariant() == "info.dat") == null)
+				throw new InvalidDataException();
 
 			if(token.IsCancellationRequested)
 				throw new TaskCanceledException();
