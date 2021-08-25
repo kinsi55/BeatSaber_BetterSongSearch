@@ -314,7 +314,7 @@ namespace BetterSongSearch.UI {
 
 		bool isQualified => detailsSong.rankedStatus == RankedStatus.Qualified;
 
-		public string fullFormattedSongName => $"<color=#{(CheckIsDownloaded() ? "888" : "FFF")}>{detailsSong.songAuthorName} - {detailsSong.songName}</color>";
+		public string fullFormattedSongName => $"{(CheckIsDownloaded() ? "<color=#888>" : "")}{detailsSong.songAuthorName} - {detailsSong.songName}";
 		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
 		public string songRating => showVotesInsteadOfRating ? $"👍 {detailsSong.upvotes} 👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
