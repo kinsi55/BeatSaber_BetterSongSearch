@@ -168,7 +168,6 @@ namespace BetterSongSearch.UI {
 		}
 
 		LevelFilteringNavigationController levelFilteringNavigationController = Resources.FindObjectsOfTypeAll<LevelFilteringNavigationController>().FirstOrDefault();
-		LevelSearchViewController levelSearchViewController = Resources.FindObjectsOfTypeAll<LevelSearchViewController>().FirstOrDefault();
 		LevelCollectionNavigationController levelCollectionNavigationController = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>().FirstOrDefault();
 
 		SongSearchSong songToPlayAfterLoading = null;
@@ -202,10 +201,6 @@ namespace BetterSongSearch.UI {
 			if(level == null)
 				return;
 
-			BSSFlowCoordinator.Close(true);
-
-			Manager.goToSongSelect.Invoke();
-
 			if(levelFilteringNavigationController == null)
 				return;
 
@@ -220,19 +215,21 @@ namespace BetterSongSearch.UI {
 				}
 			} catch { }
 
+			BSSFlowCoordinator.Close(true);
+			Manager.goToSongSelect.Invoke();
+
 			SharedCoroutineStarter.instance.StartCoroutine(SelectLevelNextFrame(level));
 			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 		}
 
 		IEnumerator SelectLevelNextFrame(IPreviewBeatmapLevel level) {
-			// 4 LOC basegame method of selecting a song that works always I LOST
+			// 3 LOC basegame method of selecting a song that works always I LOST
 			//TODO: remove the delays once SongBrowser bug is fixed where it always defaults to OST tab
 			yield return 0;
-			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();
 			levelFilteringNavigationController.UpdateSecondChildControllerContent(LevelCategory.All);
 
-			yield return 0;
+			yield return new WaitForEndOfFrame();
 			levelCollectionNavigationController?.SelectLevel(level);
 		}
 
