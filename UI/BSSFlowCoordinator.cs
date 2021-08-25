@@ -49,7 +49,7 @@ namespace BetterSongSearch.UI {
 					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
 				});
 
-				if(playerDataModel != null) _ = Task.Run(() => {
+				Task.Run(() => {
 					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
@@ -58,8 +58,12 @@ namespace BetterSongSearch.UI {
 
 						var sh = x.levelID.Substring(13, 40);
 
-						if(!songDetails.songs.FindByHash(sh, out var song))
-							continue;
+						SongDetailsCache.Structs.Song song;
+						// local score level id's can be scuffed if you pass custom levels w/ no songcore installed
+						try {
+							if(!songDetails.songs.FindByHash(sh, out song))
+								continue;
+						} catch { continue; }
 
 						if(!song.GetDifficulty(out var diff, (SongDetailsCache.Structs.MapDifficulty)x.difficulty))
 							continue;
