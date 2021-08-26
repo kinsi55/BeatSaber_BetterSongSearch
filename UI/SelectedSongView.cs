@@ -168,6 +168,7 @@ namespace BetterSongSearch.UI {
 		}
 
 		LevelFilteringNavigationController levelFilteringNavigationController = Resources.FindObjectsOfTypeAll<LevelFilteringNavigationController>().FirstOrDefault();
+		LevelSearchViewController levelSearchViewController = Resources.FindObjectsOfTypeAll<LevelSearchViewController>().FirstOrDefault();
 		LevelCollectionNavigationController levelCollectionNavigationController = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>().FirstOrDefault();
 
 		SongSearchSong songToPlayAfterLoading = null;
@@ -226,6 +227,7 @@ namespace BetterSongSearch.UI {
 			// 3 LOC basegame method of selecting a song that works always I LOST
 			//TODO: remove the delays once SongBrowser bug is fixed where it always defaults to OST tab
 			yield return 0;
+			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();
 			levelFilteringNavigationController.UpdateSecondChildControllerContent(LevelCategory.All);
 
