@@ -53,7 +53,7 @@ namespace BetterSongSearch.UI {
 					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
-						if(!x.validScore || x.highScore == 0 || !x.levelID.StartsWith("custom_level_") || x.levelID.Length < 13 + 40)
+						if(!x.validScore || x.highScore == 0 || x.levelID.Length < 13 + 40 || !x.levelID.StartsWith("custom_level_"))
 							continue;
 
 						var sh = x.levelID.Substring(13, 40);
