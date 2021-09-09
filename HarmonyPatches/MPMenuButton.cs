@@ -9,7 +9,7 @@ namespace BetterSongSearch.HarmonyPatches {
 	[HarmonyPatch(typeof(GameplaySetupViewController), nameof(GameplaySetupViewController.RefreshContent))]
 	static class MPMenuButton {
 		static GameObject button = null;
-		static void Postfix(GameplaySetupViewController __instance, GameplaySetupViewController.GameplayMode ____gameplayMode) {
+		static void Postfix(GameplaySetupViewController __instance, bool ____showMultiplayer) {
 			// I dont want the plugin to ever break because of changes to this
 			try {
 				if(button == null) {
@@ -33,7 +33,7 @@ namespace BetterSongSearch.HarmonyPatches {
 					};
 				}
 
-				button.SetActive(____gameplayMode == GameplaySetupViewController.GameplayMode.MultiplayerPrivate);
+				button.SetActive(____showMultiplayer);
 			} catch { }
 		}
 	}
