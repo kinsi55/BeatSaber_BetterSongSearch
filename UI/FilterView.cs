@@ -12,7 +12,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -230,6 +232,13 @@ namespace BetterSongSearch.UI {
 		#endregion
 
 
+		[UIComponent("sponsorsText")] CurvedTextMeshPro sponsorsText = null;
+		void OpenSponsorsLink() => Process.Start("https://github.com/sponsors/kinsi55");
+		void OpenSponsorsModal() {
+			try {
+				sponsorsText.text = (new WebClient()).DownloadString("http://kinsi.me/sponsors/bsout.php");
+			} catch { }
+		}
 
 
 		public static RatelimitCoroutine limitedUpdateData { get; private set; } = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.3f);

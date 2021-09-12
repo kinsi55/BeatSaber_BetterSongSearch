@@ -56,8 +56,12 @@
 	</macro.as-host>
 	
 	<modal clickerino-offerino-closerino='true' move-to-center='true' hide-event='ClosePresets' show-event='OpenPresets' size-delta-x='80' size-delta-y='82'>
-		<vertical preferred-width='70' vertical-fit='PreferredSize' pad='2' spacing='3' horizontal-fit='PreferredSize'>
-			<text text='Filter Presets' align='Center'/>
+		<vertical preferred-width='80' vertical-fit='PreferredSize' pad-left='3' pad-right='3' horizontal-fit='PreferredSize'>
+			<horizontal pad-bottom='4' pad-top='1'>
+				<horizontal bg='panel-top-gradient'>
+					<text text='BetterSongSearch - Filter Presets' align='Center' font-size='4'/>
+				</horizontal>
+			</horizontal>
 			<horizontal horizontal-fit='PreferredSize'>
 				<vertical horizontal-fit='Unconstrained'>
 					<custom-list visible-cells='8' cell-size='7' id='presetList' select-cell='PresetSelected'>
@@ -78,9 +82,11 @@
 	</modal>
 
 	<modal move-to-center='true' hide-event='CloseSettingsModal' show-event='ShowSettingsModal' size-delta-x='70' size-delta-y='45' clickerino-offerino-closerino='true'>
-		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='4' child-expand-width='true' preferred-width='70' preferred-height='45'>
-			<horizontal pad-bottom='5'>
-				<text align='Center' text='Settings'/>
+		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad-left='3' pad-right='3' child-expand-width='true' preferred-width='70' preferred-height='45'>
+			<horizontal pad-bottom='4' pad-top='1'>
+				<horizontal bg='panel-top-gradient'>
+					<text text='BetterSongSearch - Settings' align='Center' font-size='4'/>
+				</horizontal>
 			</horizontal>
 			<macro.as-host host='cfgInstance'>
 				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
@@ -102,8 +108,30 @@
 		</vertical>
 	</modal>
 
+	<modal move-to-center='true' hide-event='CloseSponsorModal' show-event='OpenSponsorModal' size-delta-x='80' size-delta-y='92'>
+		<vertical preferred-width='80' vertical-fit='PreferredSize' pad-left='2' pad-right='2' spacing='2' child-expand-width='true'>
+			<horizontal pad-bottom='2' pad-top='1'>
+				<horizontal bg='panel-top-gradient'>
+					<text text='BetterSongSearch - Sponsors' align='Center' font-size='4'/>
+				</horizontal>
+			</horizontal>
+			<text text='Are you enjoying my stuff and want to support me?' align='Center'/>
+			<horizontal>
+				<primary-button text='Open Website on Desktop' on-click='OpenSponsorsLink'/>
+				<button text='Close' click-event='CloseSponsorModal'/>
+			</horizontal>
+			<text text='Current sponsors' align='Center'/>
+			<vertical horizontal-fit='Unconstrained' vertical-fit='Unconstrained' preferred-height='50'>
+				<text-page id='sponsorsText' text='Loading...'/>
+			</vertical>
+		</vertical>
+	</modal>
+
 	<horizontal>
-		<text text="~version" font-size="3" font-color="#CC6E3B" align="Center"/>
+		<horizontal spacing='2' child-expand-width='false' child-align='MiddleCenter'>
+			<text text="~version" font-size="3" font-color="#CC6E3B" align="Center"/>
+			<clickable-text text='♥ Donate' font-size="4" align="Center" click-event="OpenSponsorModal" on-click="OpenSponsorsModal"/>
+		</horizontal>
 		<text id="datasetInfoLabel" font-size="3" font-color="#CCC" text="Loading dataset..." align="Center"/>
 	</horizontal>
 </vertical>
