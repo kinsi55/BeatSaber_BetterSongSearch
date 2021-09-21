@@ -229,7 +229,7 @@ namespace BetterSongSearch.UI {
 			yield return 0;
 			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();
-			levelFilteringNavigationController.UpdateSecondChildControllerContent(LevelCategory.All);
+			levelFilteringNavigationController.UpdateSecondChildControllerContent((LevelCategory)Enum.Parse(typeof(LevelCategory), nameof(LevelCategory.All)));
 
 			yield return new WaitForEndOfFrame();
 			levelCollectionNavigationController?.SelectLevel(level);
