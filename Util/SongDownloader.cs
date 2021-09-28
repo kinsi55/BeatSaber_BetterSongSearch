@@ -127,7 +127,7 @@ namespace BetterSongSearch.Util {
 			}
 
 			// Failsafe so we dont break songcore. Info.dat, a diff and the song itself - not sure if the cover is needed
-			if(files.Count < 3 || files.Keys.FirstOrDefault(x => x.ToLowerInvariant() == "info.dat") == null)
+			if(files.Count < 3 || !files.Keys.Any(x => x.ToLowerInvariant() == "info.dat"))
 				throw new InvalidDataException();
 
 			if(token.IsCancellationRequested)

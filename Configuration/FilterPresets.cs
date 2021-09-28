@@ -141,7 +141,7 @@ namespace BetterSongSearch.Configuration {
 
 			name = string.Concat(name.Split(Path.GetInvalidFileNameChars())).Trim();
 
-			name = presets.Keys.FirstOrDefault(x => x.ToLower() == name.ToLower()) ?? name;
+			name = presets.Keys.FirstOrDefault(x => x.Equals(name, StringComparison.InvariantCultureIgnoreCase)) ?? name;
 
 			if(name.Length == 0)
 				name = "Unnamed";
