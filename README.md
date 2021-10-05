@@ -6,7 +6,7 @@ Searching, downloading and playing songs, now with 100% less annoying!
 
 ---
 
-Currently compatible game versions: **1.16 and up**
+Currently compatible game versions: **1.17.1 and up**
 
 ## Install
 
