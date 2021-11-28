@@ -61,6 +61,7 @@ namespace BetterSongSearch.UI {
 
 			selectedSong = song;
 
+			//TODO: Mabye disable download button when song is already queued
 			SetIsDownloaded(song.CheckIsDownloaded(), song.CheckIsDownloadable());
 
 			selectedSongAuthor.text = song.detailsSong.songAuthorName;
@@ -225,13 +226,17 @@ namespace BetterSongSearch.UI {
 
 		IEnumerator SelectLevelNextFrame(IPreviewBeatmapLevel level) {
 			// 3 LOC basegame method of selecting a song that works always I LOST
-			//TODO: remove the delays once SongBrowser bug is fixed where it always defaults to OST tab
-			yield return 0;
+			if(IPA.Loader.PluginManager.GetPluginFromId("SongBrowser") != null)
+				yield return 0;
+
 			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();
-			levelFilteringNavigationController.UpdateSecondChildControllerContent((LevelCategory)Enum.Parse(typeof(LevelCategory), nameof(LevelCategory.All)));
+			if(levelFilteringNavigationController.selectedLevelCategory.ToString() != nameof(LevelCategory.All))
+				levelFilteringNavigationController.UpdateSecondChildControllerContent((LevelCategory)Enum.Parse(typeof(LevelCategory), nameof(LevelCategory.All)));
 
 			yield return new WaitForEndOfFrame();
+			// Reset again here. This is kind of a duct-tape fix for an edge-case of better song list
+			levelSearchViewController?.ResetCurrentFilterParams();
 			levelCollectionNavigationController?.SelectLevel(level);
 		}
 
