@@ -31,8 +31,11 @@ namespace BetterSongSearch.Util {
 				(ourContainer.Find("BSMLSlider").transform as RectTransform).offsetMin = new Vector2(-20, 0);
 				ourContainer.position = prevContainer.position;
 
-				var minTimeSlider = prevContainer.GetComponentInChildren<TimeSlider>();
-				var maxTimeSlider = ourContainer.GetComponentInChildren<TimeSlider>();
+				var minTimeSlider = prevContainer.GetComponentInChildren<TextSlider>();
+				var maxTimeSlider = ourContainer.GetComponentInChildren<TextSlider>();
+
+				if(minTimeSlider == null || maxTimeSlider == null)
+					yield break;
 
 				maxTimeSlider.valueSize = minTimeSlider.valueSize /= 2.1f;
 
