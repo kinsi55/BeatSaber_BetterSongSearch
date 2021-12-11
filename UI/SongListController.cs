@@ -191,32 +191,12 @@ namespace BetterSongSearch.UI {
 			foreach(var x in GetComponentsInChildren<ScrollView>()) ReflectionUtil.SetField(x, "_platformHelper", meWhen);
 
 			// Make the sort list BIGGER
-			ReflectionUtil.SetField(_sortDropdown, "_numberOfVisibleCells", 9);
+			var c = Mathf.Min(9, _sortDropdown.tableViewDataSource.NumberOfCells());
+			ReflectionUtil.SetField(_sortDropdown, "_numberOfVisibleCells", c);
 			_sortDropdown.ReloadData();
 
-			StartCoroutine(HackDropdown());
-		}
-
-		IEnumerator HackDropdown() {
-			yield return 0;
-			yield return new WaitForEndOfFrame();
-
-			// Offset it far down so that its not sticking up 10 kilometers
-			var l = ReflectionUtil.GetField<Button, DropdownWithTableView>(_sortDropdown, "_button");
-			l.onClick.RemoveAllListeners();
-			l.onClick.AddListener(new UnityEngine.Events.UnityAction(() => {
-				var offsHack = (_sortDropdown.transform as RectTransform);
-
-				offsHack.offsetMin = new Vector2(offsHack.offsetMin.x, offsHack.offsetMin.x - 28);
-
-				_sortDropdown.OnButtonClick();
-
-				offsHack.offsetMin = new Vector2(offsHack.offsetMin.x, 0);
-
-				// We should only do this on the first load because the modified position will stick
-				l.onClick.RemoveAllListeners();
-				l.onClick.AddListener(new UnityEngine.Events.UnityAction(_sortDropdown.OnButtonClick));
-			}));
+			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(_sortDropdown, "_modalView");
+			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.83f + (c * 0.011f));
 		}
 
 		// While not the best for readability you have to agree this is a neat implementation!
