@@ -6,7 +6,7 @@ Searching, downloading and playing songs, now with 100% less annoying!
 
 ---
 
-Currently compatible game versions: **1.17.1 and up**
+The Game version(s) specific releases are compatible with are mentioned in the Release title (Its obviously possible latest is not supported assuming its been released recently). If you need the plugin for an older version - Grab an older release that fits 🤯
 
 ## Install
 
