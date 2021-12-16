@@ -112,7 +112,7 @@ namespace BetterSongSearch.UI {
 			currentFilter.NotifyPropertiesChanged();
 			/*
 			 * This is a massive hack and I have NO IDEA why I need to do this. If I dont do this, or
-			 * the FilterSongs() method NEVER ends up being called, not even if I manually invoke 
+			 * the FilterSongs() method NEVER ends up being called, not even if I manually invoke
 			 * limitedUpdateData.Call[NextFrame]() OR EVEN BSSFlowCoordinator.FilterSongs() DIRECTLY
 			 * Seems like there is SOMETHING broken with how input changes are handled, something to do
 			 * with nested coroutines or whatever. I have no idea. For now I spent enough time trying to fix this
@@ -195,7 +195,7 @@ namespace BetterSongSearch.UI {
 
 			if(currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[0]) {
 				if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1]) {
-					if(song.rankedStatus != RankedStatus.Ranked) 
+					if(song.rankedStatus != RankedStatus.Ranked)
 						return false;
 				} else if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[2]) {
 					if(song.rankedStatus != RankedStatus.Qualified)
@@ -245,6 +245,9 @@ namespace BetterSongSearch.UI {
 
 				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 					sponsorsText.text = desc;
+					// There is almost certainly a better way to update / correctly set the scrollbar size...
+					sponsorsText.gameObject.SetActive(false);
+					sponsorsText.gameObject.SetActive(true);
 				});
 			}).ConfigureAwait(false);
 		}
