@@ -112,8 +112,8 @@ namespace BetterSongSearch.UI {
 			if(!song.CheckIsDownloadedAndLoaded()) {
 				try {
 					XD.FunnyMono(songPreviewPlayer)?.CrossfadeToDefault();
+					coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 				} catch { }
-				coverImage.sprite = await BSSFlowCoordinator.coverLoader.LoadAsync(song.detailsSong, coverLoadCancel.Token);
 			} else {
 				var h = song.GetCustomLevelIdString();
 
@@ -122,9 +122,8 @@ namespace BetterSongSearch.UI {
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
 				if(preview != null) try {
 					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
 				} catch { }
-
-				coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
 			}
 			ShowCoverLoader(false);
 		}
