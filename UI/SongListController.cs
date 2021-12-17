@@ -97,10 +97,7 @@ namespace BetterSongSearch.UI {
 		[UIComponent("multiDlCountSlider")] internal SliderSetting multiDlCountSlider = null;
 		[UIAction("StartMultiDownload")]
 		void StartMultiDownload() {
-			for(int i = songList.GetVisibleCellsIdRange().Item1, downloaded = 0; ; i++) {
-				if(i > searchedSongsList.Count)
-					break;
-
+			for(int i = songList.GetVisibleCellsIdRange().Item1, downloaded = 0; i < searchedSongsList.Count; i++) {
 				if(searchedSongsList[i].CheckIsDownloaded() || !searchedSongsList[i].CheckIsDownloadable())
 					continue;
 
