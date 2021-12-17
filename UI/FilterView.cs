@@ -44,6 +44,8 @@ namespace BetterSongSearch.UI {
 		public static FilterOptions currentFilter = new FilterOptions();
 
 		[UIComponent("dontScuffBg")] ModalView dontScuffBg = null;
+		[UIComponent("modsRequirementDropdown")] DropdownWithTableView _modsRequirementDropdown = null;
+
 		[UIAction("#post-parse")]
 		void Parsed() {
 			currentFilter.hideOlderThanSlider.slider.maxValue = hideOlderThanOptions.Count - 1;
@@ -59,6 +61,12 @@ namespace BetterSongSearch.UI {
 			ReflectionUtil.SetField(newPresetName.modalKeyboard.modalView, "_animateParentCanvas", false);
 
 			StartCoroutine(BSMLStuff.MergeSliders(gameObject));
+
+			// I hate BSML some times
+			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(
+				GetComponentsInChildren<DropDownListSetting>().Where(x => x.associatedValue.MemberName == "mods").First().GetComponent<DropdownWithTableView>()
+			, "_modalView");
+			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
 		}
 
 		#region PresetStuff
