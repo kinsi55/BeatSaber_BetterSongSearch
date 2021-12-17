@@ -40,22 +40,22 @@
 	</horizontal>
 	<modal clickerino-offerino-closerino='true' move-to-center='true' show-event='downloadCancelConfirm' hide-event='CloseDownloadCancelConfirm' size-delta-x='80' size-delta-y='40'>
 		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='8' child-expand-width='true' preferred-width='80' preferred-height='40'>
-			<text text='You still have pending downloads which would be stopped by closing Better Song Search. Continue?' word-wrapping='true'></text>
+			<text text='You still have pending downloads which would be stopped by closing Better Song Search. Continue?' word-wrapping='true'/>
 			<horizontal spacing='10' pad-top='4'>
-				<primary-button text='Yes' on-click='ForcedUIClose' click-event='CloseDownloadCancelConfirm'></primary-button>
-				<button text='Cancel' on-click='ForcedUICloseCancel' click-event='CloseDownloadCancelConfirm'></button>
+				<primary-button text='Yes' on-click='ForcedUIClose' click-event='CloseDownloadCancelConfirm'/>
+				<button text='Cancel' on-click='ForcedUICloseCancel' click-event='CloseDownloadCancelConfirm'/>
 			</horizontal>
 		</vertical>
 	</modal>
 	<modal clickerino-offerino-closerino='true' move-to-center='true' show-event='showMultiDlModal' hide-event='closeMultiDlModal' size-delta-x='90' size-delta-y='60'>
 		<vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='8' child-expand-width='true' preferred-width='90' preferred-height='60'>
-			<text text='Download a certain amount of songs at once that match your critera, starting from your scroll location in the list' word-wrapping='true'></text>
+			<text text='Download a certain amount of songs at once that match your critera, starting from your scroll location in the list' word-wrapping='true'/>
 			<horizontal spacing='10' pad-top='4'>
 				<slider-setting min='5' max='20' text='Songs to download' integer-only='true' id='multiDlCountSlider'/>
 			</horizontal>
 			<horizontal spacing='10' pad-top='4'>
-				<primary-button text='Download' on-click='StartMultiDownload' click-event='closeMultiDlModal'></primary-button>
-				<button text='Cancel' click-event='closeMultiDlModal'></button>
+				<primary-button text='Download' on-click='StartMultiDownload' click-event='closeMultiDlModal'/>
+				<button text='Cancel' click-event='closeMultiDlModal'/>
 			</horizontal>
 		</vertical>
 	</modal>
@@ -64,19 +64,19 @@
 			<vertical pad='3' child-expand-height='false' vertical-fit='Unconstrained' preferred-width='85' preferred-height='85'>
 				<horizontal vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
 					<vertical child-expand-height='false' preferred-width="25">
-						<text text="Song Key" align="Center" color='#7CF'></text>
+						<text text="Song Key" align="Center" color='#7CF'/>
 						<vertical>
 							<text id="selectedSongKey" align="Center" all-uppercase='true'/>
-							<text text="BeatSaver Rating" align="Center" color='#7CF'></text>
+							<text text="BeatSaver Rating" align="Center" color='#7CF'/>
 							<text id="selectedRating" align="Center"/>
-							<text text="Downloads" align="Center" color='#7CF'></text>
+							<text text="Downloads" align="Center" color='#7CF'/>
 							<text id="selectedDownloadCount" align="Center"/>
-							<text text="Characteristics" align="Center" color='#7CF'></text>
+							<text text="Characteristics" align="Center" color='#7CF'/>
 							<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
 						</vertical>
 					</vertical>
 					<vertical child-expand-height="false" preferred-width="65">
-						<text text="Description" align="Center" color='#7CF'></text>
+						<text text="Description" align="Center" color='#7CF'/>
 						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="20"/>
 						<vertical horizontal-fit='PreferredSize' preferred-width="60">
 							<text-page id="selectedSongDescription" align="Center" word-wrapping="true"/>
