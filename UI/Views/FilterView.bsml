@@ -42,6 +42,8 @@
 				<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
 				<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
 				<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
+				<!--intentonally pointing to _uploadersString because formatter is called before setting the bound value and RRRRRRRR-->
+				<string-setting text='Uploader(s)' value='uploadersString' bind-value='true' apply-on-change='true' formatter='FormatUploaderShortInfo' on-change="UpdateData" hover-hint='You can enter multiple Uploader names, seperated by spaces. If you have an Exclamation mark at the beginning of your input it becomes a blacklist for the given uploaders'/>
 				<horizontal pad-top="3">
 					<text text='[ Characteristic / Difficulty ]' align='Center' underlined='true' font-size='3.5'/>
 				</horizontal>

@@ -54,6 +54,30 @@ namespace BetterSongSearch.Configuration {
 		[JsonProperty] public float minimumRating { get; private set; } = 0f;
 		[JsonProperty] public int minimumVotes { get; private set; } = 0;
 
+		string _uploadersString = "";
+		[JsonProperty("uploaders")] public string uploadersString { 
+			get => _uploadersString; 
+			set {
+				if(_uploadersString == value)
+					return;
+
+				_uploadersString = value;
+				if(value.Length == 0)
+					return;
+
+				uploadersBlacklist = value[0] == '!';
+				if(uploadersBlacklist)
+					value = value.Substring(1);
+
+				uploaders = value.ToLowerInvariant().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToHashSet();
+			}
+		}
+
+
+		public bool uploadersBlacklist = false;
+		public HashSet<string> uploaders = new HashSet<string>();
+
+
 
 		public int difficulty_int = -1;
 		[JsonProperty]
@@ -108,6 +132,13 @@ namespace BetterSongSearch.Configuration {
 		static string FormatMaxNjs(float d) => d >= NJS_FILTER_MAX ? "Unlimited" : d.ToString();
 		static string FormatMaxNps(float d) => d >= NPS_FILTER_MAX ? "Unlimited" : d.ToString();
 		static string FormatShortFloat(float d) => d.ToString("0.0");
+		string FormatUploaderShortInfo(string d) {
+			if(d == "")
+				return "Show all";
+
+			uploadersString = d;
+			return $"{(uploadersBlacklist ? "Hiding" : "Show only")} <color=#CCC>{uploaders.Count}</color> uploader{(uploaders.Count == 1 ? "" : "s")}";
+		}
 		#endregion
 
 		public FilterOptions Clone() => (FilterOptions)MemberwiseClone();

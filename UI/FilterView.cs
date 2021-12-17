@@ -228,6 +228,15 @@ namespace BetterSongSearch.UI {
 					return false;
 			}
 
+			if(currentFilter.uploaders.Count != 0) {
+				if(currentFilter.uploaders.Contains(song.uploaderNameLowercase)) {
+					if(currentFilter.uploadersBlacklist)
+						return false;
+				} else if(!currentFilter.uploadersBlacklist) {
+					return false;
+				}
+			}
+
 			return true;
 		}
 		#endregion
