@@ -10,16 +10,6 @@ using UnityEngine.UI;
 
 namespace BetterSongSearch.Util {
 	static class BSMLStuff {
-		public static void UnleakTable(GameObject gameObject) {
-			foreach(var x in gameObject.GetComponentsInChildren<Touchable>(true).Where(x => !x.gameObject.activeSelf)) {
-				var l = x.gameObject;
-
-				GameObject.DestroyImmediate(x);
-				GameObject.DestroyImmediate(l.GetComponent<CanvasRenderer>());
-				GameObject.DestroyImmediate(l);
-			}
-		}
-
 		public static IEnumerator MergeSliders(GameObject container, bool constrictValuesMinMax = true) {
 			yield return 0;
 			foreach(var x in container.GetComponentsInChildren<CurvedTextMeshPro>().Where(x => x.text == "MERGE_TO_PREV")) {

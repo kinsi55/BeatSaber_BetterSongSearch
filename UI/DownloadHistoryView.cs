@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BetterSongSearch.UI.CustomLists;
 using BetterSongSearch.Util;
 using HMUI;
 using IPA.Utilities;
@@ -16,11 +17,12 @@ using UnityEngine.UI;
 namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\DownloadHistory.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.DownloadHistory.bsml")]
-	class DownloadHistoryView : BSMLAutomaticViewController {
+	class DownloadHistoryView : BSMLAutomaticViewController, TableView.IDataSource {
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
-		[UIComponent("downloadList")] CustomCellListTableData downloadHistoryData = null;
+		[UIComponent("downloadList")] CustomListTableData downloadHistoryData = null;
 		TableView downloadHistoryTable => downloadHistoryData?.tableView;
 		public readonly List<DownloadHistoryEntry> downloadList = new List<DownloadHistoryEntry>();
+		DownloadHistoryEntry[] downloadListSorted = null;
 
 		public bool hasUnloadedDownloads => downloadList.Any(x => x.status == DownloadHistoryEntry.DownloadStatus.Downloaded);
 
@@ -48,9 +50,11 @@ namespace BetterSongSearch.UI {
 			return true;
 		}
 
-		void SelectSong(TableView _, DownloadHistoryEntry row) {
-			if(BSSFlowCoordinator.songDetails.songs.FindByMapId(row.key, out var song))
+		void SelectSong(TableView _, int idx) {
+			if(BSSFlowCoordinator.songDetails.songs.FindByMapId(downloadListSorted[idx].key, out var song)) {
 				BSSFlowCoordinator.songListView.selectedSongView.SetSelectedSong(BSSFlowCoordinator.songsList[song.index]);
+				BSSFlowCoordinator.songListView.songList.ClearSelection();
+			}
 		}
 
 		public async void ProcessDownloads(bool forceTableReload = false) {
@@ -88,7 +92,7 @@ namespace BetterSongSearch.UI {
 					updateRateLimiter.Start();
 
 					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
-						if(updateRateLimiter.ElapsedMilliseconds < 100)
+						if(updateRateLimiter.ElapsedMilliseconds < 50)
 							return;
 
 						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / {RETRY_COUNT}");
@@ -96,7 +100,8 @@ namespace BetterSongSearch.UI {
 
 						updateRateLimiter.Restart();
 
-						IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgress);
+						if(firstEntry.UpdateProgressHandler != null)
+							IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgressHandler);
 					});
 
 					firstEntry.downloadProgress = 1f;
@@ -118,6 +123,8 @@ namespace BetterSongSearch.UI {
 				var selectedSongView = BSSFlowCoordinator.songListView.selectedSongView;
 				if(selectedSongView.selectedSong.detailsSong.key == firstEntry.key)
 					selectedSongView.SetIsDownloaded(true);
+
+				BSSFlowCoordinator.songListView.songList.RefreshCells(false, true);
 			}
 
 			ProcessDownloads(true);
@@ -125,31 +132,26 @@ namespace BetterSongSearch.UI {
 
 		RatelimitCoroutine limitedFullTableReload;
 
-		void Awake() {
-			limitedFullTableReload = new RatelimitCoroutine(() => {
-				BSMLStuff.UnleakTable(downloadHistoryTable.gameObject);
-
-				downloadHistoryData.data = downloadList.OrderBy(x => x.orderValue).ToList<object>();
-
-				downloadHistoryTable.ReloadData();
-			}, 0.5f);
-		}
-
 		public void RefreshTable(bool fullReload = true) {
-			if(fullReload) {
-				SharedCoroutineStarter.instance.StartCoroutine(limitedFullTableReload.Call());
-			} else {
-				downloadHistoryTable.RefreshCells(false, true);
-			}
+			downloadListSorted = downloadList.OrderBy(x => x.orderValue).ToArray();
+			SharedCoroutineStarter.instance.StartCoroutine(limitedFullTableReload.Call());
 		}
 
 
 		[UIAction("#post-parse")]
 		void Parsed() {
+			limitedFullTableReload = new RatelimitCoroutine(downloadHistoryTable.ReloadData, 0.1f);
+			downloadHistoryTable.SetDataSource(this, false);
+
 			ReflectionUtil.SetField(downloadHistoryTable, "_canSelectSelectedCell", true);
 
 			BSMLStuff.GetScrollbarForTable(downloadHistoryData.gameObject, _scrollBarContainer.transform);
 		}
+
+		public float CellSize() => 8.05f;
+		public int NumberOfCells() => downloadList?.Count ?? 0;
+
+		public TableCell CellForIdx(TableView tableView, int idx) => DownloadListTableData.GetCell(tableView).PopulateWithSongData(downloadListSorted[idx]);
 
 		public class DownloadHistoryEntry {
 			[Flags]
@@ -199,36 +201,7 @@ namespace BetterSongSearch.UI {
 				hash = song.detailsSong.hash.ToLower();
 			}
 
-			[UIComponent("statusLabel")] TextMeshProUGUI statusLabel = null;
-			[UIComponent("bgContainer")] ImageView bg = null;
-			[UIComponent("bgProgress")] ImageView bgProgress = null;
-			[UIAction("refresh-visuals")]
-			public void Refresh(bool selected, bool highlighted) {
-				bg.color = new Color(0, 0, 0, highlighted ? 0.8f : 0.45f);
-
-				RefreshBar();
-			}
-
-			[UIAction("#post-parse")]
-			void RefreshBar() {
-				var clr = status == DownloadStatus.Failed ? Color.red : status != DownloadStatus.Queued ? Color.green : Color.gray;
-
-				clr.a = 0.5f + (downloadProgress * 0.4f);
-				bgProgress.color = clr;
-
-				var x = (bgProgress.gameObject.transform as RectTransform);
-				if(x == null)
-					return;
-
-				x.anchorMax = new Vector2(downloadProgress, 1);
-				x.ForceUpdateRectTransforms();
-			}
-
-			public void UpdateProgress() {
-				statusLabel.text = statusMessage;
-
-				RefreshBar();
-			}
+			public Action UpdateProgressHandler;
 		}
 	}
 }

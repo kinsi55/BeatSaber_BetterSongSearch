@@ -169,7 +169,6 @@ namespace BetterSongSearch.UI {
 				songsList = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;
-				songListView.songListData.data = new List<object>();
 				songListView.songList.ReloadData();
 
 				coverLoader?.Dispose();

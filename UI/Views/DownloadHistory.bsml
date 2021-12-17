@@ -4,19 +4,7 @@
 	</horizontal>
 	<horizontal preferred-height='72' pad-top='5' pad-bottom='2' preferred-width='80'>
 		<vertical preferred-width='70'>
-			<custom-list id='downloadList' select-cell='SelectSong' cell-size='11' visible-cells='7'>
-				<vertical id='bgContainer' bg='round-rect-panel' horizontal-fit='Unconstrained' preferred-height='9' vertical-fit='PreferredSize'/>
-				<vertical id='bgProgress' horizontal-fit='Unconstrained' preferred-height='1' vertical-fit='PreferredSize' background='panel-fade-gradient' anchor-pos-y='-3.875'/>
-				<vertical horizontal-fit='Unconstrained' pad='1' preferred-height='10' vertical-fit='PreferredSize'>
-					<horizontal spacing='2'>
-						<text text='~songName' align='MidlineLeft' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false'/>
-						<text text='~levelAuthorName' align='MidlineRight' font-size='2.3' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC'/>
-					</horizontal>
-					<horizontal pad-top='3'>
-						<text id='statusLabel' text='~statusMessage' align='MidlineLeft' font-size='3' word-wrapping='false' color='cyan'/>
-					</horizontal>
-				</vertical>
-			</custom-list>
+			<list id='downloadList' select-cell='SelectSong' visible-cells='9'/>
 		</vertical>
 		<vertical preferred-width='8' id='scrollBarContainer' vertical-fit='Unconstrained'/>
 	</horizontal>

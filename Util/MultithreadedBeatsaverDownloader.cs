@@ -113,20 +113,20 @@ namespace BetterSongSearch.Util {
 
 						int pos = start;
 
-						var buf = new byte[2 ^ 14];
 						while(pos != end) {
 							if(token.IsCancellationRequested)
 								throw new TaskCanceledException();
 
-							var read = await stream.ReadAsync(buf, 0, buf.Length, token);
+							var read = await stream.ReadAsync(fileOut, pos, Math.Min(8192, fileOut.Length - pos), token);
 							if(read == 0)
 								break;
-
-							Buffer.BlockCopy(buf, 0, fileOut, pos, read); // Faster on Mono than Array.Copy apparently
 
 							pos += read;
 
 							AddDownloadedBytes(read);
+
+							if(pos == fileOut.Length)
+								break;
 
 #if DEBUG
 							if(!MAKE_SLOW)

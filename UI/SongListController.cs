@@ -3,6 +3,7 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BetterSongSearch.UI.CustomLists;
 using BetterSongSearch.Util;
 using HMUI;
 using IPA.Utilities;
@@ -22,7 +23,7 @@ using static BetterSongSearch.UI.SongSearchSong;
 namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.SongList.bsml")]
-	class SongListController : BSMLAutomaticViewController {
+	class SongListController : BSMLAutomaticViewController, TableView.IDataSource {
 		static internal List<SongSearchSong> filteredSongsList = null;
 		static internal List<SongSearchSong> searchedSongsList = null;
 
@@ -58,10 +59,10 @@ namespace BetterSongSearch.UI {
 			var wasEmpty = searchedSongsList == null;
 
 			searchedSongsList = _newSearchedSongsList.ToList();
-			songListData.data = searchedSongsList.ToList<object>();
+
 
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-				StartCoroutine(_AntiLagRefreshTable(true));
+				songList.ReloadData();
 
 				songSearchPlaceholder.text = $"Search {searchedSongsList.Count} songs";
 
@@ -79,41 +80,6 @@ namespace BetterSongSearch.UI {
 
 				searchInProgress.gameObject.SetActive(false);
 			});
-		}
-
-		public void RefreshTable() => StartCoroutine(_AntiLagRefreshTable());
-
-		// This will spawn the UI rows in the table in batches so its not one big lag spike but 2/3 smaller ones
-		IEnumerator _AntiLagRefreshTable(bool reload = false) {
-			var x = (songList.transform as RectTransform);
-
-			void setH(float h) {
-				var copi = x.offsetMin;
-				copi.y = h;
-
-				x.offsetMin = copi;
-			}
-
-			setH(11.7f * 4);
-			var s = new Stopwatch();
-			s.Start();
-
-			if(reload) {
-				BSMLStuff.UnleakTable(songList.gameObject);
-				songList.ReloadData();
-			} else {
-				songList.RefreshCells(false, true);
-			}
-
-			var gap = Math.Min(0.1f, (s.ElapsedMilliseconds / 1000f) * 4);
-
-			yield return new WaitForSeconds(gap);
-			setH(11.7f * 2);
-			songList.RefreshCells(false, false);
-
-			yield return new WaitForSeconds(gap);
-			setH(0);
-			songList.RefreshCells(false, false);
 		}
 
 		[UIAction("UpdateDataAndFilters")] void UpdateDataAndFilters(object _) => StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
@@ -147,12 +113,12 @@ namespace BetterSongSearch.UI {
 
 		void Awake() {
 			selectedSongView = gameObject.AddComponent<SelectedSongView>();
-			limitedUpdateSearchedSongsList = new RatelimitCoroutine(() => Task.Run(_UpdateSearchedSongsList), 0.5f);
+			limitedUpdateSearchedSongsList = new RatelimitCoroutine(() => Task.Run(_UpdateSearchedSongsList), 0.1f);
 		}
 
-		[UIAction("SelectSong")] void _SelectSong(TableView _, SongSearchSong row) => selectedSongView.SetSelectedSong(row);
+		[UIAction("SelectSong")] void _SelectSong(TableView _, int row) => selectedSongView.SetSelectedSong(searchedSongsList[row]);
 
-		[UIComponent("songList")] public CustomCellListTableData songListData = null;
+		[UIComponent("songList")] public CustomListTableData songListData = null;
 		public TableView songList => songListData?.tableView;
 		[UIComponent("searchBoxContainer")] private VerticalLayoutGroup _searchBoxContainer = null;
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
@@ -177,6 +143,8 @@ namespace BetterSongSearch.UI {
 				songSearchInput.onValueChanged.AddListener(_ => UpdateSearchedSongsList());
 			}
 
+			songList.SetDataSource(this, false);
+
 			BSMLStuff.GetScrollbarForTable(songListData.gameObject, _scrollBarContainer.transform);
 
 			// Funny bsml bug where scrolling would not work otherwise
@@ -198,6 +166,10 @@ namespace BetterSongSearch.UI {
 			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(_sortDropdown, "_modalView");
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.83f + (c * 0.011f));
 		}
+
+		public float CellSize() => 11.66f;
+		public int NumberOfCells() => searchedSongsList?.Count ?? 0;
+		public TableCell CellForIdx(TableView tableView, int idx) => SongListTableData.GetCell(tableView).PopulateWithSongData(searchedSongsList[idx]);
 
 		// While not the best for readability you have to agree this is a neat implementation!
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
@@ -294,7 +266,7 @@ namespace BetterSongSearch.UI {
 
 		bool isQualified => detailsSong.rankedStatus == RankedStatus.Qualified;
 
-		public string fullFormattedSongName => $"{(CheckIsDownloaded() ? "<color=#888>" : "")}{detailsSong.songAuthorName} - {detailsSong.songName}";
+		public string fullFormattedSongName => $"{detailsSong.songAuthorName} - {detailsSong.songName}";
 		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
 		public string songRating => showVotesInsteadOfRating ? $"👍 {detailsSong.upvotes} 👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
@@ -333,18 +305,18 @@ namespace BetterSongSearch.UI {
 
 				return retVal;
 			}
-			string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{(detailsDiff.ranked ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "")}";
+			public string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{(detailsDiff.ranked ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "")}";
 			public SongSearchDiff(SongSearchSong songSearchSong, in SongDifficulty diff) {
 				this.detailsDiff = diff;
 				this.songSearchSong = songSearchSong;
 			}
 
 			static readonly IReadOnlyDictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {
-				{ MapDifficulty.Easy, "E" },
-				{ MapDifficulty.Normal, "N" },
-				{ MapDifficulty.Hard, "H" },
+				{ MapDifficulty.Easy, "Easy" },
+				{ MapDifficulty.Normal, "Norm" },
+				{ MapDifficulty.Hard, "Hard" },
 				{ MapDifficulty.Expert, "Ex" },
-				{ MapDifficulty.ExpertPlus, "E+" }
+				{ MapDifficulty.ExpertPlus, "Ex+" }
 			};
 
 			static readonly IReadOnlyDictionary<MapCharacteristic, string> customCharNames = new Dictionary<MapCharacteristic, string> {
@@ -354,13 +326,6 @@ namespace BetterSongSearch.UI {
 				{ MapCharacteristic.Custom, "?" },
 				{ MapCharacteristic.Lightshow, "💡" }
 			};
-		}
-
-
-		[UIComponent("bgContainer")] ImageView bg = null;
-		[UIAction("refresh-visuals")]
-		public void Refresh(bool selected, bool highlighted) {
-			bg.color = new Color(0, 0, 0, selected ? 0.9f : highlighted ? 0.6f : 0.45f);
 		}
 	}
 }

@@ -46,9 +46,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="UI\CustomLists\DownloadListCell.bsml" />
+    <None Remove="UI\CustomLists\SongListCell.bsml" />
     <None Remove="UI\Views\DownloadHistory.bsml" />
     <None Remove="UI\Views\FilterView.bsml" />
     <None Remove="UI\Views\SongList.bsml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UI\CustomLists\DownloadListCell.bsml" />
+    <EmbeddedResource Include="UI\CustomLists\SongListCell.bsml" />
   </ItemGroup>
 
   <ItemGroup>

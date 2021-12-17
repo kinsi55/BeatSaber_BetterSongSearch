@@ -1,0 +1,19 @@
+﻿<vertical id='bgContainer' bg='round-rect-panel' pad='1' pad-bottom='2' horizontal-fit='Unconstrained' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<horizontal spacing='3'>
+		<text id='fullFormattedSongName' align='MidlineLeft' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false' rich-text='false'/>
+		<text id='uploadDateFormatted' align='MidlineRight' font-size='2.7' word-wrapping='false' color='#AAA' rich-text='false'/>
+	</horizontal>
+	<horizontal pad-top='1' pad-bottom='2' spacing='2'>
+		<text id='levelAuthorName' align='MidlineLeft' font-size='2.3' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC' rich-text='false'/>
+		<text id='songLengthAndRating' align='MidlineRight' font-size='2.5' font-color='#CCC' word-wrapping='false'/>
+	</horizontal>
+	<horizontal id='diffs' bg='round-rect-panel' background-color='black' preferred-height='3.9'>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+		<text font-size='2.5' align='Center' overflow-mode='Truncate'/>
+	</horizontal>
+</vertical>
