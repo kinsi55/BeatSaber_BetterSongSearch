@@ -43,6 +43,8 @@ namespace BetterSongSearch.UI {
 		void OnEnable() {
 			if(playButton != null)
 				playButton.interactable = true;
+
+			SetIsDownloaded(selectedSong.CheckIsDownloaded(), selectedSong.CheckIsDownloadable());
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
