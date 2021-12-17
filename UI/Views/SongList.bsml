@@ -75,7 +75,7 @@
 							<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
 						</vertical>
 					</vertical>
-					<vertical child-expand-height="false" preferred-width="65">
+					<vertical child-expand-height="false" preferred-width="64" pad-left="6">
 						<text text="Description" align="Center" color='#7CF'/>
 						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="20"/>
 						<vertical horizontal-fit='PreferredSize' preferred-width="60">
