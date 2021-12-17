@@ -64,7 +64,11 @@ namespace BetterSongSearch.UI {
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 				songList.ReloadData();
 
-				songSearchPlaceholder.text = $"Search {searchedSongsList.Count} songs";
+				if(BSSFlowCoordinator.songsList.Length == filteredSongsList.Count) {
+					songSearchPlaceholder.text = $"Search by Song, Key, Mapper..";
+				} else {
+					songSearchPlaceholder.text = $"Search {searchedSongsList.Count} songs";
+				}
 
 				if(selectedSongView.selectedSong == null) {
 					selectedSongView.SetSelectedSong(searchedSongsList.FirstOrDefault(), true);
