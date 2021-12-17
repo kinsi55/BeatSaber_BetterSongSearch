@@ -194,8 +194,7 @@ namespace BetterSongSearch.UI {
 				}
 
 				return returnVal;
-			} },
-			{ "Most Downloads", x => x.detailsSong.downloadCount }
+			} }
 		};
 
 		internal static readonly IReadOnlyDictionary<string, Func<SongSearchDiff, float>> sortModesDiffSort = new Dictionary<string, Func<SongSearchDiff, float>>() {
