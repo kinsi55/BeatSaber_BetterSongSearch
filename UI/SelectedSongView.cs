@@ -44,7 +44,8 @@ namespace BetterSongSearch.UI {
 			if(playButton != null)
 				playButton.interactable = true;
 
-			SetIsDownloaded(selectedSong.CheckIsDownloaded(), selectedSong.CheckIsDownloadable());
+			if(selectedSong != null)
+				SetIsDownloaded(selectedSong.CheckIsDownloaded(), selectedSong.CheckIsDownloadable());
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
