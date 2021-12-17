@@ -58,8 +58,11 @@ namespace BetterSongSearch.Util {
 			}
 		}
 
+		static GameObject scrollBar = null;
+
 		public static GameObject GetScrollbarForTable(GameObject table, Transform targetContainer) {
-			var scrollBar = Resources.FindObjectsOfTypeAll<VerticalScrollIndicator>().FirstOrDefault(x => x.enabled)?.transform.parent?.gameObject;
+			if(scrollBar == null)
+				scrollBar = Resources.FindObjectsOfTypeAll<VerticalScrollIndicator>().FirstOrDefault(x => x.enabled)?.transform.parent?.gameObject;
 
 			if(scrollBar == null)
 				return null;
@@ -71,11 +74,11 @@ namespace BetterSongSearch.Util {
 
 			var listScrollBar = GameObject.Instantiate(scrollBar, targetContainer, false);
 			listScrollBar.SetActive(true);
-			var vsi = listScrollBar.GetComponentInChildren<VerticalScrollIndicator>();
+			var vsi = listScrollBar.GetComponentInChildren<VerticalScrollIndicator>(true);
 
 			ReflectionUtil.SetField(sw, "_verticalScrollIndicator", vsi);
 
-			var buttoneZ = listScrollBar.GetComponentsInChildren<NoTransitionsButton>().OrderByDescending(x => x.gameObject.name == "UpButton").ToArray();
+			var buttoneZ = listScrollBar.GetComponentsInChildren<NoTransitionsButton>(true).OrderByDescending(x => x.gameObject.name == "UpButton").ToArray();
 			if(buttoneZ.Length == 2) {
 				ReflectionUtil.SetField(sw, "_pageUpButton", (Button)buttoneZ[0]);
 				ReflectionUtil.SetField(sw, "_pageDownButton", (Button)buttoneZ[1]);
