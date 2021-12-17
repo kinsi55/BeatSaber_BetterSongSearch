@@ -29,10 +29,11 @@
 				<horizontal horizontal-fit="Unconstrained" pad-top="2">
 					<text id="selectedSongDiffInfo" align='Center' font-size='2.5' word-wrapping='false' color='#CCC' text=''/>
 				</horizontal>
-				<vertical vertical-fit="PreferredSize">
+				<vertical vertical-fit="PreferredSize" active="false" id="detailActions">
 					<primary-button id="downloadButton" on-click='Download' text='Download' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
 					<primary-button id="playButton" on-click='Play' text='Play' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
-					<button id="songDetailsButton" on-click='ShowSongDetauls' text='Song Details' horizontal-fit='Unconstrained' font-size='3.5' active='false'/>
+					<button on-click='ShowSongDetails' text='Upload Details' horizontal-fit='Unconstrained' font-size='3.5'/>
+					<button on-click='FilterByUploader' text='Filter by Uploader' horizontal-fit='Unconstrained' font-size='3.2'/>
 				</vertical>
 			</macro.as-host>
 		</vertical>
@@ -74,10 +75,12 @@
 							<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
 						</vertical>
 					</vertical>
-					<vertical child-expand-height="false" horizontal-fit="Unconstrained" vertical-fit="Unconstrained">
+					<vertical child-expand-height="false" horizontal-fit="PreferredSize" preferred-width="65">
 						<text text="Description" align="Center" color='#7CF'></text>
-						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="15"/>
-						<text id="selectedSongDescription" align="Center" word-wrapping="true" font-size="2.5" overflow-mode="Ellipsis"/>
+						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="20"/>
+						<vertical horizontal-fit='PreferredSize' preferred-height="80" preferred-width="55">
+							<text-page id="selectedSongDescription" align="Center" word-wrapping="true"/>
+						</vertical>
 					</vertical>
 				</horizontal>
 				<button event-click='CloseSongDetails' text='Close Details'/>

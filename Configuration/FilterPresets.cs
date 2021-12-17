@@ -74,8 +74,8 @@ namespace BetterSongSearch.Configuration {
 		}
 
 
-		public bool uploadersBlacklist = false;
-		public HashSet<string> uploaders = new HashSet<string>();
+		public bool uploadersBlacklist { get; private set; } = false;
+		public HashSet<string> uploaders { get; private set; } = new HashSet<string>();
 
 
 
@@ -133,10 +133,11 @@ namespace BetterSongSearch.Configuration {
 		static string FormatMaxNps(float d) => d >= NPS_FILTER_MAX ? "Unlimited" : d.ToString();
 		static string FormatShortFloat(float d) => d.ToString("0.0");
 		string FormatUploaderShortInfo(string d) {
+			uploadersString = d;
+
 			if(d == "")
 				return "Show all";
 
-			uploadersString = d;
 			return $"{(uploadersBlacklist ? "Hiding" : "Show only")} <color=#CCC>{uploaders.Count}</color> uploader{(uploaders.Count == 1 ? "" : "s")}";
 		}
 		#endregion

@@ -25,7 +25,8 @@ namespace BetterSongSearch.UI {
 
 		[UIComponent("downloadButton")] NoTransitionsButton downloadButton = null;
 		[UIComponent("playButton")] NoTransitionsButton playButton = null;
-		[UIComponent("songDetailsButton")] NoTransitionsButton songDetailsButton = null;
+
+		[UIComponent("detailActions")] Transform detailActionsHideUntilSongsAvailable = null;
 
 		static Material lol = null;
 		[UIAction("#post-parse")]
@@ -67,7 +68,7 @@ namespace BetterSongSearch.UI {
 			selectedSongAuthor.text = song.detailsSong.songAuthorName;
 			selectedSongName.text = song.detailsSong.songName;
 
-			songDetailsButton.gameObject.SetActive(true);
+			detailActionsHideUntilSongsAvailable.gameObject.SetActive(true);
 
 			if(song.diffs.Length > 1) {
 				selectedSongDiffInfo.text = string.Format(
@@ -137,13 +138,13 @@ namespace BetterSongSearch.UI {
 		[UIComponent("songDetails")] ModalView songDetails = null;
 		[UIComponent("selectedCharacteristics")] TextMeshProUGUI selectedCharacteristics = null;
 		[UIComponent("selectedSongKey")] TextMeshProUGUI selectedSongKey = null;
-		[UIComponent("selectedSongDescription")] TextMeshProUGUI selectedSongDescription = null;
+		[UIComponent("selectedSongDescription")] CurvedTextMeshPro selectedSongDescription = null;
 		[UIComponent("selectedRating")] TextMeshProUGUI selectedRating = null;
 		[UIComponent("selectedDownloadCount")] TextMeshProUGUI selectedDownloadCount = null;
 		[UIComponent("songDetailsLoading")] ImageView songDetailsLoading = null;
 
-		[UIAction("ShowSongDetauls")]
-		void ShowSongDetauls() {
+		[UIAction("ShowSongDetails")]
+		void ShowSongDetails() {
 			selectedCharacteristics.text = String.Join(", ", selectedSong.detailsSong.difficulties.GroupBy(x => x.characteristic).Select(x => $"{x.Count()}x {x.Key}"));
 			selectedSongKey.text = selectedSong.detailsSong.key;
 			selectedDownloadCount.text = selectedSong.detailsSong.downloadCount.ToString("N0");
@@ -163,9 +164,17 @@ namespace BetterSongSearch.UI {
 				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 					songDetailsLoading.gameObject.SetActive(false);
 					// If we dont do that, the description is long and contains unicode the game crashes. Fun.
-					selectedSongDescription.text = Regex.Replace(desc, @"\p{Cs}", "?");
+					selectedSongDescription.text = desc;
+					selectedSongDescription.gameObject.SetActive(false);
+					selectedSongDescription.gameObject.SetActive(true);
 				});
 			}).ConfigureAwait(false);
+		}
+
+		void FilterByUploader() {
+			FilterView.currentFilter.uploadersString = selectedSong.detailsSong.uploaderName.ToLowerInvariant();
+			FilterView.currentFilter.NotifyPropertyChanged("uploadersString");
+			BSSFlowCoordinator.FilterSongs();
 		}
 
 		LevelFilteringNavigationController levelFilteringNavigationController = Resources.FindObjectsOfTypeAll<LevelFilteringNavigationController>().FirstOrDefault();
