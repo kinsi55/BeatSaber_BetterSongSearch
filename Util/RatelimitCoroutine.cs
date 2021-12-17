@@ -24,7 +24,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		public IEnumerator CallNextFrame() {
-			yield return 0;
+			yield return null;
 			yield return Call();
 		}
 

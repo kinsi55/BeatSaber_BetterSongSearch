@@ -236,7 +236,7 @@ namespace BetterSongSearch.UI {
 		IEnumerator SelectLevelNextFrame(IPreviewBeatmapLevel level) {
 			// 3 LOC basegame method of selecting a song that works always I LOST
 			if(IPA.Loader.PluginManager.GetPluginFromId("SongBrowser") != null)
-				yield return 0;
+				yield return null;
 
 			levelSearchViewController?.ResetCurrentFilterParams();
 			levelFilteringNavigationController.UpdateCustomSongs();

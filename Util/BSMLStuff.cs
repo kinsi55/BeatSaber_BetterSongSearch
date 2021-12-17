@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace BetterSongSearch.Util {
 	static class BSMLStuff {
 		public static IEnumerator MergeSliders(GameObject container, bool constrictValuesMinMax = true) {
-			yield return 0;
+			yield return null;
 			foreach(var x in container.GetComponentsInChildren<CurvedTextMeshPro>().Where(x => x.text == "MERGE_TO_PREV")) {
 				yield return new WaitForEndOfFrame();
 				var ourContainer = x.transform.parent;
@@ -103,7 +103,7 @@ namespace BetterSongSearch.Util {
 			void OnEnable() => StartCoroutine(dorefresh());
 
 			IEnumerator dorefresh() {
-				yield return 0;
+				yield return null;
 				var sv = gameObject.GetComponent<ScrollView>();
 
 				if(sv == null)
