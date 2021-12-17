@@ -130,7 +130,7 @@ namespace BetterSongSearch.UI {
 					if(!x.isDownloading && !x.isQueued)
 						continue;
 
-					x.retries = int.MaxValue;
+					x.retries = 69;
 					x.status = DownloadHistoryEntry.DownloadStatus.Failed;
 				}
 				closeCancelSource?.Cancel();
