@@ -197,8 +197,8 @@ namespace BetterSongSearch.UI {
 			public DownloadHistoryEntry(SongSearchSong song) {
 				songName = song.detailsSong.songName;
 				levelAuthorName = song.detailsSong.levelAuthorName;
-				key = song.detailsSong.key.ToLower();
-				hash = song.detailsSong.hash.ToLower();
+				key = song.detailsSong.key.ToLowerInvariant();
+				hash = song.detailsSong.hash.ToLowerInvariant();
 			}
 
 			public Action UpdateProgressHandler;

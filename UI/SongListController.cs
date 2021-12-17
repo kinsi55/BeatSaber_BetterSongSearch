@@ -221,6 +221,9 @@ namespace BetterSongSearch.UI {
 		string _hash = null;
 		public string hash => _hash ?? (_hash = detailsSong.hash);
 
+		string _uploaderNameLowercase = null;
+		public string uploaderNameLowercase => _uploaderNameLowercase ?? (_uploaderNameLowercase = detailsSong.uploaderName.ToLowerInvariant());
+
 		public SongSearchDiff[] diffs { get; private set; }
 		public SongSearchDiff[] _sortedDiffsCache;
 
@@ -275,7 +278,7 @@ namespace BetterSongSearch.UI {
 		//public string levelAuthorName => song.levelAuthorName;
 		#endregion
 
-		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpper()}";
+		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpperInvariant()}";
 		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.First();
 		public SongSearchSong(in Song song) {
 			detailsSong = song;

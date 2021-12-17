@@ -34,7 +34,7 @@ namespace BetterSongSearch.Util {
 		public static async Task<string> GetSongDescription(string key, CancellationToken token) {
 			InitClientIfNecessary();
 
-			using(var resp = await client.GetAsync($"https://api.beatsaver.com/maps/id/{key.ToLower()}", HttpCompletionOption.ResponseHeadersRead, token)) {
+			using(var resp = await client.GetAsync($"https://api.beatsaver.com/maps/id/{key.ToLowerInvariant()}", HttpCompletionOption.ResponseHeadersRead, token)) {
 				if(resp.StatusCode != HttpStatusCode.OK)
 					throw new Exception($"Unexpected HTTP response: {resp.StatusCode} {resp.ReasonPhrase}");
 
@@ -52,7 +52,7 @@ namespace BetterSongSearch.Util {
 
 			var folderName = $"{entry.key} ({entry.songName} - {entry.levelAuthorName})";
 
-			var dl = new MultithreadedBeatsaverDownloader(client, $"https://cdn.beatsaver.com/{entry.hash}.zip".ToLower(), (p) => {
+			var dl = new MultithreadedBeatsaverDownloader(client, $"https://cdn.beatsaver.com/{entry.hash}.zip".ToLowerInvariant(), (p) => {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
 				progressCb(p);
 			});

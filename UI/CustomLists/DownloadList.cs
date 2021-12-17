@@ -86,7 +86,7 @@ namespace BetterSongSearch.UI.CustomLists {
         }
 
         public void UpdateProgress() {
-            statusLabel.text = entry.statusMessage
+            statusLabel.text = entry.statusMessage;
 
             RefreshBar();
         }
