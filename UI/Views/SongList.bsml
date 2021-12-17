@@ -61,9 +61,9 @@
 	</modal>
 	<macro.as-host host='selectedSongView'>
 		<modal id='songDetails' clickerino-offerino-closerino='true' hide-event='CloseSongDetails' size-delta-x='90' size-delta-y='75'>
-			<vertical pad='3' child-expand-height='false' vertical-fit='Unconstrained' preferred-width='90' preferred-height='85'>
+			<vertical pad='3' child-expand-height='false' vertical-fit='Unconstrained' preferred-width='85' preferred-height='85'>
 				<horizontal vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
-					<vertical child-expand-height='false' min-width='30'>
+					<vertical child-expand-height='false' preferred-width="25">
 						<text text="Song Key" align="Center" color='#7CF'></text>
 						<vertical>
 							<text id="selectedSongKey" align="Center" all-uppercase='true'/>
@@ -75,10 +75,10 @@
 							<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
 						</vertical>
 					</vertical>
-					<vertical child-expand-height="false" horizontal-fit="PreferredSize" preferred-width="65">
+					<vertical child-expand-height="false" preferred-width="65">
 						<text text="Description" align="Center" color='#7CF'></text>
 						<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="20"/>
-						<vertical horizontal-fit='PreferredSize' preferred-height="80" preferred-width="55">
+						<vertical horizontal-fit='PreferredSize' preferred-width="60">
 							<text-page id="selectedSongDescription" align="Center" word-wrapping="true"/>
 						</vertical>
 					</vertical>
