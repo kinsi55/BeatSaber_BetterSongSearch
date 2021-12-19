@@ -101,11 +101,11 @@ namespace BetterSongSearch.Util {
 			if(prefiltered.Count == 0)
 				return new List<SongSearchSong>();
 
-			var maxSearchWeight = prefiltered.Max(x => x.searchWeight);
+			var maxSearchWeightInverse = 1f / prefiltered.Max(x => x.searchWeight);
 			var maxSortWeight = prefiltered.Max(x => x.sortWeight);
 
 			return prefiltered.OrderByDescending((s) => {
-				var searchWeight = (s.searchWeight / maxSearchWeight);
+				var searchWeight = s.searchWeight * maxSearchWeightInverse;
 
 				return searchWeight + Math.Min(searchWeight / 2, (s.sortWeight / maxSortWeight) * (searchWeight / 2));
 			}).Select(x => x.song);

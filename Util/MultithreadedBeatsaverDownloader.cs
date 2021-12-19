@@ -28,6 +28,7 @@ namespace BetterSongSearch.Util {
 
 		const bool doMultiDl = false; // (Current) BeatSaver does not support multiple connections for downloads
 		int downloadSize = 0;
+		float downloadSizeInverse = 0;
 		int downloadedBytes = 0;
 		float progress = 0f;
 		byte[] fileOut;
@@ -41,7 +42,7 @@ namespace BetterSongSearch.Util {
 		void AddDownloadedBytes(int bytes) {
 			Interlocked.Add(ref downloadedBytes, bytes);
 
-			var newProgress = (float)downloadedBytes / downloadSize;
+			var newProgress = downloadedBytes * downloadSizeInverse;
 
 			if(newProgress - progress > 0.01f) {
 				progress = newProgress;
@@ -94,6 +95,8 @@ namespace BetterSongSearch.Util {
 					// If we got a partial response (Requested bytes are less than the total fizesize) get the total fizesize from resp header
 					if(resp.StatusCode == HttpStatusCode.PartialContent)
 						downloadSize = (int)resp.Content.Headers.ContentRange.Length;
+
+					downloadSizeInverse = 1f / downloadSize;
 
 					fileOut = new byte[downloadSize];
 
