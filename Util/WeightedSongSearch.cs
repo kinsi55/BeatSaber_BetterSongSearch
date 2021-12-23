@@ -13,6 +13,7 @@ namespace BetterSongSearch.Util {
 
 		public static IEnumerable<SongSearchSong> Search(IList<SongSearchSong> inList, string filter, Func<SongSearchSong, float> ordersort) {
 			var words = filter.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			var wordLengthInverses = words.Select(x => 1f / x.Length).ToArray();
 
 			var possibleSongKey = 0u;
 
@@ -50,7 +51,7 @@ namespace BetterSongSearch.Util {
 						if(index == 0 || index > 0 && IsSpace(songe.songAuthorName[index - 1])) {
 							matchedAuthor = true;
 
-							resultWeight += (int)Math.Round((index == 0 ? 4 : 3) * ((float)words[i].Length / songe.songAuthorName.Length));
+							resultWeight += (int)Math.Round((index == 0 ? 4 : 3) * (wordLengthInverses[i] * songe.songAuthorName.Length));
 							continue;
 						}
 					}
