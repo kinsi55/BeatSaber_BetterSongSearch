@@ -40,16 +40,16 @@ namespace BetterSongSearch.UI {
 			void DataUpdated() {
 				songsList = new SongSearchSong[songDetails.songs.Length];
 
-				for(var i = 0; i < songsList.Length; i++)
-					songsList[i] = new SongSearchSong(songDetails.songs[i]);
-
-				FilterSongs();
-
-				IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
-				});
-
 				Task.Run(() => {
+					for(var i = 0; i < songsList.Length; i++)
+						songsList[i] = new SongSearchSong(songDetails.songs[i]);
+
+					FilterSongs();
+
+					IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
+						filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
+					});
+
 					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
