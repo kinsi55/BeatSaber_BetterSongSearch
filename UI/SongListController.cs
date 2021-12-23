@@ -234,7 +234,7 @@ namespace BetterSongSearch.UI {
 		public SongSearchDiff[] _sortedDiffsCache;
 
 		#region BSML stuffs
-		public SongSearchDiff[] sortedDiffs { 
+		public SongSearchDiff[] sortedDiffs {
 			get {
 				if(_sortedDiffsCache == null) {
 					// Matching Standard > Matching Non-Standard > Non-Matching Standard > Non-Matching Non-Standard
