@@ -171,6 +171,8 @@ namespace BetterSongSearch.UI {
 			if(instance != null) Manager._parentFlow.DismissFlowCoordinator(instance, () => {
 				lastVisibleTableRowIdx = songListView.songList.GetVisibleCellsIdRange().Item1;
 				songsList = null;
+				filteredSongsListPreallocatedArray = null;
+				searchedSongsListPreallocatedArray = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;
 				songListView.songList.ReloadData();
