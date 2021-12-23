@@ -48,8 +48,6 @@ namespace BetterSongSearch.UI {
 					for(var i = 0; i < songsList.Length; i++)
 						songsList[i] = new SongSearchSong(songDetails.songs[i]);
 
-					FilterSongs();
-
 					IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 						filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
 					});
@@ -57,7 +55,7 @@ namespace BetterSongSearch.UI {
 					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
-						if(!x.validScore || x.highScore == 0 || x.levelID.Length < 13 + 40 || !x.levelID.StartsWith("custom_level_"))
+						if(!x.validScore || x.highScore == 0 || x.levelID.Length < 13 + 40 || !x.levelID.StartsWith("custom_level_", StringComparison.Ordinal))
 							continue;
 
 						var sh = x.levelID.Substring(13, 40);
@@ -79,6 +77,8 @@ namespace BetterSongSearch.UI {
 
 						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
 					}
+
+					FilterSongs();
 				});
 			};
 
