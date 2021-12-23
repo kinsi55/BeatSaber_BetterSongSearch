@@ -24,6 +24,8 @@ namespace BetterSongSearch.UI {
 		public static CancellationTokenSource closeCancelSource;
 
 		public static SongSearchSong[] songsList { get; private set; } = null;
+		public static SongSearchSong[] filteredSongsListPreallocatedArray { get; private set; } = null;
+		public static SongSearchSong[] searchedSongsListPreallocatedArray { get; private set; } = null;
 
 		public static PlayerDataModel playerDataModel = null;
 		public static Dictionary<string, Dictionary<string, float>> songsWithScores = null;
@@ -39,6 +41,8 @@ namespace BetterSongSearch.UI {
 
 			void DataUpdated() {
 				songsList = new SongSearchSong[songDetails.songs.Length];
+				filteredSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
+				searchedSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
 
 				Task.Run(() => {
 					for(var i = 0; i < songsList.Length; i++)
@@ -185,8 +189,7 @@ namespace BetterSongSearch.UI {
 				return;
 
 			await Task.Run(() => {
-				var nl = new List<SongSearchSong>();
-				SongListController.filteredSongsList = nl;
+				var sc = 0;
 
 				// Loop through our (custom) songdetails array
 				for(var i = 0; i < songsList.Length; i++) {
@@ -222,8 +225,10 @@ namespace BetterSongSearch.UI {
 
 					songsList[i]._sortedDiffsCache = null;
 
-					nl.Add(songsList[i]);
+					filteredSongsListPreallocatedArray[sc++] = songsList[i];
 				}
+
+				SongListController.filteredSongsList = new ArraySegment<SongSearchSong>(filteredSongsListPreallocatedArray, 0, sc);
 			});
 
 			songListView.UpdateSearchedSongsList();

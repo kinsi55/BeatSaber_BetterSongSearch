@@ -24,8 +24,8 @@ namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.SongList.bsml")]
 	class SongListController : BSMLAutomaticViewController, TableView.IDataSource {
-		static internal List<SongSearchSong> filteredSongsList = null;
-		static internal List<SongSearchSong> searchedSongsList = null;
+		static internal IList<SongSearchSong> filteredSongsList = null;
+		static internal IList<SongSearchSong> searchedSongsList = null;
 
 		[UIComponent("searchInProgress")] readonly ImageView searchInProgress = null;
 
@@ -58,8 +58,11 @@ namespace BetterSongSearch.UI {
 
 			var wasEmpty = searchedSongsList == null;
 
-			searchedSongsList = _newSearchedSongsList.ToList();
+			var i = 0;
+			foreach(var song in _newSearchedSongsList)
+				BSSFlowCoordinator.searchedSongsListPreallocatedArray[i++] = song;
 
+			searchedSongsList = new ArraySegment<SongSearchSong>(BSSFlowCoordinator.searchedSongsListPreallocatedArray, 0, i);
 
 			IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 				songList.ReloadData();
