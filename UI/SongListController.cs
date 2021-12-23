@@ -169,6 +169,9 @@ namespace BetterSongSearch.UI {
 
 			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(_sortDropdown, "_modalView");
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.83f + (c * 0.011f));
+
+			if(searchedSongsList == null)
+				_UpdateSearchedSongsList();
 		}
 
 		public float CellSize() => 11.66f;
