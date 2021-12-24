@@ -160,11 +160,6 @@ namespace BetterSongSearch.UI {
 				XD.FunnyMono(SelectedSongView.songPreviewPlayer)?.CrossfadeToDefault();
 			} catch { }
 
-			foreach(var x in filterView.GetComponentsInChildren<ModalView>().Concat(songListView.GetComponentsInChildren<ModalView>())) {
-				x.Hide(false);
-				x.gameObject.SetActive(false);
-			}
-
 			if(downloadHistoryView.hasUnloadedDownloads)
 				SongCore.Loader.Instance.RefreshSongs(false);
 
