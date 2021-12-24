@@ -28,31 +28,18 @@ namespace BetterSongSearch.UI {
 		public static SongSearchSong[] searchedSongsListPreallocatedArray { get; private set; } = null;
 
 		public static PlayerDataModel playerDataModel = null;
-		public static Dictionary<string, Dictionary<string, float>> songsWithScores = null;
+		public static Dictionary<string, Dictionary<string, float>> _songsWithScores = null;
+		public static bool songsWithScoresShouldProbablyUpdate = true;
 
-		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
-			instance = this;
-
-			closeCancelSource = new CancellationTokenSource();
-
-			coverLoader ??= new CoverImageAsyncLoader();
-
-			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? Resources.FindObjectsOfTypeAll<PlayerDataModel>().FirstOrDefault();
-
-			void DataUpdated() {
-				songsList = new SongSearchSong[songDetails.songs.Length];
-				filteredSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
-				searchedSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
-
-				Task.Run(() => {
-					for(var i = 0; i < songsList.Length; i++)
-						songsList[i] = new SongSearchSong(songDetails.songs[i]);
-
-					IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-						filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
-					});
-
-					songsWithScores = new Dictionary<string, Dictionary<string, float>>();
+		/*
+		 * With the control flow of BSS, this is always accessed off-main-thread when it does happen
+		 * to get populated / updated, so we can keep this on whatever thread it happens to get called from
+		 */
+		public static Dictionary<string, Dictionary<string, float>> songsWithScores {
+			get {
+				if(_songsWithScores == null || songsWithScoresShouldProbablyUpdate) {
+					_songsWithScores ??= new Dictionary<string, Dictionary<string, float>>();
+					songsWithScoresShouldProbablyUpdate = false;
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
 						if(!x.validScore || x.highScore == 0 || x.levelID.Length < 13 + 40 || !x.levelID.StartsWith("custom_level_", StringComparison.Ordinal))
@@ -70,16 +57,43 @@ namespace BetterSongSearch.UI {
 						if(!song.GetDifficulty(out var diff, (SongDetailsCache.Structs.MapDifficulty)x.difficulty))
 							continue;
 
-						if(!songsWithScores.TryGetValue(sh, out var h))
-							songsWithScores.Add(sh, h = new Dictionary<string, float>());
+						if(!_songsWithScores.TryGetValue(sh, out var h))
+							_songsWithScores.Add(sh, h = new Dictionary<string, float>());
 
 						var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
 
 						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
 					}
+				}
 
-					FilterSongs();
+				return _songsWithScores;
+			}
+		}
+
+		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+			instance = this;
+
+			closeCancelSource = new CancellationTokenSource();
+
+			coverLoader ??= new CoverImageAsyncLoader();
+
+			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? UnityEngine.Object.FindObjectOfType<PlayerDataModel>();
+
+			async Task DataUpdated() {
+				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
+					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
 				});
+
+				await Task.Run(() => {
+					songsList = new SongSearchSong[songDetails.songs.Length];
+					filteredSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
+					searchedSongsListPreallocatedArray = new SongSearchSong[songsList.Length];
+
+					for(var i = 0; i < songsList.Length; i++)
+						songsList[i] = new SongSearchSong(songDetails.songs[i]);
+				});
+
+				FilterSongs();
 			};
 
 			if(firstActivation) {
@@ -92,14 +106,14 @@ namespace BetterSongSearch.UI {
 				ProvideInitialViewControllers(songListView, filterView, downloadHistoryView);
 
 				SongCore.Loader.SongsLoadedEvent += SongcoreSongsLoaded;
-				SongDetailsContainer.dataAvailableOrUpdated += DataUpdated;
+				SongDetailsContainer.dataAvailableOrUpdated += () => _ = DataUpdated();
 
 				showBackButton = true;
 			}
 			// Re-Init every time incase its time to download a new database
 			songDetails = await SongDetails.Init(1);
 
-			DataUpdated();
+			await DataUpdated();
 
 			if(!firstActivation)
 				downloadHistoryView.RefreshTable();
@@ -170,6 +184,7 @@ namespace BetterSongSearch.UI {
 				searchedSongsListPreallocatedArray = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;
+				songsWithScoresShouldProbablyUpdate = true;
 				songListView.songList.ReloadData();
 
 				coverLoader?.Dispose();
