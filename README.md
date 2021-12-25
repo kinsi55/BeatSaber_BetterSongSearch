@@ -2,8 +2,6 @@
 
 Searching, downloading and playing songs, now with 100% less annoying!
 
-### This is not meant to be a replacement for SongBrowser or the Standard BeatSaver Downloader as some use cases cant be accomplished, it is merely an addition.
-
 ---
 
 The Game version(s) specific releases are compatible with are mentioned in the Release title (Its obviously possible latest is not supported assuming its been released recently). If you need the plugin for an older version - Grab an older release that fits 🤯
