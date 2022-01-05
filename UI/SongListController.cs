@@ -243,8 +243,8 @@ namespace BetterSongSearch.UI {
 					);
 
 					// If we are sorting by something that is on a diff-level, sort the diffy as well!
-					if(SongListController.sortModesDiffSort.ContainsKey(SongListController.opt_sort))
-						y = y.ThenBy(SongListController.sortModesDiffSort[SongListController.opt_sort]);
+					if(SongListController.sortModesDiffSort.TryGetValue(SongListController.opt_sort, out var diffSorter))
+						y = y.ThenBy(diffSorter);
 
 					_sortedDiffsCache = y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0).ToArray();
 				}
@@ -309,8 +309,8 @@ namespace BetterSongSearch.UI {
 			string GetCombinedShortDiffName() {
 				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
 
-				if(customCharNames.ContainsKey(detailsDiff.characteristic))
-					retVal += $"({customCharNames[detailsDiff.characteristic]})";
+				if(customCharNames.TryGetValue(detailsDiff.characteristic, out var customCharName))
+					retVal += $"({customCharName})";
 
 				return retVal;
 			}
