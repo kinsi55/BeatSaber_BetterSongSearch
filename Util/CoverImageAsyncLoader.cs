@@ -1,5 +1,6 @@
 ﻿using SongDetailsCache.Structs;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -10,10 +11,10 @@ using UnityEngine;
 
 namespace BetterSongSearch.Util {
 	class CoverImageAsyncLoader : IDisposable {
-		Dictionary<string, Sprite> _spriteCache;
+		static Dictionary<string, Sprite> _spriteCache;
 
 		public CoverImageAsyncLoader() {
-			_spriteCache = new Dictionary<string, Sprite>();
+			_spriteCache ??= new Dictionary<string, Sprite>();
 
 			client = new HttpClient(new HttpClientHandler() {
 				AutomaticDecompression = DecompressionMethods.GZip,
