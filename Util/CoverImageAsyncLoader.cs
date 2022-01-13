@@ -54,10 +54,13 @@ namespace BetterSongSearch.Util {
 		}
 
 		public void Dispose() {
-			foreach(var x in _spriteCache.Values)
-				GameObject.DestroyImmediate(x);
+			while(_spriteCache.Count > 1) {
+				var x = _spriteCache.Keys.First();
 
-			_spriteCache = null;
+				GameObject.DestroyImmediate(_spriteCache[x]);
+
+				_spriteCache.Remove(x);
+			}
 
 			client.CancelPendingRequests();
 			client.Dispose();
