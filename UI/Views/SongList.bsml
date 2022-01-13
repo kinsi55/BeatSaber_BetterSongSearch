@@ -13,7 +13,7 @@
 	</horizontal>
 	<horizontal preferred-height='75' pad-top='3' pad-bottom='2' preferred-width='80'>
 		<vertical preferred-width='70'>
-			<list id='songList' visible-cells='6' select-cell='SelectSong'/>
+			<list id='songList' select-cell='SelectSong'/>
 		</vertical>
 		<vertical preferred-width='8' id='scrollBarContainer' vertical-fit='Unconstrained'/>
 		<vertical preferred-width='40' bg='round-rect-panel' pad='2' child-expand-height='false'>

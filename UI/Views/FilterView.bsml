@@ -1,63 +1,84 @@
 ﻿<vertical preferred-width="130" anchor-min-y="1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<horizontal bg='panel-top-gradient'>
-		<horizontal>
+	<horizontal bg='panel-top-gradient' id='filterbarContainer'>
+		<horizontal child-align='MiddleRight' horizontal-fit='PreferredSize' preferred-width='18.5'>
 			<button text='Settings' click-event='ShowSettingsModal'/>
 		</horizontal>
 		<horizontal ignore-layout='true' pad-top='1'>
 			<text text='FILTERS' align='Center' font-size='7' italics='true'/>
 		</horizontal>
-		<horizontal horizontal-fit='PreferredSize' pad-left='77' spacing='2'>
+		<horizontal horizontal-fit='PreferredSize' pad-left='76' spacing='2'>
 			<button text='Clear' on-click='ClearFilters'/>
 			<button text='Presets' event-click='OpenPresets' on-click='ReloadPresets'/>
 		</horizontal>
 	</horizontal>
 	<macro.as-host host='currentFilter'>
-		<horizontal horizontal-fit='PreferredSize' child-expand-width='true' preferred-height='80' pad-top='3' pad-bottom='1'>
-			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-right='2'>
-				<horizontal>
-					<text text='[ General ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<list-setting text='Downloaded' value="existingSongs" choices='downloadedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
-				<list-setting text='Local score' value="existingScore" choices='scoreFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
-				<slider-setting text='Length' value="minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
-				<slider-setting text='MERGE_TO_PREV' value="maximumSongLength" bind-value="true" apply-on-change="true" min='0' max='~SONG_LENGTH_FILTER_MAX' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
-				<horizontal pad-top="3">
-					<text text='[ Mapping ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<slider-setting text='NJS' value="minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
-				<slider-setting text='MERGE_TO_PREV' value="maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
-				<slider-setting text='Notes/s' value="minimumNps" bind-value="true" apply-on-change="true" min='0' max='15' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
-				<slider-setting text='MERGE_TO_PREV' value="maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
-				<horizontal pad-top="3">
-					<text text='[ ScoreSaber ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<list-setting text='Ranked Status' value="rankedState" choices='rankedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
-				<slider-setting text='Stars' value="minimumStars" bind-value="true" apply-on-change="true" min='0' max='13' increment='0.2' formatter='FormatShortFloat' on-change="UpdateData"/>
-				<slider-setting text='MERGE_TO_PREV' value="maximumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
+		<horizontal horizontal-fit='PreferredSize' pad='4' spacing='2' preferred-height='79' vertical-fit='PreferredSize' child-control-height='false'>
+			<vertical spacing='2' child-expand-height='false'>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>General' align='Center' underlined='true' bold='true' font-size='3.5' color='#69B'/>
+					</horizontal>
+					<list-setting text='Downloaded' value="existingSongs" choices='downloadedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
+					<list-setting text='Local score' value="existingScore" choices='scoreFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
+					<slider-setting text='Length' value="minimumSongLength" bind-value="true" apply-on-change="true" min='0' max='10' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
+					<slider-setting text='MERGE_TO_PREV' value="maximumSongLength" bind-value="true" apply-on-change="true" min='0' max='~SONG_LENGTH_FILTER_MAX' increment='0.25' formatter='FormatSongLengthLimitFloat' on-change="UpdateData"/>
+				</vertical>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>Mapping' align='Center' underlined='true' bold='true'  font-size='3.5' color='#69B'/>
+					</horizontal>
+					<slider-setting text='NJS' value="minimumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
+					<slider-setting text='MERGE_TO_PREV' value="maximumNjs" bind-value="true" apply-on-change="true" min='0' max='~NJS_FILTER_MAX' increment='0.5' formatter='FormatMaxNjs' on-change="UpdateData"/>
+					<slider-setting text='Notes/s' value="minimumNps" bind-value="true" apply-on-change="true" min='0' max='15' increment='0.5' formatter='FormatShortFloat' on-change="UpdateData"/>
+					<slider-setting text='MERGE_TO_PREV' value="maximumNps" bind-value="true" apply-on-change="true" min='0' max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
+				</vertical>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>ScoreSaber' align='Center' underlined='true' bold='true'  font-size='3.5' color='#69B'/>
+					</horizontal>
+					<list-setting text='Ranked Status' value="rankedState" choices='rankedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
+					<slider-setting text='Stars' value="minimumStars" bind-value="true" apply-on-change="true" min='0' max='13' increment='0.2' formatter='FormatShortFloat' on-change="UpdateData"/>
+					<slider-setting text='MERGE_TO_PREV' value="maximumStars" bind-value="true" apply-on-change="true" min='0' max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
+				</vertical>
 			</vertical>
-			<vertical child-expand-height='false' child-control-height='false' preferred-width='65' pad-left='2'>
-				<horizontal>
-					<text text='[ BeatSaver ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
-				<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
-				<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
-				<!--intentonally pointing to _uploadersString because formatter is called before setting the bound value and RRRRRRRR-->
-				<string-setting text='Uploader(s)' value='uploadersString' bind-value='true' apply-on-change='true' formatter='FormatUploaderShortInfo' on-change="UpdateData" hover-hint='You can enter multiple Uploader names, seperated by spaces. If you have an Exclamation mark at the beginning of your input it becomes a blacklist for the given uploaders'/>
-				<horizontal pad-top="3">
-					<text text='[ Characteristic / Difficulty ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<dropdown-list-setting text='Characteristic' value="characteristic" apply-on-change="true" bind-value="true" choices='characteristics' on-change="UpdateData"/>
-				<dropdown-list-setting text='Difficulty' value="difficulty" apply-on-change="true" bind-value="true" choices='difficulties' on-change="UpdateData"/>
-				<horizontal pad-top="3">
-					<text text='[ Mods ]' align='Center' underlined='true' font-size='3.5'/>
-				</horizontal>
-				<dropdown-list-setting text='Requirement' value="mods" apply-on-change="true" bind-value="true" choices='modOptions' on-change="UpdateData"/>
+			<vertical spacing='2' child-expand-height='false'>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>BeatSaver' align='Center' underlined='true' bold='true'  font-size='3.5' color='#69B'/>
+					</horizontal>
+					<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min='0' max='10' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
+					<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" min='0' max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
+					<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" min='0' max='100' integer-only='true' on-change="UpdateData"/>
+					<string-setting text='Uploader(s)' value='uploadersString' bind-value='true' apply-on-change='true' formatter='FormatUploaderShortInfo' on-change="UpdateData" hover-hint='You can enter multiple Uploader names, seperated by spaces. If you have an Exclamation mark at the beginning of your input it becomes a blacklist for the given uploaders'/>
+				</vertical>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>Characteristic / Difficulty' align='Center' underlined='true' bold='true'  font-size='3.5' color='#69B'/>
+					</horizontal>
+					<dropdown-list-setting text='Characteristic' value="characteristic" apply-on-change="true" bind-value="true" choices='characteristics' on-change="UpdateData"/>
+					<dropdown-list-setting text='Difficulty' value="difficulty" apply-on-change="true" bind-value="true" choices='difficulties' on-change="UpdateData"/>
+				</vertical>
+				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
+					<horizontal>
+						<text text='&lt;color=#DDD>Mods' align='Center' underlined='true' bold='true' font-size='3.5' color='#69B'/>
+					</horizontal>
+					<dropdown-list-setting id='modsRequirementDropdown' text='Requirement' value="mods" apply-on-change="true" bind-value="true" choices='modOptions' on-change="UpdateData"/>
+				</vertical>
 			</vertical>
 		</horizontal>
 	</macro.as-host>
-	
-	<modal clickerino-offerino-closerino='true' move-to-center='true' hide-event='ClosePresets' show-event='OpenPresets' size-delta-x='80' size-delta-y='82'>
+
+	<horizontal spacing='2' horizontal-fit='PreferredSize'>
+		<horizontal preferred-width="65" child-expand-width="false" spacing='2' child-align='MiddleCenter'>
+			<text text="~version" font-size="3" font-color="#CC6E3B" align="Center"/>
+			<clickable-text text='♥ Donate' font-size="4" align="Center" click-event="OpenSponsorModal" on-click="OpenSponsorsModal"/>
+		</horizontal>
+		<horizontal preferred-width="65" spacing='2' child-expand-width='false' child-align='MiddleCenter'>
+			<text id="datasetInfoLabel" font-size="3" font-color="#CCC" text="Loading dataset..." align="Center"/>
+		</horizontal>
+	</horizontal>
+
+	<modal clickerino-offerino-closerino='true' move-to-center='true' hide-event='ClosePresets' show-event='OpenPresets' size-delta-x='80' size-delta-y='78'>
 		<vertical preferred-width='80' vertical-fit='PreferredSize' pad-left='3' pad-right='3' horizontal-fit='PreferredSize'>
 			<horizontal pad-bottom='4' pad-top='1'>
 				<horizontal bg='panel-top-gradient'>
@@ -92,13 +113,14 @@
 			</horizontal>
 			<macro.as-host host='cfgInstance'>
 				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
+				<toggle-setting text='Smaller Font size' value="smallerFontSize" bind-value="true" apply-on-change="true" hover-hint="Makes the Font size of the Song List smaller"/>
 			</macro.as-host>
 			<horizontal pad-top="5">
 				<button text='Close' click-event='CloseSettingsModal'/>
 			</horizontal>
 		</vertical>
 	</modal>
-	
+
 	<modal move-to-center='true' hide-event='CloseAddPresetModal' show-event='OpenAddPresetModal' size-delta-x='70' size-delta-y='45' id='dontScuffBg'>
 		<vertical preferred-width='70' vertical-fit='PreferredSize' pad='8' child-expand-width='true'>
 			<text text='Add new preset' align='Center'/>
@@ -110,7 +132,7 @@
 		</vertical>
 	</modal>
 
-	<modal move-to-center='true' hide-event='CloseSponsorModal' show-event='OpenSponsorModal' size-delta-x='80' size-delta-y='92'>
+	<modal move-to-center='true' hide-event='CloseSponsorModal' show-event='OpenSponsorModal' size-delta-x='80' size-delta-y='88'>
 		<vertical preferred-width='80' vertical-fit='PreferredSize' pad-left='2' pad-right='2' spacing='2' child-expand-width='true'>
 			<horizontal pad-bottom='2' pad-top='1'>
 				<horizontal bg='panel-top-gradient'>
@@ -128,12 +150,4 @@
 			</vertical>
 		</vertical>
 	</modal>
-
-	<horizontal>
-		<horizontal spacing='2' child-expand-width='false' child-align='MiddleCenter'>
-			<text text="~version" font-size="3" font-color="#CC6E3B" align="Center"/>
-			<clickable-text text='♥ Donate' font-size="4" align="Center" click-event="OpenSponsorModal" on-click="OpenSponsorsModal"/>
-		</horizontal>
-		<text id="datasetInfoLabel" font-size="3" font-color="#CCC" text="Loading dataset..." align="Center"/>
-	</horizontal>
 </vertical>

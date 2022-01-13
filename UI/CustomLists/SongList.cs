@@ -28,7 +28,7 @@ namespace BetterSongSearch.UI.CustomLists {
                     tableCell.gameObject, tableCell
                 );
             }
-            
+
             return (CustomSongListTableCell)tableCell;
         }
     }
@@ -55,6 +55,7 @@ namespace BetterSongSearch.UI.CustomLists {
             levelAuthorName.text = song.detailsSong.levelAuthorName;
             songLengthAndRating.text = song.songLengthAndRating;
 
+
             var diffsLeft = song.sortedDiffs.Length;
 
             for(var i = 0; i < diffs.Length; i++) {
@@ -64,7 +65,7 @@ namespace BetterSongSearch.UI.CustomLists {
 
                 if(!isActive)
                     continue;
-                    
+
                 if(diffsLeft != 1 && i == diffs.Length - 1) {
                     diffs[i].text = $"<color=#0AD>+{diffsLeft} More";
                 } else {
@@ -73,8 +74,27 @@ namespace BetterSongSearch.UI.CustomLists {
                 }
             }
 
+            SetFontSizes();
+
             return this;
-		}
+        }
+
+        public void SetFontSizes() {
+            foreach(var d in diffs)
+                d.fontSize = PluginConfig.Instance.smallerFontSize ? 2.5f : 2.9f;
+
+            if(PluginConfig.Instance.smallerFontSize) {
+                fullFormattedSongName.fontSize = 2.7f;
+                uploadDateFormatted.fontSize = 2.7f;
+                levelAuthorName.fontSize = 2.3f;
+                songLengthAndRating.fontSize = 2.5f;
+            } else {
+                fullFormattedSongName.fontSize = 3.2f;
+                uploadDateFormatted.fontSize = 3.2f;
+                levelAuthorName.fontSize = 2.6f;
+                songLengthAndRating.fontSize = 3f;
+            }
+        }
 
         protected override void SelectionDidChange(TransitionType transitionType) => RefreshBgState();
 
@@ -84,7 +104,7 @@ namespace BetterSongSearch.UI.CustomLists {
         [UIComponent("bgContainer")] ImageView bg = null;
 
         void RefreshBgState() {
-            bg.color = new Color(0, 0, 0, selected ? 0.9f : highlighted ? 0.6f : 0.45f);
+            bg.color = new Color(0, 0, 0, selected ? 0.8f : highlighted ? 0.6f : 0.45f);
         }
     }
 }

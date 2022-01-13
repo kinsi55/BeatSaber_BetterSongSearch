@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using BetterSongSearch.UI;
 using IPA.Config.Stores;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
@@ -6,6 +7,7 @@ namespace BetterSongSearch {
 	internal class PluginConfig {
 		public static PluginConfig Instance { get; set; }
 		public virtual bool returnToBssFromSolo { get; set; } = false;
+		public virtual bool smallerFontSize { get; set; } = false;
 
 		/// <summary>
 		/// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
@@ -19,6 +21,8 @@ namespace BetterSongSearch {
 		/// </summary>
 		public virtual void Changed() {
 			// Do stuff when the config is changed.
+			if(BSSFlowCoordinator.songListView && BSSFlowCoordinator.songListView.songList)
+				BSSFlowCoordinator.songListView.songList.ReloadData();
 		}
 
 		/// <summary>

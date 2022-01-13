@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -44,7 +45,8 @@ namespace BetterSongSearch.UI {
 		public static FilterOptions currentFilter = new FilterOptions();
 
 		[UIComponent("dontScuffBg")] ModalView dontScuffBg = null;
-		[UIComponent("modsRequirementDropdown")] DropdownWithTableView _modsRequirementDropdown = null;
+		[UIComponent("filterbarContainer")] Transform filterbarContainer = null;
+		//[UIComponent("modsRequirementDropdown")] DropdownWithTableView _modsRequirementDropdown = null;
 
 		[UIAction("#post-parse")]
 		void Parsed() {
@@ -67,7 +69,23 @@ namespace BetterSongSearch.UI {
 				GetComponentsInChildren<DropDownListSetting>().Where(x => x.associatedValue.MemberName == "mods").First().GetComponent<DropdownWithTableView>()
 			, "_modalView");
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
+
+			// This is garbage
+			foreach(var x in GetComponentsInChildren<Backgroundable>().Select(x => x.GetComponent<ImageView>())) {
+				if(!x || x.color0 != Color.white || x.sprite.name != "RoundRect10")
+					continue;
+
+				ReflectionUtil.SetField(x, "_skew", 0f);
+				x.overrideSprite = null;
+				x.SetImage("#RoundRect10BorderFade");
+				x.color = new Color(0, 0.7f, 1f, 0.4f);
+			}
+
+			foreach(var x in filterbarContainer.GetComponentsInChildren<ImageView>().Where(x => x.gameObject.name == "Underline"))
+				x.SetImage("#RoundRect10BorderFade");
 		}
+
+		[UIAction("ReloadSongsTable")] void ReloadSongsTable() => BSSFlowCoordinator.songListView.UpdateSearchedSongsList();
 
 		#region PresetStuff
 		class FilterPresetRow {

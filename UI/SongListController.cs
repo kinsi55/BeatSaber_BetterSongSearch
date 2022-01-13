@@ -174,7 +174,7 @@ namespace BetterSongSearch.UI {
 				_UpdateSearchedSongsList();
 		}
 
-		public float CellSize() => 11.66f;
+		public float CellSize() => PluginConfig.Instance.smallerFontSize ? 11.66f : 14f;
 		public int NumberOfCells() => searchedSongsList?.Count ?? 0;
 		public TableCell CellForIdx(TableView tableView, int idx) => SongListTableData.GetCell(tableView).PopulateWithSongData(searchedSongsList[idx]);
 
