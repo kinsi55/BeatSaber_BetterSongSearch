@@ -28,6 +28,9 @@ namespace BetterSongSearch.Util {
 
 			var prefiltered = new List<xd>();
 
+			var maxSearchWeight = 0f;
+			var maxSortWeight = 0f;
+
 			foreach(var x in inList) {
 				int resultWeight = 0;
 				bool matchedAuthor = false;
@@ -91,24 +94,32 @@ namespace BetterSongSearch.Util {
 				}
 
 				if(resultWeight > 0) {
+					var sortWeight = ordersort(x);
+
 					prefiltered.Add(new xd() {
 						song = x,
 						searchWeight = resultWeight,
-						sortWeight = ordersort(x)
+						sortWeight = sortWeight
 					});
+
+					if(maxSearchWeight < resultWeight)
+						maxSearchWeight = resultWeight;
+
+					if(maxSortWeight < sortWeight)
+						maxSortWeight = sortWeight;
 				}
 			}
 
 			if(prefiltered.Count == 0)
 				return new List<SongSearchSong>();
 
-			var maxSearchWeightInverse = 1f / prefiltered.Max(x => x.searchWeight);
-			var maxSortWeight = prefiltered.Max(x => x.sortWeight);
+			var maxSearchWeightInverse = 1f / maxSearchWeight;
+			var maxSortWeightInverse = 1f / maxSortWeight;
 
 			return prefiltered.OrderByDescending((s) => {
 				var searchWeight = s.searchWeight * maxSearchWeightInverse;
 
-				return searchWeight + Math.Min(searchWeight / 2, (s.sortWeight / maxSortWeight) * (searchWeight / 2));
+				return searchWeight + Math.Min(searchWeight / 2, s.sortWeight * maxSortWeightInverse * (searchWeight / 2));
 			}).Select(x => x.song);
 		}
 	}
