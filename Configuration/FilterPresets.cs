@@ -55,15 +55,17 @@ namespace BetterSongSearch.Configuration {
 		[JsonProperty] public int minimumVotes { get; private set; } = 0;
 
 		string _uploadersString = "";
-		[JsonProperty("uploaders")] public string uploadersString { 
+		[JsonProperty] public string uploadersString { 
 			get => _uploadersString; 
 			set {
 				if(_uploadersString == value)
 					return;
 
 				_uploadersString = value;
-				if(value.Length == 0)
+				if(value.Length == 0) {
+					uploaders.Clear();
 					return;
+				}
 
 				uploadersBlacklist = value[0] == '!';
 				if(uploadersBlacklist)
