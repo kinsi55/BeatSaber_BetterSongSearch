@@ -11,7 +11,7 @@ namespace BetterSongSearch.UI.SplitViews {
 		public static readonly MultiDl instance = new MultiDl();
 		MultiDl() { }
 
-		[UIComponent("multiDlCountSlider")] internal SliderSetting multiDlCountSlider = null;
+		[UIComponent("multiDlCountSlider")] SliderSetting multiDlCountSlider = null;
 		[UIAction("StartMultiDownload")]
 		void StartMultiDownload() {
 			for(int i = BSSFlowCoordinator.songListView.songList.GetVisibleCellsIdRange().Item1, downloaded = 0; i < SongListController.searchedSongsList.Count; i++) {

@@ -145,6 +145,8 @@ namespace BetterSongSearch.Configuration {
 		#endregion
 
 		public FilterOptions Clone() => (FilterOptions)MemberwiseClone();
+
+		public string Serialize(Formatting formatting = Formatting.Indented) => JsonConvert.SerializeObject(this, formatting);
 	}
 
 	static class FilterPresets {
@@ -182,7 +184,7 @@ namespace BetterSongSearch.Configuration {
 
 			presets[name] = FilterView.currentFilter.Clone();
 
-			File.WriteAllText(ConfigUtil.GetPresetPath(name), JsonConvert.SerializeObject(FilterView.currentFilter, Formatting.Indented));
+			File.WriteAllText(ConfigUtil.GetPresetPath(name), FilterView.currentFilter.Serialize());
 		}
 
 		public static void Delete(string name) {

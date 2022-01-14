@@ -117,7 +117,7 @@ namespace BetterSongSearch.UI {
 		[UIComponent("searchBoxContainer")] private VerticalLayoutGroup _searchBoxContainer = null;
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
 
-		InputFieldView songSearchInput = null;
+		internal InputFieldView songSearchInput { get; private set; } = null;
 		CurvedTextMeshPro songSearchPlaceholder = null;
 
 		[UIComponent("sortDropdown")] private DropdownWithTableView _sortDropdown = null;
@@ -176,7 +176,9 @@ namespace BetterSongSearch.UI {
 
 		BSMLParserParams createPlaylistParams = null;
 		[UIAction("ShowPlaylistCreation")] void ShowPlaylistCreation() {
-			BSMLStuff.InitSplitView(ref createPlaylistParams, gameObject, SplitViews.PlaylistCreation.instance).EmitEvent("ShowModal");
+			BSMLStuff.InitSplitView(ref createPlaylistParams, gameObject, SplitViews.PlaylistCreation.instance);
+
+			SplitViews.PlaylistCreation.instance.Open();
 		}
 
 		// While not the best for readability you have to agree this is a neat implementation!

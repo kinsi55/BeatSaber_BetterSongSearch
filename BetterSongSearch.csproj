@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>8</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -75,6 +75,9 @@
     </Reference>
     <Reference Include="BeatmapCore">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
+    </Reference>
+    <Reference Include="BeatSaberPlaylistsLib">
+      <HintPath>E:\SteamLibrary\steamapps\common\Beat Saber\Libs\BeatSaberPlaylistsLib.dll</HintPath>
     </Reference>
     <Reference Include="BSML">
       <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
