@@ -102,7 +102,7 @@ namespace BetterSongSearch.UI {
 		}
 
 		#region filters
-		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.opt_sort == "Worst local score";
+		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
 
 		public bool DifficultyCheck(in SongDifficulty diff) {
 			if(diff.stars < currentFilter.minimumStars || diff.stars > currentFilter.maximumStars)

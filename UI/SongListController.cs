@@ -47,9 +47,9 @@ namespace BetterSongSearch.UI {
 			IEnumerable<SongSearchSong> _newSearchedSongsList;
 
 			if(songSearchInput != null && songSearchInput.text.Length > 0) {
-				_newSearchedSongsList = WeightedSongSearch.Search(filteredSongsList, songSearchInput.text, sortModes[opt_sort]);
+				_newSearchedSongsList = WeightedSongSearch.Search(filteredSongsList, songSearchInput.text, sortModes[selectedSortMode]);
 			} else {
-				_newSearchedSongsList = filteredSongsList.OrderByDescending(sortModes[opt_sort]);
+				_newSearchedSongsList = filteredSongsList.OrderByDescending(sortModes[selectedSortMode]);
 			}
 
 			if(songListData == null)
@@ -214,7 +214,7 @@ namespace BetterSongSearch.UI {
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
 
-		internal static string opt_sort { get; private set; } = sortModes.First().Key;
+		internal static string selectedSortMode { get; private set; } = sortModes.First().Key;
 	}
 
 	class SongSearchSong {
@@ -241,7 +241,7 @@ namespace BetterSongSearch.UI {
 					);
 
 					// If we are sorting by something that is on a diff-level, sort the diffy as well!
-					if(SongListController.sortModesDiffSort.TryGetValue(SongListController.opt_sort, out var diffSorter))
+					if(SongListController.sortModesDiffSort.TryGetValue(SongListController.selectedSortMode, out var diffSorter))
 						y = y.ThenBy(diffSorter);
 
 					_sortedDiffsCache = y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0).ToArray();
