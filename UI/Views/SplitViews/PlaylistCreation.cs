@@ -1,11 +1,11 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
-using IPA.Utilities;
-using TMPro;
 using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
+using IPA.Utilities;
 using System.IO;
+using TMPro;
 
 namespace BetterSongSearch.UI.SplitViews {
 	class PlaylistCreation {
@@ -39,8 +39,8 @@ namespace BetterSongSearch.UI.SplitViews {
 		void CreatePlaylist() {
 			if(!PlaylistManager.DefaultManager.TryGetPlaylist(playlistName.Text, out var plist))
 				plist = PlaylistManager.DefaultManager.CreatePlaylist(
-					$"BetterSongSearch - {string.Concat(playlistName.Text.Split(Path.GetInvalidFileNameChars())).Trim()}", 
-					playlistName.Text, 
+					$"BetterSongSearch - {string.Concat(playlistName.Text.Split(Path.GetInvalidFileNameChars())).Trim()}",
+					playlistName.Text,
 					"BetterSongSearch",
 					""
 				);

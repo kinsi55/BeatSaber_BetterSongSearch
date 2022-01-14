@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace BetterSongSearch.UI {
@@ -86,7 +84,7 @@ namespace BetterSongSearch.UI {
 
 			RefreshTable(true);
 
-			await Task.Run(async() => {
+			await Task.Run(async () => {
 				try {
 					var updateRateLimiter = new Stopwatch();
 					updateRateLimiter.Start();

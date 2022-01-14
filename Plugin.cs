@@ -1,10 +1,10 @@
-﻿using HarmonyLib;
+﻿using BetterSongSearch.UI;
+using HarmonyLib;
 using IPA;
-using System.Reflection;
-using IPALogger = IPA.Logging.Logger;
 using IPA.Config;
 using IPA.Config.Stores;
-using BetterSongSearch.UI;
+using System.Reflection;
+using IPALogger = IPA.Logging.Logger;
 
 namespace BetterSongSearch {
 	[Plugin(RuntimeOptions.SingleStartInit)]
@@ -20,7 +20,7 @@ namespace BetterSongSearch {
 		public void Init(IPALogger logger, Config conf) {
 			Log = logger;
 			Log.Info("BetterSongSearch initialized.");
-			SongListController.cfgInstance =  PluginConfig.Instance = conf.Generated<PluginConfig>();
+			SongListController.cfgInstance = PluginConfig.Instance = conf.Generated<PluginConfig>();
 
 			UI.Manager.Init();
 

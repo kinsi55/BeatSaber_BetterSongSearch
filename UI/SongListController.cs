@@ -1,7 +1,5 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.UI.CustomLists;
@@ -10,12 +8,9 @@ using HMUI;
 using IPA.Utilities;
 using SongDetailsCache.Structs;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -101,7 +96,7 @@ namespace BetterSongSearch.UI {
 				selectedSongView.SetSelectedSong(searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
 		}
 
-		
+
 
 		internal SelectedSongView selectedSongView;
 
@@ -253,7 +248,7 @@ namespace BetterSongSearch.UI {
 				}
 
 				return _sortedDiffsCache;
-			} 
+			}
 		}
 
 		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);

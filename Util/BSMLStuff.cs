@@ -1,10 +1,7 @@
 ﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
-using HarmonyLib;
 using HMUI;
 using IPA.Utilities;
-using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;

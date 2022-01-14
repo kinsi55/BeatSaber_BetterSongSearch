@@ -1,14 +1,14 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BetterSongSearch.UI;
 using BetterSongSearch.Util;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Globalization;
-using BeatSaberMarkupLanguage.Components.Settings;
 using UnityEngine;
 
 namespace BetterSongSearch.Configuration {

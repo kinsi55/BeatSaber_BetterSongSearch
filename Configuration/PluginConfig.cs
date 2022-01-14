@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using BetterSongSearch.UI;
+﻿using BetterSongSearch.UI;
 using IPA.Config.Stores;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace BetterSongSearch {

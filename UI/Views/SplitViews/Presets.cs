@@ -5,11 +5,7 @@ using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
 using HMUI;
 using IPA.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine.UI;
 

@@ -6,9 +6,7 @@ using HMUI;
 using System;
 using System.Collections;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -122,9 +120,9 @@ namespace BetterSongSearch.UI {
 
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
 				if(preview != null) try {
-					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
-				} catch { }
+						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
+						coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
+					} catch { }
 			}
 			ShowCoverLoader(false);
 		}
@@ -192,14 +190,14 @@ namespace BetterSongSearch.UI {
 
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
 			if(songToPlay.diffs.Any(x => x.passesFilter)) try {
-				var diffToSelect = songToPlay.GetFirstPassingDifficulty();
-				var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
-				var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
-				if(targetChar != null && pData != null) {
-					pData.SetLastSelectedBeatmapCharacteristic(targetChar);
-					pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
-				}
-			} catch { }
+					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
+					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
+					var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
+					if(targetChar != null && pData != null) {
+						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
+						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
+					}
+				} catch { }
 
 			BSSFlowCoordinator.Close(true);
 			Manager.goToSongSelect.Invoke();

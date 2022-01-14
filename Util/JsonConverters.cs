@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BetterSongSearch.Util {
 	static class JsonHelpers {
