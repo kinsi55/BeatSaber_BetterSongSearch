@@ -71,6 +71,8 @@ namespace BetterSongSearch.UI.SplitViews {
 		}
 
 		void LoadPreset() {
+			PlaylistCreation.nameToUseOnNextOpen = curSelected;
+
 			BSSFlowCoordinator.filterView.SetFilter(FilterPresets.presets[curSelected]);
 		}
 		void DeletePreset() {

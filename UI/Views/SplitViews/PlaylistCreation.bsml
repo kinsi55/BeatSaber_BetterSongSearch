@@ -12,7 +12,7 @@
 				<slider-setting min='20' max='2000' text='Amount of Songs' integer-only='true' id='playlistSongsCountSlider' show-buttons='true'/>
 			</vertical>
 			<horizontal pad-top='4'>
-				<primary-button text='Create' on-click='CreatePlaylist' click-event='CloseModal'/>
+				<primary-button text='Create' on-click='CreatePlaylist'/>
 				<button text='Cancel' click-event='CloseModal'/>
 			</horizontal>
 		</vertical>
