@@ -20,7 +20,7 @@ namespace BetterSongSearch {
 		public void Init(IPALogger logger, Config conf) {
 			Log = logger;
 			Log.Info("BetterSongSearch initialized.");
-			FilterView.cfgInstance =  PluginConfig.Instance = conf.Generated<PluginConfig>();
+			SongListController.cfgInstance =  PluginConfig.Instance = conf.Generated<PluginConfig>();
 
 			UI.Manager.Init();
 

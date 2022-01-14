@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +26,8 @@ namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.SongList.bsml")]
 	class SongListController : BSMLAutomaticViewController, TableView.IDataSource {
+		public static PluginConfig cfgInstance;
+
 		static internal IList<SongSearchSong> filteredSongsList = null;
 		static internal IList<SongSearchSong> searchedSongsList = null;
 
@@ -97,21 +101,7 @@ namespace BetterSongSearch.UI {
 				selectedSongView.SetSelectedSong(searchedSongsList[UnityEngine.Random.Range(0, searchedSongsList.Count - 1)], true);
 		}
 
-		[UIComponent("multiDlCountSlider")] internal SliderSetting multiDlCountSlider = null;
-		[UIAction("StartMultiDownload")]
-		void StartMultiDownload() {
-			for(int i = songList.GetVisibleCellsIdRange().Item1, downloaded = 0; i < searchedSongsList.Count; i++) {
-				if(searchedSongsList[i].CheckIsDownloaded() || !searchedSongsList[i].CheckIsDownloadable())
-					continue;
-
-				BSSFlowCoordinator.downloadHistoryView.TryAddDownload(searchedSongsList[i], true);
-
-				if(++downloaded >= multiDlCountSlider.Value)
-					break;
-			}
-
-			BSSFlowCoordinator.downloadHistoryView.RefreshTable(true);
-		}
+		
 
 		internal SelectedSongView selectedSongView;
 
@@ -171,12 +161,23 @@ namespace BetterSongSearch.UI {
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.83f + (c * 0.011f));
 
 			if(searchedSongsList == null)
-				_UpdateSearchedSongsList();
+				Task.Run(_UpdateSearchedSongsList);
 		}
 
 		public float CellSize() => PluginConfig.Instance.smallerFontSize ? 11.66f : 14f;
 		public int NumberOfCells() => searchedSongsList?.Count ?? 0;
 		public TableCell CellForIdx(TableView tableView, int idx) => SongListTableData.GetCell(tableView).PopulateWithSongData(searchedSongsList[idx]);
+
+		BSMLParserParams multiDlParams = null;
+		[UIAction("ShowMultiDlModal")]
+		void ShowMultiDlModal() {
+			BSMLStuff.InitSplitView(ref multiDlParams, gameObject, SplitViews.MultiDl.instance).EmitEvent("ShowModal");
+		}
+
+		BSMLParserParams createPlaylistParams = null;
+		[UIAction("ShowPlaylistCreation")] void ShowPlaylistCreation() {
+			BSMLStuff.InitSplitView(ref createPlaylistParams, gameObject, SplitViews.PlaylistCreation.instance).EmitEvent("ShowModal");
+		}
 
 		// While not the best for readability you have to agree this is a neat implementation!
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {

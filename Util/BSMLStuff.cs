@@ -1,10 +1,13 @@
-﻿using BeatSaberMarkupLanguage.Components.Settings;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.Parser;
 using HarmonyLib;
 using HMUI;
 using IPA.Utilities;
 using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,6 +59,16 @@ namespace BetterSongSearch.Util {
 				//	minTimeSlider.value = value;
 				//};
 			}
+		}
+
+		public static BSMLParserParams InitSplitView(ref BSMLParserParams pparams, GameObject targetGameObject, object host, string viewName = null) {
+			if(pparams != null)
+				return pparams;
+
+			if(viewName == null)
+				viewName = host.GetType().Name;
+
+			return pparams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"BetterSongSearch.UI.Views.SplitViews.{viewName}.bsml"), targetGameObject, host);
 		}
 
 		static GameObject scrollBar = null;

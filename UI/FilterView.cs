@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
@@ -28,7 +29,6 @@ namespace BetterSongSearch.UI {
 	[ViewDefinition("BetterSongSearch.UI.Views.FilterView.bsml")]
 	class FilterView : BSMLAutomaticViewController, INotifyPropertyChanged {
 		public static List<DateTime> hideOlderThanOptions { get; private set; }
-		public static PluginConfig cfgInstance;
 
 		public void Awake() {
 			if(hideOlderThanOptions != null)
@@ -38,13 +38,10 @@ namespace BetterSongSearch.UI {
 
 			for(var x = new DateTime(2018, 5, 1); x < DateTime.Now; x = x.AddMonths(1))
 				hideOlderThanOptions.Add(x);
-
-			FilterPresets.Init();
 		}
 
 		public static FilterOptions currentFilter = new FilterOptions();
 
-		[UIComponent("dontScuffBg")] ModalView dontScuffBg = null;
 		[UIComponent("filterbarContainer")] Transform filterbarContainer = null;
 		//[UIComponent("modsRequirementDropdown")] DropdownWithTableView _modsRequirementDropdown = null;
 
@@ -55,12 +52,6 @@ namespace BetterSongSearch.UI {
 			currentFilter.hideOlderThanSlider.ReceiveValue();
 
 			((RectTransform)gameObject.transform).offsetMax = new Vector2(20, 22);
-
-			BSMLStuff.GetScrollbarForTable(presetList.tableView.gameObject, _presetScrollbarContainer.transform);
-
-			// BSML / HMUI my beloved
-			ReflectionUtil.SetField(dontScuffBg, "_animateParentCanvas", false);
-			ReflectionUtil.SetField(newPresetName.modalKeyboard.modalView, "_animateParentCanvas", false);
 
 			StartCoroutine(BSMLStuff.MergeSliders(gameObject));
 
@@ -87,50 +78,9 @@ namespace BetterSongSearch.UI {
 
 		[UIAction("ReloadSongsTable")] void ReloadSongsTable() => BSSFlowCoordinator.songListView.UpdateSearchedSongsList();
 
-		#region PresetStuff
-		class FilterPresetRow {
-			public readonly string name;
-			[UIComponent("label")] TextMeshProUGUI label = null;
+		internal void ClearFilters() => SetFilter();
 
-			public FilterPresetRow(string name) => this.name = name;
-
-			[UIAction("refresh-visuals")]
-			public void Refresh(bool selected, bool highlighted) {
-				label.color = new UnityEngine.Color(
-					selected ? 0 : 255,
-					selected ? 128 : 255,
-					selected ? 128 : 255,
-					highlighted ? 0.9f : 0.6f
-				);
-			}
-		}
-
-		[UIComponent("loadButton")] private NoTransitionsButton loadButton = null;
-		[UIComponent("deleteButton")] private NoTransitionsButton deleteButton = null;
-		[UIComponent("presetList")] private CustomCellListTableData presetList = null;
-		[UIComponent("newPresetName")] private StringSetting newPresetName = null;
-		[UIComponent("presetScrollbarContainer")] private VerticalLayoutGroup _presetScrollbarContainer = null;
-		void ClearFilters() => SetFilter();
-
-		void ReloadPresets() {
-			presetList.data = FilterPresets.presets.Select(x => new FilterPresetRow(x.Key)).ToList<object>();
-			presetList.tableView.ReloadData();
-			presetList.tableView.ClearSelection();
-
-			loadButton.interactable = false;
-			deleteButton.interactable = false;
-
-			newPresetName.Text = "";
-		}
-
-		string curSelected;
-		void PresetSelected(object _, FilterPresetRow row) {
-			loadButton.interactable = true;
-			deleteButton.interactable = true;
-			newPresetName.Text = curSelected = row.name;
-		}
-
-		void SetFilter(FilterOptions filter = null) {
+		internal void SetFilter(FilterOptions filter = null) {
 			filter ??= new FilterOptions();
 			foreach(var x in AccessTools.GetDeclaredProperties(typeof(FilterOptions)))
 				x.SetValue(currentFilter, x.GetValue(filter));
@@ -146,20 +96,12 @@ namespace BetterSongSearch.UI {
 			currentFilter.hideOlderThanSlider.onChange.Invoke(currentFilter.hideOlderThanSlider.Value);
 		}
 
-		void AddPreset() {
-			FilterPresets.Save(newPresetName.Text);
-			ReloadPresets();
-		}
+		BSMLParserParams presetsViewParams = null;
+		[UIAction("ShowPresets")] void ShowPresets() {
+			BSMLStuff.InitSplitView(ref presetsViewParams, gameObject, SplitViews.Presets.instance).EmitEvent("OpenPresets");
 
-		void LoadPreset() {
-			SetFilter(FilterPresets.presets[curSelected]);
+			SplitViews.Presets.instance.ReloadPresets();
 		}
-		void DeletePreset() {
-			FilterPresets.Delete(curSelected);
-			ReloadPresets();
-		}
-		#endregion
-
 
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.opt_sort == "Worst local score";
@@ -290,7 +232,7 @@ namespace BetterSongSearch.UI {
 
 		public static RatelimitCoroutine limitedUpdateData { get; private set; } = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.1f);
 
-		readonly string version = $" BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
+		readonly string version = $"BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
 		[UIComponent("datasetInfoLabel")] private TextMeshProUGUI _datasetInfoLabel = null;
 		public TextMeshProUGUI datasetInfoLabel => _datasetInfoLabel;
 	}

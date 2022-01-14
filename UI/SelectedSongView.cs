@@ -1,4 +1,5 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Parser;
 using BetterSongSearch.HarmonyPatches;
 using BetterSongSearch.Util;
 using HMUI;
@@ -137,40 +138,12 @@ namespace BetterSongSearch.UI {
 				downloadButton.interactable = downloadable;
 		}
 
-		[UIComponent("songDetails")] ModalView songDetails = null;
-		[UIComponent("selectedCharacteristics")] TextMeshProUGUI selectedCharacteristics = null;
-		[UIComponent("selectedSongKey")] TextMeshProUGUI selectedSongKey = null;
-		[UIComponent("selectedSongDescription")] CurvedTextMeshPro selectedSongDescription = null;
-		[UIComponent("selectedRating")] TextMeshProUGUI selectedRating = null;
-		[UIComponent("selectedDownloadCount")] TextMeshProUGUI selectedDownloadCount = null;
-		[UIComponent("songDetailsLoading")] ImageView songDetailsLoading = null;
-
+		BSMLParserParams detailsParams = null;
 		[UIAction("ShowSongDetails")]
 		void ShowSongDetails() {
-			selectedCharacteristics.text = String.Join(", ", selectedSong.detailsSong.difficulties.GroupBy(x => x.characteristic).Select(x => $"{x.Count()}x {x.Key}"));
-			selectedSongKey.text = selectedSong.detailsSong.key;
-			selectedDownloadCount.text = selectedSong.detailsSong.downloadCount.ToString("N0");
-			selectedRating.text = selectedSong.detailsSong.rating.ToString("0.0%");
-			selectedSongDescription.text = "";
+			BSMLStuff.InitSplitView(ref detailsParams, gameObject, SplitViews.UploadDetails.instance).EmitEvent("ShowModal");
 
-			songDetails.Show(true, true);
-
-			songDetailsLoading.gameObject.SetActive(true);
-
-			Task.Run(async () => {
-				string desc = "Failed to load description";
-				try {
-					desc = await SongDownloader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
-				} catch { }
-
-				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-					songDetailsLoading.gameObject.SetActive(false);
-					// If we dont do that, the description is long and contains unicode the game crashes. Fun.
-					selectedSongDescription.text = desc;
-					selectedSongDescription.gameObject.SetActive(false);
-					selectedSongDescription.gameObject.SetActive(true);
-				});
-			}).ConfigureAwait(false);
+			SplitViews.UploadDetails.instance.Populate(selectedSong);
 		}
 
 		void FilterByUploader() {

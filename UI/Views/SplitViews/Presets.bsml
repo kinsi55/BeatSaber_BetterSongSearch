@@ -1,0 +1,42 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<modal clickerino-offerino-closerino='true' hide-event='ClosePresets' show-event='OpenPresets' size-delta-x='80' size-delta-y='78'>
+		<vertical horizontal-fit='Unconstrained' pad='4' pad-bottom='2' pad-top='1'>
+			<horizontal pad-right='-2' pad-left='-2'>
+				<horizontal bg='panel-top-gradient'>
+					<text text='BetterSongSearch - Filter Presets' align='Center' font-size='4'/>
+				</horizontal>
+			</horizontal>
+			<horizontal horizontal-fit='PreferredSize'>
+				<vertical horizontal-fit='Unconstrained'>
+					<custom-list visible-cells='8' cell-size='7' id='presetList' select-cell='PresetSelected'>
+						<horizontal>
+							<text text='~name' id='label'/>
+						</horizontal>
+					</custom-list>
+				</vertical>
+				<vertical id='presetScrollbarContainer' preferred-width='8'/>
+			</horizontal>
+			<horizontal>
+				<button text='Save..' click-event='ClosePresets,OpenAddPresetModal'/>
+				<button text='Load' id='loadButton' event-click='ClosePresets' on-click='LoadPreset'/>
+				<button text='Delete' id='deleteButton' on-click='DeletePreset'/>
+				<button text='Close' click-event='ClosePresets'/>
+			</horizontal>
+		</vertical>
+	</modal>
+
+	<modal hide-event='CloseAddPresetModal' show-event='OpenAddPresetModal' size-delta-x='70' size-delta-y='45'>
+		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='-1'>
+			<horizontal pad-right='-2' pad-left='-2'>
+				<horizontal bg='panel-top-gradient'>
+					<text text='BetterSongSearch - Save Preset' align='Center' font-size='4'/>
+				</horizontal>
+			</horizontal>
+			<string-setting id='newPresetName' text='Name'/>
+			<horizontal>
+				<button text='Save' click-event='CloseAddPresetModal,OpenPresets' on-click='AddPreset'/>
+				<button text='Cancel' click-event='OpenPresets,CloseAddPresetModal'/>
+			</horizontal>
+		</vertical>
+	</modal>
+</bg>

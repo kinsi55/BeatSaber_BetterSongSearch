@@ -40,7 +40,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		void AddDownloadedBytes(int bytes) {
-			Interlocked.Add(ref downloadedBytes, bytes);
+			downloadedBytes += bytes;
 
 			var newProgress = downloadedBytes * downloadSizeInverse;
 
@@ -110,7 +110,7 @@ namespace BetterSongSearch.Util {
 					Plugin.Log.Debug(string.Format("downloadSize: {0}, isDownloadingFromCache: {1}", downloadSize, doMultiDl));
 				}
 
-				return Task.Run(async () => {
+				return Task.Run(() => {
 					try {
 						stream.ReadTimeout = 7000;
 
@@ -120,7 +120,7 @@ namespace BetterSongSearch.Util {
 							if(token.IsCancellationRequested)
 								throw new TaskCanceledException();
 
-							var read = await stream.ReadAsync(fileOut, pos, Math.Min(8192, fileOut.Length - pos), token);
+							var read = stream.Read(fileOut, pos, Math.Min(8192, fileOut.Length - pos));
 							if(read == 0)
 								break;
 
@@ -149,10 +149,10 @@ namespace BetterSongSearch.Util {
 						cleanup(ex);
 					}
 				});
-			} catch(Exception ex) {
+			} catch {
 				// Gotta do this manually here, else C# will yell at us because it has no idea cleanup will throw
 				cleanup();
-				throw ex;
+				throw;
 			}
 		}
 

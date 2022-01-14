@@ -1,0 +1,17 @@
+﻿<modal clickerino-offerino-closerino='true' show-event='ShowModal' hide-event='CloseModal' size-delta-x='80' size-delta-y='50' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<vertical horizontal-fit='Unconstrained' pad='4' pad-top='1'>
+		<horizontal pad-left='-2' pad-right='-2'>
+			<horizontal bg='panel-top-gradient'>
+				<text text='BetterSongSearch - Batch Download' align='Center'/>
+			</horizontal>
+		</horizontal>
+		<text text='Download a certain amount of songs at once that match your critera, starting from your scroll location in the list' word-wrapping='true'/>
+		<horizontal>
+			<slider-setting min='5' max='30' text='Amount' integer-only='true' id='multiDlCountSlider' show-buttons='true'/>
+		</horizontal>
+		<horizontal pad-top='4'>
+			<primary-button text='Download' on-click='StartMultiDownload' click-event='CloseModal'/>
+			<button text='Cancel' click-event='CloseModal'/>
+		</horizontal>
+	</vertical>
+</modal>

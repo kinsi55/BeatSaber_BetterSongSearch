@@ -29,7 +29,7 @@ namespace BetterSongSearch.Util {
 		static HttpClient client = null;
 
 		public async Task<Sprite> LoadAsync(Song song, CancellationToken token) {
-			var path = $"https://cdn.beatsaver.com/{song.hash.ToLowerInvariant()}.jpg"; // song.coverURL;
+			var path = song.coverURL;
 
 			if(_spriteCache.TryGetValue(path, out Sprite sprite))
 				return sprite;

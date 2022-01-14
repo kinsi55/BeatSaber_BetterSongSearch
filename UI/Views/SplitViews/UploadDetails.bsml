@@ -1,0 +1,31 @@
+﻿<modal clickerino-offerino-closerino='true' show-event='ShowModal' hide-event='CloseModal' size-delta-x='90' size-delta-y='75' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<vertical horizontal-fit='Unconstrained' pad='4' pad-top='0'>
+		<horizontal pad-left='-2' pad-right='-2'>
+			<horizontal bg='panel-top-gradient'>
+				<text text='BetterSongSearch - Upload Details' align='Center'/>
+			</horizontal>
+		</horizontal>
+		<horizontal vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
+			<vertical child-expand-height='false' preferred-width="25">
+				<text text="Song Key" align="Center" color='#7CF'/>
+				<vertical>
+					<text id="selectedSongKey" align="Center" all-uppercase='true'/>
+					<text text="BeatSaver Rating" align="Center" color='#7CF'/>
+					<text id="selectedRating" align="Center"/>
+					<!--<text text="Downloads" align="Center" color='#7CF'/>
+					<text id="selectedDownloadCount" align="Center"/>-->
+					<text text="Characteristics" align="Center" color='#7CF'/>
+					<text id="selectedCharacteristics" align="Center" font-size='3.3' word-wrapping='true'/>
+				</vertical>
+			</vertical>
+			<vertical child-expand-height="false" pad-left="6">
+				<text text="Description" align="Center" color='#7CF'/>
+				<loading id="songDetailsLoading" preserve-aspect="true" preferred-height="20"/>
+				<vertical horizontal-fit='PreferredSize' preferred-width="60">
+					<text-page id="selectedSongDescription" align="Center" word-wrapping="true"/>
+				</vertical>
+			</vertical>
+		</horizontal>
+		<button event-click='CloseModal' text='Close Details'/>
+	</vertical>
+</modal>
