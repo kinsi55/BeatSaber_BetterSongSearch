@@ -3,7 +3,7 @@
 		<vertical horizontal-fit='Unconstrained' pad='4' pad-bottom='2' pad-top='9'>
 			<horizontal bg='panel-top-gradient'  ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
 				<text text='BetterSongSearch - Filter Presets' align='Center' font-size='4'/>
-			</horizontal>>
+			</horizontal>
 			<horizontal horizontal-fit='PreferredSize'>
 				<vertical horizontal-fit='Unconstrained'>
 					<custom-list visible-cells='8' cell-size='7' id='presetList' select-cell='PresetSelected'>
