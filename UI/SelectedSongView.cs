@@ -17,7 +17,7 @@ namespace BetterSongSearch.UI {
 		internal SongSearchSong selectedSong = null;
 
 		[UIComponent("coverLoading")] ImageView coverLoading = null;
-		[UIComponent("coverImage")] Image coverImage = null;
+		[UIComponent("coverImage")] internal readonly Image coverImage = null;
 		[UIComponent("selectedSongAuthor")] TextMeshProUGUI selectedSongAuthor = null;
 		[UIComponent("selectedSongName")] TextMeshProUGUI selectedSongName = null;
 		[UIComponent("selectedSongDiffInfo")] TextMeshProUGUI selectedSongDiffInfo = null;
@@ -120,9 +120,9 @@ namespace BetterSongSearch.UI {
 
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
 				if(preview != null) try {
-						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-						coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
-					} catch { }
+					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(coverLoadCancel.Token);
+				} catch { }
 			}
 			ShowCoverLoader(false);
 		}
