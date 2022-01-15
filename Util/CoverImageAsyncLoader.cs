@@ -1,4 +1,5 @@
-﻿using SongDetailsCache.Structs;
+﻿using BetterSongSearch.UI;
+using SongDetailsCache.Structs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,10 +56,9 @@ namespace BetterSongSearch.Util {
 		}
 
 		public void Dispose() {
-			while(_spriteCache.Count > 1) {
-				var x = _spriteCache.Keys.First();
-
-				GameObject.DestroyImmediate(_spriteCache[x]);
+			foreach(var x in _spriteCache.Keys.ToArray()) {
+				if(_spriteCache[x] == BSSFlowCoordinator.songListView.selectedSongView.coverImage.sprite)
+					continue;
 
 				_spriteCache.Remove(x);
 			}
