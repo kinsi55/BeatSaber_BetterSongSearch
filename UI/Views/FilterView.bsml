@@ -76,8 +76,8 @@
 	</horizontal>
 
 	<modal hide-event='CloseSponsorModal' show-event='OpenSponsorModal' size-delta-x='80' size-delta-y='88'>
-		<vertical horizontal-fit='Unconstrained' pad='2' pad-top='1'>
-			<horizontal bg='panel-top-gradient'>
+		<vertical horizontal-fit='Unconstrained' pad='2' pad-top='9'>
+			<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
 				<text text='BetterSongSearch - Sponsors' align='Center'/>
 			</horizontal>
 			<text text='Are you enjoying my stuff and want to support me?' align='Center'/>
@@ -85,7 +85,7 @@
 				<primary-button text='Open Website on Desktop' on-click='OpenSponsorsLink'/>
 				<button text='Close' click-event='CloseSponsorModal'/>
 			</horizontal>
-			<text text='Current sponsors' align='Center'/>
+			<text text='Current sponsors' align='Center' underlined='true'/>
 			<vertical horizontal-fit='Unconstrained' vertical-fit='Unconstrained' preferred-height='50'>
 				<text-page id='sponsorsText' text='Loading...'/>
 			</vertical>

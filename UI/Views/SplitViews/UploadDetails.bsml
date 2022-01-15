@@ -1,9 +1,7 @@
 ﻿<modal clickerino-offerino-closerino='true' show-event='ShowModal' hide-event='CloseModal' size-delta-x='90' size-delta-y='75' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<vertical horizontal-fit='Unconstrained' pad='4' pad-top='0'>
-		<horizontal pad-left='-2' pad-right='-2'>
-			<horizontal bg='panel-top-gradient'>
-				<text text='BetterSongSearch - Upload Details' align='Center'/>
-			</horizontal>
+	<vertical horizontal-fit='Unconstrained' pad='4' pad-top='9'>
+		<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
+			<text text='BetterSongSearch - Upload Details' align='Center'/>
 		</horizontal>
 		<horizontal vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
 			<vertical child-expand-height='false' preferred-width="25">

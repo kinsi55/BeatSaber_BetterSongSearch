@@ -48,11 +48,9 @@
 	</modal>
 
 	<modal clickerino-offerino-closerino='true' hide-event='CloseSettingsModal' show-event='ShowSettingsModal' size-delta-x='80' size-delta-y='45'>
-		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='1'>
-			<horizontal pad-left='-2' pad-right='-2'>
-				<horizontal bg='panel-top-gradient'>
-					<text text='BetterSongSearch - Settings' align='Center'/>
-				</horizontal>
+		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='9'>
+			<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
+				<text text='BetterSongSearch - Settings' align='Center'/>
 			</horizontal>
 			<macro.as-host host='cfgInstance'>
 				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
@@ -65,11 +63,9 @@
 	</modal>
 	
 	<modal clickerino-offerino-closerino='true' show-event='downloadCancelConfirm' hide-event='CloseDownloadCancelConfirm' size-delta-x='80' size-delta-y='40'>
-		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='1'>
-			<horizontal pad-left='-2' pad-right='-2'>
-				<horizontal bg='panel-top-gradient'>
-					<text text='BetterSongSearch - Pending Downloads' align='Center'/>
-				</horizontal>
+		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='9'>
+			<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
+				<text text='BetterSongSearch - Pending Downloads' align='Center'/>
 			</horizontal>
 			<text text='You still have pending downloads which would be stopped by closing Better Song Search. Continue?' word-wrapping='true' align='Capline'/>
 			<horizontal pad-top='4'>

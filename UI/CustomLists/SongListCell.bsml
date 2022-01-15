@@ -7,7 +7,7 @@
 		<text id='levelAuthorName' align='MidlineLeft' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC' rich-text='false'/>
 		<text id='songLengthAndRating' align='MidlineRight' font-color='#CCC' word-wrapping='false'/>
 	</horizontal>
-	<horizontal id='diffs' bg='round-rect-panel' bg-color='#000C'>
+	<horizontal id='diffs' bg='round-rect-panel' bg-color='#000D'>
 		<text align='Center' overflow-mode='Truncate'/>
 		<text align='Center' overflow-mode='Truncate'/>
 		<text align='Center' overflow-mode='Truncate'/>
