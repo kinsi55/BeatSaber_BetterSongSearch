@@ -21,11 +21,11 @@ namespace BetterSongSearch.UI.SplitViews {
 
 		[UIAction("#post-parse")]
 		void Parsed() {
-			// BSML / HMUI my beloved
 			ReflectionUtil.SetField(playlistName.modalKeyboard.modalView, "_animateParentCanvas", false);
 		}
 
-		internal static string nameToUseOnNextOpen = "";
+		internal static string nameToUseOnNextOpen = "h";
+		static bool clearExisting = true;
 
 		public void Open() {
 			if(IPA.Loader.PluginManager.GetPluginFromId("BeatSaberPlaylistsLib") == null) {
@@ -49,8 +49,6 @@ namespace BetterSongSearch.UI.SplitViews {
 		}
 
 		void CreatePlaylist() {
-			var manager = PlaylistManager.DefaultManager.CreateChildManager("BetterSongSearch");
-
 			var fName = string.Concat(playlistName.Text.Split(Path.GetInvalidFileNameChars())).Trim();
 
 			if(fName.Length == 0) {
@@ -59,6 +57,8 @@ namespace BetterSongSearch.UI.SplitViews {
 			}
 
 			try {
+				var manager = PlaylistManager.DefaultManager.CreateChildManager("BetterSongSearch");
+
 				if(!manager.TryGetPlaylist(fName, out var plist))
 					plist = manager.CreatePlaylist(
 						fName,
@@ -67,18 +67,26 @@ namespace BetterSongSearch.UI.SplitViews {
 						""
 					);
 
-				plist.Clear();
+				if(clearExisting)
+					plist.Clear();
+
 				plist.SetCustomData("BetterSongSearchFilter", FilterView.currentFilter.Serialize(Newtonsoft.Json.Formatting.None));
 				plist.SetCustomData("BetterSongSearchSearchTerm", BSSFlowCoordinator.songListView.songSearchInput.text);
 				plist.SetCustomData("BetterSongSearchSort", SongListController.selectedSortMode);
+				plist.AllowDuplicates = false;
+
+				int addedSongs = 0;
 
 				for(var i = 0; i < SongListController.searchedSongsList.Count; i++) {
-					if(i >= playlistSongsCountSlider.Value)
+					if(addedSongs >= playlistSongsCountSlider.Value)
 						break;
 
 					var s = SongListController.searchedSongsList[i];
 
 					var pls = (PlaylistSong)plist.Add(s.hash, s.detailsSong.songName, s.detailsSong.key, s.detailsSong.levelAuthorName);
+
+					if(pls == null)
+						continue;
 
 					foreach(var x in s.diffs) {
 						if(!x.passesFilter)
@@ -93,12 +101,14 @@ namespace BetterSongSearch.UI.SplitViews {
 
 						pls.AddDifficulty(dchar, x.detailsDiff.difficulty.ToString());
 					}
+
+					addedSongs++;
 				}
 
 				manager.StorePlaylist(plist);
 				manager.RequestRefresh("BetterSongSearch");
 
-				ShowResult($"Created Playlist <b><color=#CCC>{playlistName.Text}</color></b> containing <b><color=#CCC>{plist.Count}</color></b> Songs");
+				ShowResult($"Added <b><color=#CCC>{addedSongs}</color></b> Songs to Playlist <b><color=#CCC>{playlistName.Text}</color></b> (Contains {plist.Count} now)");
 			} catch(Exception ex) {
 				ShowResult($"Playlist failed to Create: More details in log, {ex.GetType().Name}");
 				Plugin.Log.Warn("Failed to create Playlist:");
