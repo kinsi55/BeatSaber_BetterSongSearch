@@ -18,10 +18,12 @@
 		<vertical preferred-width='8' id='scrollBarContainer' vertical-fit='Unconstrained'/>
 		<vertical preferred-width='40' bg='round-rect-panel' pad='2' child-expand-height='false'>
 			<macro.as-host host='selectedSongView'>
-				<vertical vertical-fit="PreferredSize" horizontal-fit="Unconstrained">
-					<text id="selectedSongAuthor" align='Center' font-size='3.2' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC' text='Loading...'/>
-					<text id="selectedSongName" align='Center' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false' text='Please wait'/>
-				</vertical>
+				<horizontal preferred-height='6'>
+					<text id="selectedSongAuthor" align='Center' font-size='3.2' overflow-mode='Ellipsis' word-wrapping='false' color='#CCC' text='Loading...' rich-text='false'/>
+				</horizontal>
+				<horizontal preferred-height='4'>
+					<text id="selectedSongName" align='Center' font-size='2.7' overflow-mode='Ellipsis' word-wrapping='false' text='Please wait' rich-text='false'/>
+				</horizontal>
 				<horizontal child-align='MiddleCenter' vertical-fit="PreferredSize" preferred-height="28">
 					<image id="coverImage" preserve-aspect="true"/>
 					<loading id="coverLoading" preserve-aspect="true" ignore-layout="true"/>

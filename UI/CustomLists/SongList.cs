@@ -42,7 +42,7 @@ namespace BetterSongSearch.UI.CustomLists {
 		}
 
 		public CustomSongListTableCell PopulateWithSongData(SongSearchSong song) {
-			fullFormattedSongName.text = song.fullFormattedSongName;
+			fullFormattedSongName.text = song.fullFormattedSongName.Replace("\n", " ");
 			fullFormattedSongName.color = song.CheckIsDownloaded() ? Color.gray : Color.white;
 
 			uploadDateFormatted.text = song.uploadDateFormatted;
