@@ -239,8 +239,6 @@ namespace BetterSongSearch.UI {
 					if(!hasAnyValid)
 						continue;
 
-					songsList[i]._sortedDiffsCache = null;
-
 					filteredSongsListPreallocatedArray[sc++] = songsList[i];
 				}
 

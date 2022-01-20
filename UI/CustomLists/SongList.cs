@@ -50,7 +50,8 @@ namespace BetterSongSearch.UI.CustomLists {
 			songLengthAndRating.text = song.songLengthAndRating;
 
 
-			var diffsLeft = song.sortedDiffs.Length;
+			var sortedDiffs = song.sortedDiffs.GetEnumerator();
+			var diffsLeft = song.diffs.Length;
 
 			for(var i = 0; i < diffs.Length; i++) {
 				var isActive = diffsLeft != 0;
@@ -63,7 +64,8 @@ namespace BetterSongSearch.UI.CustomLists {
 				if(diffsLeft != 1 && i == diffs.Length - 1) {
 					diffs[i].text = $"<color=#0AD>+{diffsLeft} More";
 				} else {
-					diffs[i].text = song.sortedDiffs[i].formattedDiffDisplay;
+					sortedDiffs.MoveNext();
+					diffs[i].text = sortedDiffs.Current.formattedDiffDisplay;
 					diffsLeft--;
 				}
 			}

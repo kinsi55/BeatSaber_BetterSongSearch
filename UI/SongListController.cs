@@ -228,26 +228,21 @@ namespace BetterSongSearch.UI {
 		string _uploaderNameLowercase = null;
 		public string uploaderNameLowercase => _uploaderNameLowercase ?? (_uploaderNameLowercase = detailsSong.uploaderName.ToLowerInvariant());
 
-		public SongSearchDiff[] diffs { get; private set; }
-		public SongSearchDiff[] _sortedDiffsCache;
+		public readonly SongSearchDiff[] diffs;
 
 		#region BSML stuffs
-		public SongSearchDiff[] sortedDiffs {
+		public IOrderedEnumerable<SongSearchDiff> sortedDiffs {
 			get {
-				if(_sortedDiffsCache == null) {
-					// Matching Standard > Matching Non-Standard > Non-Matching Standard > Non-Matching Non-Standard
-					var y = diffs.OrderByDescending(x =>
-						(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0)
-					);
+				// Matching Standard > Matching Non-Standard > Non-Matching Standard > Non-Matching Non-Standard
+				var y = diffs.OrderByDescending(x =>
+					(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0)
+				);
 
-					// If we are sorting by something that is on a diff-level, sort the diffy as well!
-					if(SongListController.sortModesDiffSort.TryGetValue(SongListController.selectedSortMode, out var diffSorter))
-						y = y.ThenBy(diffSorter);
+				// If we are sorting by something that is on a diff-level, sort the diffy as well!
+				if(SongListController.sortModesDiffSort.TryGetValue(SongListController.selectedSortMode, out var diffSorter))
+					y = y.ThenBy(diffSorter);
 
-					_sortedDiffsCache = y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0).ToArray();
-				}
-
-				return _sortedDiffsCache;
+				return y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0);
 			}
 		}
 
