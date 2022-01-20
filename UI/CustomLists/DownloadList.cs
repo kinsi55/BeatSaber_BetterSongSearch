@@ -15,7 +15,7 @@ namespace BetterSongSearch.UI.CustomLists {
 			var tableCell = tableView.DequeueReusableCellForIdentifier(ReuseIdentifier);
 
 			if(tableCell == null) {
-				tableCell = new GameObject("CustomDownloadListTableCell", new[] { typeof(Touchable) }).AddComponent<CustomDownloadListTableCell>();
+				tableCell = new GameObject("CustomDownloadListTableCell", typeof(Touchable)).AddComponent<CustomDownloadListTableCell>();
 				tableCell.interactable = true;
 
 				tableCell.reuseIdentifier = ReuseIdentifier;

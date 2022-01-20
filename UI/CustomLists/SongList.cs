@@ -4,6 +4,7 @@ using HMUI;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using System.Linq;
 
 namespace BetterSongSearch.UI.CustomLists {
 	static class SongListTableData {
@@ -13,7 +14,7 @@ namespace BetterSongSearch.UI.CustomLists {
 			var tableCell = tableView.DequeueReusableCellForIdentifier(ReuseIdentifier);
 
 			if(tableCell == null) {
-				tableCell = new GameObject("CustomSongListTableCell", new[] { typeof(Touchable) }).AddComponent<CustomSongListTableCell>();
+				tableCell = new GameObject("CustomSongListTableCell", typeof(Touchable)).AddComponent<CustomSongListTableCell>();
 				tableCell.interactable = true;
 
 				tableCell.reuseIdentifier = ReuseIdentifier;

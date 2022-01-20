@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace BetterSongSearch {
 	internal class PluginConfig {
-		public static PluginConfig Instance { get; set; }
+		public static PluginConfig Instance;
 		public virtual bool returnToBssFromSolo { get; set; } = false;
 		public virtual bool smallerFontSize { get; set; } = false;
 

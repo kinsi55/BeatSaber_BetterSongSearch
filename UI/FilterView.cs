@@ -228,7 +228,7 @@ namespace BetterSongSearch.UI {
 		}
 
 
-		public static RatelimitCoroutine limitedUpdateData { get; private set; } = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.1f);
+		public static readonly RatelimitCoroutine limitedUpdateData = new RatelimitCoroutine(BSSFlowCoordinator.FilterSongs, 0.1f);
 
 		readonly string version = $"BetterSongSearch v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)} by Kinsi55";
 		[UIComponent("datasetInfoLabel")] private TextMeshProUGUI _datasetInfoLabel = null;
