@@ -3,10 +3,8 @@
 		<button on-click='SelectRandom' text='Random' preferred-height='8'/>
 		<button event-click='ShowMoreModal' text='More🔽' preferred-height='8'/>
 		<vertical id='searchBoxContainer' preferred-width='44' pad-left='2'/>
-		<vertical vertical-fit='PreferredSize' pref-height='6' ignore-layout='true' pad-right='42'>
-			<loading id="searchInProgress" preserve-aspect="true"/>
-		</vertical>
-		
+		<loading id="searchInProgress" preserve-aspect="true" ignore-layout='true' size-delta-x='6' anchor-min-x='0.33' anchor-max-x='0.33'/>
+
 		<vertical preferred-width='44' pad-left='1'>
 			<dropdown-list-setting id='sortDropdown' text='Sort' value="selectedSortMode" apply-on-change="true" choices='sortModeSelections' on-change='UpdateDataAndFilters'/>
 		</vertical>
