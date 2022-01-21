@@ -214,7 +214,7 @@ namespace BetterSongSearch.UI {
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
 
-		internal static readonly string selectedSortMode = sortModes.First().Key;
+		internal static string selectedSortMode { get; private set; } = sortModes.First().Key;
 	}
 
 	class SongSearchSong {
