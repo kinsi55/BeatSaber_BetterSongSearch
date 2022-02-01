@@ -43,7 +43,7 @@
 		<vertical horizontal-fit='Unconstrained' pad='2' pad-bottom='-2'>
 			<primary-button text='Batch Download' click-event='HideMoreModal' on-click='ShowMultiDlModal' horizontal-fit='Unconstrained'/>
 			<primary-button text='Create / Update Playlist' click-event='HideMoreModal' on-click='ShowPlaylistCreation' horizontal-fit='Unconstrained'/>
-			<primary-button text='BetterSongList Settings' click-event='HideMoreModal,ShowSettingsModal' horizontal-fit='Unconstrained'/>
+			<primary-button text='BetterSongSearch Settings' click-event='HideMoreModal,ShowSettingsModal' horizontal-fit='Unconstrained'/>
 		</vertical>
 	</modal>
 
