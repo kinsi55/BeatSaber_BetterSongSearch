@@ -30,10 +30,10 @@ namespace BetterSongSearch.Util {
 		static HttpClient client = null;
 
 		public async Task<Sprite> LoadAsync(Song song, CancellationToken token) {
-			var path = $"{PluginConfig.Instance.downloadUrlOverride}/{song.hash.ToLowerInvariant()}.jpg";
+			var path = song.coverURL;
 
-			if(path.Length == 0)
-				path = song.coverURL;
+			if(PluginConfig.Instance.downloadUrlOverride.Length == 0)
+				path = $"{PluginConfig.Instance.downloadUrlOverride}/{song.hash.ToLowerInvariant()}.jpg";
 
 			if(_spriteCache.TryGetValue(path, out Sprite sprite))
 				return sprite;
