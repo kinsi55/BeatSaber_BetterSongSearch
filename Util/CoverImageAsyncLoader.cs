@@ -32,7 +32,7 @@ namespace BetterSongSearch.Util {
 		public async Task<Sprite> LoadAsync(Song song, CancellationToken token) {
 			var path = song.coverURL;
 
-			if(PluginConfig.Instance.downloadUrlOverride.Length == 0)
+			if(PluginConfig.Instance.downloadUrlOverride.Length != 0)
 				path = $"{PluginConfig.Instance.downloadUrlOverride}/{song.hash.ToLowerInvariant()}.jpg";
 
 			if(_spriteCache.TryGetValue(path, out Sprite sprite))
