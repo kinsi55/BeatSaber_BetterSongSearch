@@ -40,7 +40,7 @@ namespace BetterSongSearch.Util {
 				var songeName = songe.songName;
 
 				if(possibleSongKey != 0 && x.detailsSong.mapId == possibleSongKey)
-					resultWeight = 10;
+					resultWeight = 30;
 
 				for(int i = 0; i < words.Length; i++) {
 					if(!matchedAuthor && songe.songAuthorName.Equals(words[i], StringComparison.OrdinalIgnoreCase)) {
@@ -110,7 +110,7 @@ namespace BetterSongSearch.Util {
 				}
 			}
 
-			if(prefiltered.Count == 0)
+			if(!prefiltered.Any())
 				return new List<SongSearchSong>();
 
 			var maxSearchWeightInverse = 1f / maxSearchWeight;
