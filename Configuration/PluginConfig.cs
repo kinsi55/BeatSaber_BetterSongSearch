@@ -9,6 +9,7 @@ namespace BetterSongSearch {
 		public virtual bool returnToBssFromSolo { get; set; } = false;
 		public virtual bool smallerFontSize { get; set; } = false;
 		public virtual string downloadUrlOverride { get; set; } = "";
+		public virtual string coverUrlOverride { get; set; } = "";
 		public virtual string apiUrlOverride { get; set; } = "";
 
 		/// <summary>
