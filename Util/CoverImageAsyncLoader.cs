@@ -60,10 +60,15 @@ namespace BetterSongSearch.Util {
 
 		public void Dispose() {
 			foreach(var x in _spriteCache.Keys.ToArray()) {
-				if(_spriteCache[x] == BSSFlowCoordinator.songListView.selectedSongView.coverImage.sprite)
+				var s = _spriteCache[x];
+
+				if(s == BSSFlowCoordinator.songListView.selectedSongView.coverImage.sprite)
 					continue;
 
 				_spriteCache.Remove(x);
+
+				GameObject.DestroyImmediate(s.texture);
+				GameObject.DestroyImmediate(s);
 			}
 
 			client.CancelPendingRequests();
