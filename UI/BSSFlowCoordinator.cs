@@ -59,9 +59,13 @@ namespace BetterSongSearch.UI {
 						if(!_songsWithScores.TryGetValue(sh, out var h))
 							_songsWithScores.Add(sh, h = new Dictionary<string, float>());
 
-						var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
-
-						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
+						/*
+						 * Calculating the maxscore for a map is now a bajillion times more complex than it was before
+						 * bye bye sort by worst score
+						 */
+						//var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
+						//h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
+						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = 0;
 					}
 				}
 

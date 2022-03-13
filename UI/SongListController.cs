@@ -185,31 +185,31 @@ namespace BetterSongSearch.UI {
 			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) },
 			{ "Best rated", x => x.detailsSong.rating },
 			{ "Worst rated", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
-			{ "Worst local score", x => {
-				var returnVal = -420f;
+			//{ "Worst local score", x => {
+			//	var returnVal = -420f;
 
-				if(x.CheckHasScore()) {
-					foreach(var diff in x.diffs) {
-						var y = -sortModesDiffSort["Worst local score"](diff);
+			//	if(x.CheckHasScore()) {
+			//		foreach(var diff in x.diffs) {
+			//			var y = -sortModesDiffSort["Worst local score"](diff);
 
-						if(y > returnVal)
-							returnVal = y;
-					}
-				}
+			//			if(y > returnVal)
+			//				returnVal = y;
+			//		}
+			//	}
 
-				return returnVal;
-			} }
+			//	return returnVal;
+			//} }
 		};
 
 		internal static readonly IReadOnlyDictionary<string, Func<SongSearchDiff, float>> sortModesDiffSort = new Dictionary<string, Func<SongSearchDiff, float>>() {
 			{ "Most Stars", x => -x.detailsDiff.stars },
 			{ "Least Stars", x => x.detailsDiff.ranked ? x.detailsDiff.stars : -420f },
-			{ "Worst local score", x => {
-				if(x.passesFilter && x.CheckHasScore())
-					return x.localScore;
+			//{ "Worst local score", x => {
+			//	if(x.passesFilter && x.CheckHasScore())
+			//		return x.localScore;
 
-				return 420;
-			} }
+			//	return 420;
+			//} }
 		};
 
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
