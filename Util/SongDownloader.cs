@@ -36,9 +36,9 @@ namespace BetterSongSearch.Util {
 			var baseUrl = PluginConfig.Instance.apiUrlOverride;
 
 			if(baseUrl.Length == 0)
-				baseUrl = "https://api.beatsaver.com";
+				baseUrl = "https://api.beatsaver.com/maps/id";
 
-			using(var resp = await client.GetAsync($"{baseUrl}/maps/id/{key.ToLowerInvariant()}", HttpCompletionOption.ResponseHeadersRead, token)) {
+			using(var resp = await client.GetAsync($"{baseUrl}/{key.ToLowerInvariant()}", HttpCompletionOption.ResponseHeadersRead, token)) {
 				if(resp.StatusCode != HttpStatusCode.OK)
 					throw new Exception($"Unexpected HTTP response: {resp.StatusCode} {resp.ReasonPhrase}");
 
