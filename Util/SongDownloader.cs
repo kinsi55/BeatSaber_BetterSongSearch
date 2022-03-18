@@ -44,7 +44,7 @@ namespace BetterSongSearch.Util {
 
 				using(var reader = new StreamReader(await resp.Content.ReadAsStreamAsync()))
 				using(var jsonReader = new JsonTextReader(reader)) {
-					JsonSerializer ser = new JsonSerializer();
+					var ser = new JsonSerializer();
 
 					return ser.Deserialize<JObject>(jsonReader).GetValue("description").Value<string>();
 				}
@@ -85,10 +85,10 @@ namespace BetterSongSearch.Util {
 		}
 
 		static void ExtractZip(Stream zipStream, string basePath, CancellationToken token, Action<float> progressCb, bool overwrite = false) {
-			string path = Path.Combine(CustomLevelPathHelper.customLevelsDirectoryPath, string.Concat(basePath.Split(Path.GetInvalidFileNameChars())).Trim());
+			var path = Path.Combine(CustomLevelPathHelper.customLevelsDirectoryPath, string.Concat(basePath.Split(Path.GetInvalidFileNameChars())).Trim());
 
 			if(!overwrite && Directory.Exists(path)) {
-				int pathNum = 1;
+				var pathNum = 1;
 				while(Directory.Exists(path + $" ({pathNum})"))
 					pathNum++;
 
@@ -96,7 +96,7 @@ namespace BetterSongSearch.Util {
 			}
 
 			int steps;
-			int progress = 0;
+			var progress = 0;
 			Dictionary<string, byte[]> files;
 
 			// Unzip everything to memory first so we dont end up writing half a song incase something breaks
@@ -115,7 +115,7 @@ namespace BetterSongSearch.Util {
 									if(token.IsCancellationRequested)
 										throw new TaskCanceledException();
 
-									int read = str.Read(buf, 0, buf.Length);
+									var read = str.Read(buf, 0, buf.Length);
 									if(read == 0)
 										break;
 

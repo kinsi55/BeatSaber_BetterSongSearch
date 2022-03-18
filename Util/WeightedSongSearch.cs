@@ -12,7 +12,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		public static IEnumerable<SongSearchSong> Search(IList<SongSearchSong> inList, string filter, Func<SongSearchSong, float> ordersort) {
-			var words = filter.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			var words = filter.Split(new [] { " " }, StringSplitOptions.RemoveEmptyEntries);
 			var wordLengthInverses = words.Select(x => 1f / x.Length).ToArray();
 
 			var possibleSongKey = 0u;
@@ -32,9 +32,9 @@ namespace BetterSongSearch.Util {
 			var maxSortWeight = 0f;
 
 			foreach(var x in inList) {
-				int resultWeight = 0;
-				bool matchedAuthor = false;
-				int prevMatchIndex = -1;
+				var resultWeight = 0;
+				var matchedAuthor = false;
+				var prevMatchIndex = -1;
 
 				var songe = x.detailsSong;
 				var songeName = songe.songName;
@@ -42,7 +42,7 @@ namespace BetterSongSearch.Util {
 				if(possibleSongKey != 0 && x.detailsSong.mapId == possibleSongKey)
 					resultWeight = 30;
 
-				for(int i = 0; i < words.Length; i++) {
+				for(var i = 0; i < words.Length; i++) {
 					if(!matchedAuthor && songe.songAuthorName.Equals(words[i], StringComparison.OrdinalIgnoreCase)) {
 						matchedAuthor = true;
 
@@ -51,7 +51,7 @@ namespace BetterSongSearch.Util {
 					} else if(!matchedAuthor && words[i].Length >= 3) {
 						var index = songe.songAuthorName.IndexOf(words[i], StringComparison.OrdinalIgnoreCase);
 
-						if(index == 0 || index > 0 && IsSpace(songe.songAuthorName[index - 1])) {
+						if(index == 0 || (index > 0 && IsSpace(songe.songAuthorName[index - 1]))) {
 							matchedAuthor = true;
 
 							resultWeight += (int)Math.Round((index == 0 ? 4 : 3) * (wordLengthInverses[i] * songe.songAuthorName.Length));
@@ -85,7 +85,7 @@ namespace BetterSongSearch.Util {
 					}
 				}
 
-				for(int i = 0; i < words.Length; i++) {
+				for(var i = 0; i < words.Length; i++) {
 					if(words[i].Length > 3 && songe.levelAuthorName.IndexOf(words[i], StringComparison.OrdinalIgnoreCase) != -1) {
 						resultWeight += 1;
 

@@ -223,10 +223,10 @@ namespace BetterSongSearch.UI {
 		public readonly Song detailsSong;
 
 		string _hash = null;
-		public string hash => _hash ?? (_hash = detailsSong.hash);
+		public string hash => _hash ??= detailsSong.hash;
 
 		string _uploaderNameLowercase = null;
-		public string uploaderNameLowercase => _uploaderNameLowercase ?? (_uploaderNameLowercase = detailsSong.uploaderName.ToLowerInvariant());
+		public string uploaderNameLowercase => _uploaderNameLowercase ??= detailsSong.uploaderName.ToLowerInvariant();
 
 		public readonly SongSearchDiff[] diffs;
 
@@ -284,7 +284,7 @@ namespace BetterSongSearch.UI {
 			diffs = new SongSearchDiff[song.diffCount];
 
 			// detailsSong.difficulties has an overhead of creating the ArraySegment - This doesnt 👍;
-			for(int i = 0; i < diffs.Length; i++)
+			for(var i = 0; i < diffs.Length; i++)
 				diffs[i] = new SongSearchDiff(this, in BSSFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
 		}
 
@@ -300,7 +300,7 @@ namespace BetterSongSearch.UI {
 			internal float localScore => BSSFlowCoordinator.songsWithScores[songSearchSong.hash][serializedDiff];
 
 			string GetCombinedShortDiffName() {
-				string retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
+				var retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
 
 				if(customCharNames.TryGetValue(detailsDiff.characteristic, out var customCharName))
 					retVal += $"({customCharName})";

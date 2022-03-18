@@ -82,7 +82,7 @@ namespace BetterSongSearch.UI {
 
 			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? UnityEngine.Object.FindObjectOfType<PlayerDataModel>();
 
-			async Task DataUpdated() {
+			static async Task DataUpdated() {
 				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
 					filterView.datasetInfoLabel?.SetText($"{songDetails.songs.Length} songs in dataset | Newest: {songDetails.songs.Last().uploadTime.ToLocalTime():d\\. MMM yy - HH:mm}");
 				});
@@ -223,7 +223,7 @@ namespace BetterSongSearch.UI {
 					if(!filterView.SongCheck(in val) || !filterView.SearchSongCheck(songsList[i]))
 						continue;
 
-					bool hasAnyValid = false;
+					var hasAnyValid = false;
 
 					/*
 					 * loop all diffs of this song to see if any diff matches our filter.
