@@ -273,7 +273,13 @@ namespace BetterSongSearch.UI {
 		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
 		public string songRating => showVotesInsteadOfRating ? $"<color=#9C9>👍 {detailsSong.upvotes} <color=#C99>👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
 
+#if !DEBUG
 		public string songLengthAndRating => $"{(isQualified ? "<color=#96C>🚩 Qualified</color> " : "")}⏲ {songLength}  {songRating}";
+#else
+		public float sortWeight = 0;
+		public float resultWeight = 0;
+		public string songLengthAndRating => $"RW{resultWeight} - SW{sortWeight} - {(isQualified ? "<color=#96C>🚩 Qualified</color> " : "")}⏲ {songLength}  {songRating}";
+#endif
 		//public string levelAuthorName => song.levelAuthorName;
 		#endregion
 
