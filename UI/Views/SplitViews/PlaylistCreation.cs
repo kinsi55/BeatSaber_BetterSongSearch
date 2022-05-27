@@ -5,7 +5,9 @@ using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
 using IPA.Utilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 
 namespace BetterSongSearch.UI.SplitViews {
@@ -26,6 +28,7 @@ namespace BetterSongSearch.UI.SplitViews {
 
 		internal static string nameToUseOnNextOpen = "h";
 		static bool clearExisting = true;
+		static bool hightlightDiffs = false;
 
 		public void Open() {
 			if(IPA.Loader.PluginManager.GetPluginFromId("BeatSaberPlaylistsLib") == null) {
@@ -47,6 +50,16 @@ namespace BetterSongSearch.UI.SplitViews {
 			parserParams.EmitEvent("CloseModal");
 			parserParams.EmitEvent("ShowResultModal");
 		}
+
+		static readonly IReadOnlyDictionary<SongDetailsCache.Structs.MapCharacteristic, string> songDetailsCharNames
+			= Enum.GetValues(typeof(SongDetailsCache.Structs.MapCharacteristic))
+			.Cast<SongDetailsCache.Structs.MapCharacteristic>()
+			.ToDictionary(x => x, x => x.ToString());
+
+		static readonly IReadOnlyDictionary<SongDetailsCache.Structs.MapDifficulty, string> songDetailsDiffNames
+			= Enum.GetValues(typeof(SongDetailsCache.Structs.MapDifficulty))
+			.Cast<SongDetailsCache.Structs.MapDifficulty>()
+			.ToDictionary(x => x, x => x.ToString());
 
 		void CreatePlaylist() {
 			var fName = string.Concat(playlistName.Text.Split(Path.GetInvalidFileNameChars())).Trim();
@@ -73,7 +86,11 @@ namespace BetterSongSearch.UI.SplitViews {
 				plist.SetCustomData("BetterSongSearchFilter", FilterView.currentFilter.Serialize(Newtonsoft.Json.Formatting.None));
 				plist.SetCustomData("BetterSongSearchSearchTerm", BSSFlowCoordinator.songListView.songSearchInput.text);
 				plist.SetCustomData("BetterSongSearchSort", SongListController.selectedSortMode);
-				plist.AllowDuplicates = false;
+				// PlaylistLib duplicate check is O(n^2) - Not gud enough for batch-adding with thousands of entries, so we roll out own
+				plist.AllowDuplicates = true;
+
+				// PlaylistLib contains uppercase hashes, but in that case I dont have control over it and dont know if it might change
+				var songsAlreadyInPlaylist = plist.Select(x => x.Hash.ToUpperInvariant()).ToHashSet();
 
 				int addedSongs = 0;
 
@@ -83,28 +100,35 @@ namespace BetterSongSearch.UI.SplitViews {
 
 					var s = SongListController.searchedSongsList[i];
 
-					var pls = (PlaylistSong)plist.Add(s.hash, s.detailsSong.songName, s.detailsSong.key, s.detailsSong.levelAuthorName);
+					PlaylistSong pls = null;
+					// SongDetails returns uppercase hashes
+					var uH = s.hash;
+
+					if(!songsAlreadyInPlaylist.Contains(uH))
+						pls = (PlaylistSong)plist.Add(uH, s.detailsSong.songName, s.detailsSong.key, s.detailsSong.levelAuthorName);
 
 					if(pls == null)
+						continue;
+
+					songsAlreadyInPlaylist.Add(uH);
+
+					addedSongs++;
+
+					if(!hightlightDiffs)
 						continue;
 
 					foreach(var x in s.diffs) {
 						if(!x.passesFilter)
 							continue;
 
-						var dchar = x.detailsDiff.characteristic.ToString();
-
-						if(dchar == "ThreeSixtyDegree")
-							dchar = "360Degree";
-						else if(dchar == "NinetyDegree")
-							dchar = "90Degree";
-
-						pls.AddDifficulty(dchar, x.detailsDiff.difficulty.ToString());
+						pls.AddDifficulty(
+							songDetailsCharNames[x.detailsDiff.characteristic],
+							songDetailsDiffNames[x.detailsDiff.difficulty]
+						);
 					}
-
-					addedSongs++;
 				}
 
+				plist.AllowDuplicates = false;
 				manager.StorePlaylist(plist);
 				manager.RequestRefresh("BetterSongSearch");
 
