@@ -65,7 +65,7 @@ namespace BetterSongSearch.Util {
 						if(index == 0 || (index > 0 && IsSpace(authorName[index - 1]))) {
 							matchedAuthor = true;
 
-							resultWeight += (int)Math.Round((index == 0 ? 4f : 3f) * (words[i].Length / authorName.Length));
+							resultWeight += (int)Math.Round((index == 0 ? 4f : 3f) * ((float)words[i].Length / authorName.Length));
 							continue;
 						}
 					}
