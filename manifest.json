@@ -2,7 +2,7 @@
     "id": "BetterSongSearch",
     "name": "BetterSongSearch",
     "author": "Kinsi55",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "description": "Search and download songs with a lot of filtering and sorting options and without frustration!",
     "gameVersion": "1.18.0",
     "dependsOn": {
