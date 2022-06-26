@@ -79,10 +79,10 @@ namespace BetterSongSearch.Util {
 
 			IEnumerator ucrap() {
 				using(var www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG)) {
-					//token.Register(() => {
-					//	if(!www.isDone)
-					//		www.Abort();
-					//});
+					token.Register(() => {
+						if(!www.isDone)
+							www.Abort();
+					});
 
 					www.SetRequestHeader("User-Agent", useragent);
 
