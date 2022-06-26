@@ -15,7 +15,7 @@ namespace BetterSongSearch.UI {
 		internal static SongListController songListView;
 		internal static DownloadHistoryView downloadHistoryView;
 
-		internal static CoverImageAsyncLoader coverLoader = null;
+		internal static SongAssetAsyncLoader assetLoader = null;
 		static internal SongDetails songDetails = null;
 
 		static BSSFlowCoordinator instance = null;
@@ -78,7 +78,7 @@ namespace BetterSongSearch.UI {
 
 			closeCancelSource = new CancellationTokenSource();
 
-			coverLoader ??= new CoverImageAsyncLoader();
+			assetLoader ??= new SongAssetAsyncLoader();
 
 			playerDataModel ??= XD.FunnyMono(playerDataModel) ?? UnityEngine.Object.FindObjectOfType<PlayerDataModel>();
 
@@ -172,7 +172,7 @@ namespace BetterSongSearch.UI {
 				return;
 
 			cancelConfirmCallback = null;
-			SelectedSongView.coverLoadCancel?.Cancel();
+			SelectedSongView.songAssetLoadCanceller?.Cancel();
 			try {
 				XD.FunnyMono(SelectedSongView.songPreviewPlayer)?.CrossfadeToDefault();
 			} catch { }
@@ -195,8 +195,8 @@ namespace BetterSongSearch.UI {
 				songsWithScoresShouldProbablyUpdate = true;
 				songListView.songList.ReloadData();
 
-				coverLoader?.Dispose();
-				coverLoader = null;
+				assetLoader?.Dispose();
+				assetLoader = null;
 
 				instance = null;
 			}, ViewController.AnimationDirection.Horizontal, immediately);

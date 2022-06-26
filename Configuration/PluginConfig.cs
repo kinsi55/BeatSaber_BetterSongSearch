@@ -8,8 +8,10 @@ namespace BetterSongSearch {
 		public static PluginConfig Instance;
 		public virtual bool returnToBssFromSolo { get; set; } = false;
 		public virtual bool smallerFontSize { get; set; } = false;
+		public virtual bool loadSongPreviews { get; set; } = true;
 		public virtual string downloadUrlOverride { get; set; } = "";
 		public virtual string coverUrlOverride { get; set; } = "";
+		public virtual string previewUrlOverride { get; set; } = "";
 		public virtual string apiUrlOverride { get; set; } = "";
 
 		/// <summary>

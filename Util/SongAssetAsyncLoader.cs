@@ -1,6 +1,7 @@
 ﻿using BetterSongSearch.UI;
 using SongDetailsCache.Structs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,13 +10,16 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace BetterSongSearch.Util {
-	class CoverImageAsyncLoader : IDisposable {
+	class SongAssetAsyncLoader : IDisposable {
 		static Dictionary<string, Sprite> _spriteCache;
+		static Dictionary<string, AudioClip> _previewCache;
 
-		public CoverImageAsyncLoader() {
+		public SongAssetAsyncLoader() {
 			_spriteCache ??= new Dictionary<string, Sprite>();
+			_previewCache ??= new Dictionary<string, AudioClip>();
 
 			client = new HttpClient(new HttpClientHandler() {
 				AutomaticDecompression = DecompressionMethods.GZip,
@@ -29,7 +33,7 @@ namespace BetterSongSearch.Util {
 
 		static HttpClient client = null;
 
-		public async Task<Sprite> LoadAsync(Song song, CancellationToken token) {
+		public async Task<Sprite> LoadCoverAsync(Song song, CancellationToken token) {
 			var path = song.coverURL;
 
 			if(PluginConfig.Instance.coverUrlOverride.Length != 0)
@@ -58,6 +62,49 @@ namespace BetterSongSearch.Util {
 			return SongCore.Loader.defaultCoverImage;
 		}
 
+		public Task<AudioClip> LoadPreviewAsync(Song song, CancellationToken token) {
+			var path = PluginConfig.Instance.previewUrlOverride;
+
+			if(path.Length == 0)
+				path = "https://cdn.beatsaver.com";
+
+			path += $"/{song.hash.ToLowerInvariant()}.mp3";
+
+			if(_previewCache.TryGetValue(path, out AudioClip ac))
+				return Task.FromResult(ac);
+
+			var tcs = new TaskCompletionSource<AudioClip>();
+
+			IEnumerator ucrap() {
+				using(var www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG)) {
+					//token.Register(() => {
+					//	if(!www.isDone)
+					//		www.Abort();
+					//});
+
+					yield return www.SendWebRequest();
+
+					if(!www.isHttpError) {
+						try {
+							var clip = DownloadHandlerAudioClip.GetContent(www);
+
+							if(clip != null && clip.loadState == AudioDataLoadState.Loaded) {
+								_previewCache.Add(path, clip);
+
+								tcs.SetResult(clip);
+								yield break;
+							}
+						} catch { }
+					}
+					tcs.SetException(new Exception());
+				}
+			};
+
+			SharedCoroutineStarter.instance.StartCoroutine(ucrap());
+
+			return tcs.Task;
+		}
+
 		public void Dispose() {
 			foreach(var x in _spriteCache.Keys.ToArray()) {
 				var s = _spriteCache[x];
@@ -70,6 +117,12 @@ namespace BetterSongSearch.Util {
 				GameObject.DestroyImmediate(s.texture);
 				GameObject.DestroyImmediate(s);
 			}
+
+			foreach(var x in _previewCache.Values) {
+				GameObject.Destroy(x);
+			}
+
+			_previewCache.Clear();
 
 			client.CancelPendingRequests();
 			client.Dispose();

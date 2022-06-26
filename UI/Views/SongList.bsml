@@ -54,6 +54,7 @@
 			</horizontal>
 			<macro.as-host host='cfgInstance'>
 				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
+				<toggle-setting text='Download Song previews' value="loadSongPreviews" bind-value="true" apply-on-change="true" hover-hint="Load and play a short preview of songs not downloaded yet"/>
 				<toggle-setting text='Smaller Font size' value="smallerFontSize" bind-value="true" apply-on-change="true" hover-hint="Makes the Font size of the Song List smaller"/>
 			</macro.as-host>
 			<horizontal pad-top="5">
