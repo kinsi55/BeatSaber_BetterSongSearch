@@ -85,15 +85,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		static void ExtractZip(Stream zipStream, string basePath, CancellationToken token, Action<float> progressCb, bool overwrite = false) {
-			var path = Path.Combine(CustomLevelPathHelper.customLevelsDirectoryPath, string.Concat(basePath.Split(Path.GetInvalidFileNameChars())).Trim());
-
-			if(!overwrite && Directory.Exists(path)) {
-				var pathNum = 1;
-				while(Directory.Exists(path + $" ({pathNum})"))
-					pathNum++;
-
-				path += $" ({pathNum})";
-			}
+			basePath = string.Concat(basePath.Split(Path.GetInvalidFileNameChars())).Trim();
 
 			int steps;
 			var progress = 0;
@@ -141,6 +133,21 @@ namespace BetterSongSearch.Util {
 
 			if(token.IsCancellationRequested)
 				throw new TaskCanceledException();
+
+			var path = Path.Combine(Directory.GetCurrentDirectory(), CustomLevelPathHelper.customLevelsDirectoryPath, basePath);
+
+			var longestFileNameLength = files.Max(x => x.Key.Length);
+
+			if(path.Length > 253 - longestFileNameLength)
+				path = $"{path.Substring(0, 253 - longestFileNameLength - 7)}..";
+
+			if(!overwrite && Directory.Exists(path)) {
+				var pathNum = 1;
+				while(Directory.Exists(path + $" ({pathNum})"))
+					pathNum++;
+
+				path += $" ({pathNum})";
+			}
 
 			if(!Directory.Exists(path))
 				Directory.CreateDirectory(path);
