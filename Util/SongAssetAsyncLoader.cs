@@ -78,9 +78,11 @@ namespace BetterSongSearch.Util {
 			var tcs = new TaskCompletionSource<AudioClip>();
 
 			IEnumerator ucrap() {
+				var completed = false;
+
 				using(var www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.MPEG)) {
 					token.Register(() => {
-						if(!www.isDone)
+						if(!completed && !www.isDone)
 							www.Abort();
 					});
 
@@ -96,11 +98,13 @@ namespace BetterSongSearch.Util {
 								_previewCache.Add(path, clip);
 
 								tcs.SetResult(clip);
+								completed = true;
 								yield break;
 							}
 						} catch { }
 					}
 					tcs.SetException(new Exception());
+					completed = true;
 				}
 			};
 
