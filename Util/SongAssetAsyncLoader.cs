@@ -17,6 +17,8 @@ namespace BetterSongSearch.Util {
 		static Dictionary<string, Sprite> _spriteCache;
 		static Dictionary<string, AudioClip> _previewCache;
 
+		static readonly string useragent = "BetterSongSearch/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
 		public SongAssetAsyncLoader() {
 			_spriteCache ??= new Dictionary<string, Sprite>();
 			_previewCache ??= new Dictionary<string, AudioClip>();
@@ -28,7 +30,7 @@ namespace BetterSongSearch.Util {
 				Timeout = TimeSpan.FromSeconds(5)
 			};
 
-			client.DefaultRequestHeaders.Add("User-Agent", "BetterSongSearch/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+			client.DefaultRequestHeaders.Add("User-Agent", useragent);
 		}
 
 		static HttpClient client = null;
@@ -81,6 +83,8 @@ namespace BetterSongSearch.Util {
 					//	if(!www.isDone)
 					//		www.Abort();
 					//});
+
+					www.SetRequestHeader("User-Agent", useragent);
 
 					yield return www.SendWebRequest();
 
