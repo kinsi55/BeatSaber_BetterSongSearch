@@ -26,29 +26,8 @@ namespace BetterSongSearch.Util {
 				//Proxy = new WebProxy("localhost:8888")
 			});
 
-			client.DefaultRequestHeaders.Add("User-Agent", "BetterSongSearch/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+			client.DefaultRequestHeaders.Add("User-Agent", SongAssetAsyncLoader.UserAgent);
 			client.Timeout = TimeSpan.FromSeconds(10);
-		}
-
-		public static async Task<string> GetSongDescription(string key, CancellationToken token) {
-			InitClientIfNecessary();
-
-			var baseUrl = PluginConfig.Instance.apiUrlOverride;
-
-			if(baseUrl.Length == 0)
-				baseUrl = "https://api.beatsaver.com/maps/id";
-
-			using(var resp = await client.GetAsync($"{baseUrl}/{key.ToLowerInvariant()}", HttpCompletionOption.ResponseHeadersRead, token)) {
-				if(resp.StatusCode != HttpStatusCode.OK)
-					throw new Exception($"Unexpected HTTP response: {resp.StatusCode} {resp.ReasonPhrase}");
-
-				using(var reader = new StreamReader(await resp.Content.ReadAsStreamAsync()))
-				using(var jsonReader = new JsonTextReader(reader)) {
-					var ser = new JsonSerializer();
-
-					return ser.Deserialize<JObject>(jsonReader).GetValue("description").Value<string>();
-				}
-			}
 		}
 
 		public static async Task BeatmapDownload(DownloadHistoryEntry entry, CancellationToken token, Action<float> progressCb) {
@@ -59,7 +38,7 @@ namespace BetterSongSearch.Util {
 			var baseUrl = PluginConfig.Instance.downloadUrlOverride;
 
 			if(baseUrl.Length == 0)
-				baseUrl = "https://cdn.beatsaver.com";
+				baseUrl = entry.retries == 0 ? BeatSaverRegionManager.mapDownloadUrl : BeatSaverRegionManager.mapDownloadUrlFallback;
 
 			var dl = new MultithreadedBeatsaverDownloader(client, $"{baseUrl}/{entry.hash}.zip".ToLowerInvariant(), (p) => {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
@@ -91,6 +70,8 @@ namespace BetterSongSearch.Util {
 			var progress = 0;
 			Dictionary<string, byte[]> files;
 
+			var longestFileNameLength = 0;
+
 			// Unzip everything to memory first so we dont end up writing half a song incase something breaks
 			using(var archive = new ZipArchive(zipStream, ZipArchiveMode.Read)) {
 				var buf = new byte[2 ^ 15];
@@ -115,6 +96,9 @@ namespace BetterSongSearch.Util {
 								}
 
 								files.Add(entry.Name, ms.ToArray());
+
+								if(entry.Name.Length > longestFileNameLength)
+									longestFileNameLength = entry.Name.Length;
 							}
 						} else {
 							// As this wont extract anthing further down we need to increase the process for it in advance
@@ -135,8 +119,6 @@ namespace BetterSongSearch.Util {
 				throw new TaskCanceledException();
 
 			var path = Path.Combine(Directory.GetCurrentDirectory(), CustomLevelPathHelper.customLevelsDirectoryPath, basePath);
-
-			var longestFileNameLength = files.Max(x => x.Key.Length);
 
 			if(path.Length > 253 - longestFileNameLength)
 				path = $"{path.Substring(0, 253 - longestFileNameLength - 7)}..";

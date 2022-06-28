@@ -102,6 +102,8 @@ namespace BetterSongSearch.UI {
 			if(firstActivation) {
 				SetTitle("Better Song Search");
 
+				showBackButton = true;
+
 				filterView = BeatSaberUI.CreateViewController<FilterView>();
 				songListView = BeatSaberUI.CreateViewController<SongListController>();
 				downloadHistoryView = BeatSaberUI.CreateViewController<DownloadHistoryView>();
@@ -111,7 +113,7 @@ namespace BetterSongSearch.UI {
 				SongCore.Loader.SongsLoadedEvent += SongcoreSongsLoaded;
 				SongDetailsContainer.dataAvailableOrUpdated += () => _ = DataUpdated();
 
-				showBackButton = true;
+				BeatSaverRegionManager.RegionLookup();
 			}
 			// Re-Init every time incase its time to download a new database
 			songDetails = await SongDetails.Init(1);

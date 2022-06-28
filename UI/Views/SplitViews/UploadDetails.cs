@@ -30,7 +30,7 @@ namespace BetterSongSearch.UI.SplitViews {
 			Task.Run(async () => {
 				string desc = "Failed to load description";
 				try {
-					desc = await SongDownloader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
+					desc = await BSSFlowCoordinator.assetLoader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
 				} catch { }
 
 				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
