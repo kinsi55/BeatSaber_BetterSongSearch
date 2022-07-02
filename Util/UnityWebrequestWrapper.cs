@@ -55,9 +55,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		public static async Task<Sprite> DownloadSprite(string url, CancellationToken token = default, Action<float> progressCb = null) {
-			var dhb = new DownloadHandlerTexture(true);
-			
-			try {
+			using(var dhb = new DownloadHandlerTexture(true)) {
 				if(!await Download(url, dhb, token, progressCb))
 					return null;
 
@@ -65,18 +63,16 @@ namespace BetterSongSearch.Util {
 
 				t.wrapMode = TextureWrapMode.Clamp;
 				return Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector3.zero, 100);
-			} finally {
-				dhb.Dispose();
 			}
 		}
 
 		public static async Task<AudioClip> DownloadAudio(string url, CancellationToken token = default, AudioType type = AudioType.UNKNOWN, Action<float> progressCb = null) {
-			var www = UnityWebRequestMultimedia.GetAudioClip(url, type);
-			
-			if(!await Download(url, null, token, progressCb, www))
-				return null;
+			using(var www = UnityWebRequestMultimedia.GetAudioClip(url, type)) {
+				if(!await Download(url, null, token, progressCb, www))
+					return null;
 
-			return DownloadHandlerAudioClip.GetContent(www);
+				return DownloadHandlerAudioClip.GetContent(www);
+			}
 		}
 	}
 }
