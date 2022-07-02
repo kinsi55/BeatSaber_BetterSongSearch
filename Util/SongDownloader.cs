@@ -114,8 +114,13 @@ namespace BetterSongSearch.Util {
 
 			foreach(var e in files) {
 				var entryPath = Path.Combine(path, e.Key);
-				if(overwrite || !File.Exists(entryPath))
-					File.WriteAllBytes(entryPath, e.Value);
+				if(overwrite || !File.Exists(entryPath)) {
+					using(var s = File.OpenWrite(entryPath))
+					using(var w = new BinaryWriter(s, System.Text.Encoding.ASCII)) {
+						w.Write(e.Value, 0, e.Value.Length);
+						s.SetLength(e.Value.Length);
+					}
+				}
 
 				progressCb((float)++progress / steps);
 
