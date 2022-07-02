@@ -30,7 +30,7 @@ namespace BetterSongSearch.Util {
 						break;
 					}
 
-					await Task.Delay(50);
+					await Task.Delay(25);
 
 					if(progressCb != null && www.downloadProgress > 0)
 						progressCb(www.downloadProgress);
