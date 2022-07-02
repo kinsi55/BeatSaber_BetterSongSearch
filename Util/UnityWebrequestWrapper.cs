@@ -55,7 +55,7 @@ namespace BetterSongSearch.Util {
 		}
 
 		public static async Task<Sprite> DownloadSprite(string url, CancellationToken token = default, Action<float> progressCb = null) {
-			using(var dhb = new DownloadHandlerTexture(true)) {
+			using(var dhb = new DownloadHandlerTexture()) {
 				if(!await Download(url, dhb, token, progressCb))
 					return null;
 
