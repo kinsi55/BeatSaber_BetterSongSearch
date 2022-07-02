@@ -24,7 +24,7 @@ namespace BetterSongSearch.Util {
 			if(baseUrl.Length == 0)
 				baseUrl = entry.retries == 0 ? BeatSaverRegionManager.mapDownloadUrl : BeatSaverRegionManager.mapDownloadUrlFallback;
 
-			var dl = await UnityWebrequestWrapper.DownloadContent($"{baseUrl}/{entry.hash}.zip".ToLowerInvariant(), token, (p) => {
+			var dl = await UnityWebrequestWrapper.DownloadBytes($"{baseUrl}/{entry.hash}.zip".ToLowerInvariant(), token, (p) => {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
 				progressCb(p);
 			});
@@ -32,16 +32,12 @@ namespace BetterSongSearch.Util {
 			var t = new CancellationTokenSource();
 			token.Register(t.Cancel);
 
-			using(var s = new MemoryStream(dl.data)) {
+			using(var s = new MemoryStream(dl)) {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
 				// Not async'ing this as BeatmapDownload() is supposed to be called in a task
-				try {
-					ExtractZip(s, folderName, t.Token, progressCb);
-				} finally {
-					dl.Dispose();
-				}
+				ExtractZip(s, folderName, t.Token, progressCb);
 			}
 		}
 

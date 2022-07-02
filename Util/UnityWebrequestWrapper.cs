@@ -38,7 +38,8 @@ namespace BetterSongSearch.Util {
 
 				return www.isDone && !www.isHttpError && !www.isNetworkError;
 			} catch {
-				handler?.Dispose();
+				if(handler != null)
+					handler.Dispose();
 				throw;
 			} finally {
 				if(www != null && uwr == null)
@@ -46,37 +47,45 @@ namespace BetterSongSearch.Util {
 			}
 		}
 
-		public static async Task<DownloadHandlerBuffer> DownloadContent(string url, CancellationToken token = default, Action<float> progressCb = null) {
-			var dhb = new DownloadHandlerBuffer();
+		public static async Task<byte[]> DownloadBytes(string url, CancellationToken token = default, Action<float> progressCb = null) {
+			using(var dhb = new DownloadHandlerBuffer())
+				return await Download(url, dhb, token, progressCb) ? dhb.data : null;
+		}
 
-			return await Download(url, dhb, token, progressCb) ? dhb : null;
+		public static async Task<string> DownloadText(string url, CancellationToken token = default, Action<float> progressCb = null) {
+			using(var dhb = new DownloadHandlerBuffer())
+				return await Download(url, dhb, token, progressCb) ? dhb.text : null;
 		}
 
 		public static async Task<Sprite> DownloadSprite(string url, CancellationToken token = default, Action<float> progressCb = null) {
 			var dhb = new DownloadHandlerTexture(true);
+			
+			try {
+				if(!await Download(url, dhb, token, progressCb))
+					return null;
 
-			if(!await Download(url, dhb, token, progressCb))
-				return null;
+				var t = dhb.texture;
 
-			var t = dhb.texture;
-
-			dhb.Dispose();
-
-			t.wrapMode = TextureWrapMode.Clamp;
-			return Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector3.zero, 100);
+				t.wrapMode = TextureWrapMode.Clamp;
+				return Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector3.zero, 100);
+			} finally {
+				dhb.Dispose();
+			}
 		}
 
 		public static async Task<AudioClip> DownloadAudio(string url, CancellationToken token = default, AudioType type = AudioType.UNKNOWN, Action<float> progressCb = null) {
 			var www = UnityWebRequestMultimedia.GetAudioClip(url, type);
+			
+			try {
+				if(!await Download(url, null, token, progressCb, www))
+					return null;
 
-			if(!await Download(url, null, token, progressCb, www))
-				return null;
+				var clip = DownloadHandlerAudioClip.GetContent(www);
 
-			var clip = DownloadHandlerAudioClip.GetContent(www);
-
-			www.downloadHandler.Dispose();
-
-			return clip;
+				return clip;
+			} finally {
+				www.downloadHandler.Dispose();
+			}
 		}
 	}
 }

@@ -31,12 +31,12 @@ namespace BetterSongSearch.Util {
 			if(baseUrl.Length == 0)
 				baseUrl = BeatSaverRegionManager.detailsDownloadUrl;
 
-			using(var c = await UnityWebrequestWrapper.DownloadContent($"{baseUrl}/{key.ToLowerInvariant()}", token)) {
-				using(var jsonReader = new JsonTextReader(new StreamReader(new MemoryStream(c.data)))) {
-					var ser = new JsonSerializer();
+			var c = await UnityWebrequestWrapper.DownloadBytes($"{baseUrl}/{key.ToLowerInvariant()}", token);
+			
+			using(var jsonReader = new JsonTextReader(new StreamReader(new MemoryStream(c)))) {
+				var ser = new JsonSerializer();
 
-					return valueGetter(ser.Deserialize<JObject>(jsonReader));
-				}
+				return valueGetter(ser.Deserialize<JObject>(jsonReader));
 			}
 		}
 
