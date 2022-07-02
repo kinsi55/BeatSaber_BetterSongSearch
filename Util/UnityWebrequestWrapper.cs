@@ -37,6 +37,9 @@ namespace BetterSongSearch.Util {
 				}
 
 				return www.isDone && !www.isHttpError && !www.isNetworkError;
+			} catch {
+				handler?.Dispose();
+				throw;
 			} finally {
 				if(www != null && uwr == null)
 					www.Dispose();
