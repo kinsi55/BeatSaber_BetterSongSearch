@@ -18,9 +18,10 @@ namespace BetterSongSearch.Util {
 			try {
 				www.SetRequestHeader("User-Agent", UserAgent);
 				www.timeout = 10;
-				www.disposeDownloadHandlerOnDispose = false;
 				if(handler != null)
 					www.downloadHandler = handler;
+				if(uwr == null)
+					www.disposeDownloadHandlerOnDispose = false;
 
 				var req = www.SendWebRequest();
 
@@ -37,10 +38,6 @@ namespace BetterSongSearch.Util {
 				}
 
 				return www.isDone && !www.isHttpError && !www.isNetworkError;
-			} catch {
-				if(handler != null)
-					handler.Dispose();
-				throw;
 			} finally {
 				if(www != null && uwr == null)
 					www.Dispose();
@@ -76,16 +73,10 @@ namespace BetterSongSearch.Util {
 		public static async Task<AudioClip> DownloadAudio(string url, CancellationToken token = default, AudioType type = AudioType.UNKNOWN, Action<float> progressCb = null) {
 			var www = UnityWebRequestMultimedia.GetAudioClip(url, type);
 			
-			try {
-				if(!await Download(url, null, token, progressCb, www))
-					return null;
+			if(!await Download(url, null, token, progressCb, www))
+				return null;
 
-				var clip = DownloadHandlerAudioClip.GetContent(www);
-
-				return clip;
-			} finally {
-				www.downloadHandler.Dispose();
-			}
+			return DownloadHandlerAudioClip.GetContent(www);
 		}
 	}
 }
