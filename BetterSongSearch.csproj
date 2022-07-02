@@ -46,6 +46,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Util\MultithreadedBeatsaverDownloader.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="UI\CustomLists\DownloadListCell.bsml" />
     <None Remove="UI\CustomLists\SongListCell.bsml" />
     <None Remove="UI\Views\SplitViews\MultiDl.bsml" />
@@ -118,7 +122,6 @@
     <Reference Include="System.Data.DataSetExtensions"></Reference>
     <Reference Include="System.Data"></Reference>
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -158,6 +161,9 @@
     <Reference Include="UnityEngine.UnityWebRequestModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.VRModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
     </Reference>
@@ -171,6 +177,10 @@
     <EmbeddedResource Include="UI\Views\DownloadHistory.bsml" />
     <EmbeddedResource Include="UI\Views\FilterView.bsml" />
     <EmbeddedResource Include="UI\Views\SongList.bsml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Util\MultithreadedBeatsaverDownloader.cs" />
   </ItemGroup>
 
   <ItemGroup>

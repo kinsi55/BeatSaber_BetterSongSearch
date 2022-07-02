@@ -10,29 +10,13 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.Collections;
+using UnityEngine.Networking;
 using static BetterSongSearch.UI.DownloadHistoryView;
 
 namespace BetterSongSearch.Util {
 	static class SongDownloader {
-		private static HttpClient client = null;
-
-		static void InitClientIfNecessary() {
-			if(client != null)
-				return;
-
-			client = new HttpClient(new HttpClientHandler() {
-				AutomaticDecompression = DecompressionMethods.GZip,
-				AllowAutoRedirect = true,
-				//Proxy = new WebProxy("localhost:8888")
-			});
-
-			client.DefaultRequestHeaders.Add("User-Agent", SongAssetAsyncLoader.UserAgent);
-			client.Timeout = TimeSpan.FromSeconds(10);
-		}
-
 		public static async Task BeatmapDownload(DownloadHistoryEntry entry, CancellationToken token, Action<float> progressCb) {
-			InitClientIfNecessary();
-
 			var folderName = $"{entry.key} ({entry.songName} - {entry.levelAuthorName})";
 
 			var baseUrl = PluginConfig.Instance.downloadUrlOverride;
@@ -40,26 +24,24 @@ namespace BetterSongSearch.Util {
 			if(baseUrl.Length == 0)
 				baseUrl = entry.retries == 0 ? BeatSaverRegionManager.mapDownloadUrl : BeatSaverRegionManager.mapDownloadUrlFallback;
 
-			var dl = new MultithreadedBeatsaverDownloader(client, $"{baseUrl}/{entry.hash}.zip".ToLowerInvariant(), (p) => {
+			var dl = await UnityWebrequestWrapper.DownloadContent($"{baseUrl}/{entry.hash}.zip".ToLowerInvariant(), token, (p) => {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Downloading;
 				progressCb(p);
 			});
-			byte[] res;
+
 			var t = new CancellationTokenSource();
 			token.Register(t.Cancel);
-			try {
-				res = await dl.Load(t.Token);
-			} catch(Exception ex) {
-				t.Cancel();
-				throw ex;
-			}
 
-			using(var s = new MemoryStream(res)) {
+			using(var s = new MemoryStream(dl.data)) {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
 				// Not async'ing this as BeatmapDownload() is supposed to be called in a task
-				ExtractZip(s, folderName, t.Token, progressCb);
+				try {
+					ExtractZip(s, folderName, t.Token, progressCb);
+				} finally {
+					dl.Dispose();
+				}
 			}
 		}
 
@@ -112,7 +94,7 @@ namespace BetterSongSearch.Util {
 			}
 
 			// Failsafe so we dont break songcore. Info.dat, a diff and the song itself - not sure if the cover is needed
-			if(files.Count < 3 || !files.Keys.Any(x => x.ToLowerInvariant() == "info.dat"))
+			if(files.Count < 3 || !files.Keys.Any(x => x.Equals("info.dat", StringComparison.OrdinalIgnoreCase)))
 				throw new InvalidDataException();
 
 			if(token.IsCancellationRequested)
