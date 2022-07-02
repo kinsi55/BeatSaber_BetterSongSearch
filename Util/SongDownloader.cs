@@ -56,7 +56,7 @@ namespace BetterSongSearch.Util {
 
 			// Unzip everything to memory first so we dont end up writing half a song incase something breaks
 			using(var archive = new ZipArchive(zipStream, ZipArchiveMode.Read)) {
-				var buf = new byte[2 ^ 15];
+				var buf = new byte[2 ^ 16];
 
 				using(var ms = new MemoryStream()) {
 					steps = archive.Entries.Count() * 2;
