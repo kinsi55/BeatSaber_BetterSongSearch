@@ -63,8 +63,7 @@ namespace BetterSongSearch.Util {
 						if(!entry.FullName.Contains("/")) {
 							using(var str = entry.Open()) {
 								for(; ; ) {
-									if(token.IsCancellationRequested)
-										throw new TaskCanceledException();
+									token.ThrowIfCancellationRequested();
 
 									var read = str.Read(buf, 0, buf.Length);
 									if(read == 0)
@@ -93,8 +92,7 @@ namespace BetterSongSearch.Util {
 			if(files.Count < 3 || !files.Keys.Any(x => x.Equals("info.dat", StringComparison.OrdinalIgnoreCase)))
 				throw new InvalidDataException();
 
-			if(token.IsCancellationRequested)
-				throw new TaskCanceledException();
+			token.ThrowIfCancellationRequested();
 
 			var path = Path.Combine(Directory.GetCurrentDirectory(), CustomLevelPathHelper.customLevelsDirectoryPath, basePath);
 
