@@ -52,39 +52,32 @@ namespace BetterSongSearch.Util {
 
 			// Unzip everything to memory first so we dont end up writing half a song incase something breaks
 			using(var archive = new ZipArchive(zipStream, ZipArchiveMode.Read)) {
-				var buf = new byte[2 ^ 16];
+				steps = archive.Entries.Count() * 2;
+				files = new Dictionary<string, byte[]>();
 
-				using(var ms = new MemoryStream()) {
-					steps = archive.Entries.Count() * 2;
-					files = new Dictionary<string, byte[]>();
+				foreach(var entry in archive.Entries) {
+					// Dont extract directories / sub-files
+					if(entry.FullName.IndexOf("/", StringComparison.Ordinal) == -1) {
+						using(var str = entry.Open()) {
+							// If a file, supposedly, is bigger than that we can assume its malicious
+							if(entry.Length > 200_000_000)
+								throw new InvalidDataException();
 
-					foreach(var entry in archive.Entries) {
-						// Dont extract directories / sub-files
-						if(!entry.FullName.Contains("/")) {
-							using(var str = entry.Open()) {
-								for(; ; ) {
-									token.ThrowIfCancellationRequested();
+							var buf = new byte[entry.Length];
 
-									var read = str.Read(buf, 0, buf.Length);
-									if(read == 0)
-										break;
+							str.Read(buf, 0, buf.Length);
 
-									ms.Write(buf, 0, read);
-								}
+							files.Add(entry.Name, buf);
 
-								files.Add(entry.Name, ms.ToArray());
-
-								if(entry.Name.Length > longestFileNameLength)
-									longestFileNameLength = entry.Name.Length;
-							}
-						} else {
-							// As this wont extract anthing further down we need to increase the process for it in advance
-							progress++;
+							if(entry.Name.Length > longestFileNameLength)
+								longestFileNameLength = entry.Name.Length;
 						}
-
-						progressCb((float)++progress / steps);
-						ms.SetLength(0);
+					} else {
+						// As this wont extract anthing further down we need to increase the process for it in advance
+						progress++;
 					}
+
+					progressCb((float)++progress / steps);
 				}
 			}
 
@@ -121,10 +114,6 @@ namespace BetterSongSearch.Util {
 				}
 
 				progressCb((float)++progress / steps);
-
-				// Dont think cancelling here is smart, might as well finish writing this song to not have a corrupted download
-				// if(token.IsCancellationRequested)
-				//     throw new TaskCanceledException();
 			}
 		}
 	}
