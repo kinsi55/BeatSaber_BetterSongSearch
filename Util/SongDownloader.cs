@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.Collections;
@@ -41,79 +42,87 @@ namespace BetterSongSearch.Util {
 			}
 		}
 
-		static void ExtractZip(Stream zipStream, string basePath, CancellationToken token, Action<float> progressCb, bool overwrite = false) {
+		static unsafe void ExtractZip(Stream zipStream, string basePath, CancellationToken token, Action<float> progressCb, bool overwrite = false) {
 			basePath = string.Concat(basePath.Split(Path.GetInvalidFileNameChars())).Trim();
 
 			int steps;
 			var progress = 0;
-			Dictionary<string, byte[]> files;
+			var files = new Dictionary<string, (IntPtr ptr, UnmanagedMemoryStream stream)>();
 
-			var longestFileNameLength = 0;
+			try {
+				var longestFileNameLength = 0;
 
-			// Unzip everything to memory first so we dont end up writing half a song incase something breaks
-			using(var archive = new ZipArchive(zipStream, ZipArchiveMode.Read)) {
-				steps = archive.Entries.Count() * 2;
-				files = new Dictionary<string, byte[]>();
+				// Unzip everything to memory first so we dont end up writing half a song incase something breaks
+				using(var archive = new ZipArchive(zipStream, ZipArchiveMode.Read)) {
+					steps = archive.Entries.Count() * 2;
 
-				foreach(var entry in archive.Entries) {
-					// Dont extract directories / sub-files
-					if(entry.FullName.IndexOf("/", StringComparison.Ordinal) == -1) {
-						using(var str = entry.Open()) {
-							// If a file, supposedly, is bigger than that we can assume its malicious
-							if(entry.Length > 200_000_000)
-								throw new InvalidDataException();
+					foreach(var entry in archive.Entries) {
+						var len = (int)entry.Length;
 
-							var buf = new byte[entry.Length];
+						// If a file, supposedly, is bigger than that we can assume its malicious
+						if(len > 200_000_000)
+							throw new InvalidDataException();
 
-							str.Read(buf, 0, buf.Length);
+						// Dont extract directories / sub-files
+						if(entry.FullName.IndexOf("/", StringComparison.Ordinal) == -1) {
+							using(var str = entry.Open()) {
+								var file = Marshal.AllocHGlobal(len);
+								var x = new UnmanagedMemoryStream((byte*)file, len, len, FileAccess.ReadWrite);
 
-							files.Add(entry.Name, buf);
+								str.CopyTo(x);
 
-							if(entry.Name.Length > longestFileNameLength)
-								longestFileNameLength = entry.Name.Length;
+								x.Position = 0;
+
+								files.Add(entry.Name, (file, x));
+
+								if(entry.Name.Length > longestFileNameLength)
+									longestFileNameLength = entry.Name.Length;
+							}
+						} else {
+							// As this wont extract anthing further down we need to increase the process for it in advance
+							progress++;
 						}
-					} else {
-						// As this wont extract anthing further down we need to increase the process for it in advance
-						progress++;
+
+						progressCb((float)++progress / steps);
+					}
+				}
+
+				// Failsafe so we dont break songcore. Info.dat, a diff and the song itself - not sure if the cover is needed
+				if(files.Count < 3 || !files.Keys.Any(x => x.Equals("info.dat", StringComparison.OrdinalIgnoreCase)))
+					throw new InvalidDataException();
+
+				token.ThrowIfCancellationRequested();
+
+				var path = Path.Combine(Directory.GetCurrentDirectory(), CustomLevelPathHelper.customLevelsDirectoryPath, basePath);
+
+				if(path.Length > 253 - longestFileNameLength)
+					path = $"{path.Substring(0, 253 - longestFileNameLength - 7)}..";
+
+				if(!overwrite && Directory.Exists(path)) {
+					var pathNum = 1;
+					while(Directory.Exists(path + $" ({pathNum})"))
+						pathNum++;
+
+					path += $" ({pathNum})";
+				}
+
+				if(!Directory.Exists(path))
+					Directory.CreateDirectory(path);
+
+				foreach(var e in files) {
+					var entryPath = Path.Combine(path, e.Key);
+					if(overwrite || !File.Exists(entryPath)) {
+						using(var s = File.OpenWrite(entryPath)) {
+							e.Value.stream.CopyTo(s);
+							s.SetLength(s.Position);
+						}
 					}
 
 					progressCb((float)++progress / steps);
 				}
-			}
-
-			// Failsafe so we dont break songcore. Info.dat, a diff and the song itself - not sure if the cover is needed
-			if(files.Count < 3 || !files.Keys.Any(x => x.Equals("info.dat", StringComparison.OrdinalIgnoreCase)))
-				throw new InvalidDataException();
-
-			token.ThrowIfCancellationRequested();
-
-			var path = Path.Combine(Directory.GetCurrentDirectory(), CustomLevelPathHelper.customLevelsDirectoryPath, basePath);
-
-			if(path.Length > 253 - longestFileNameLength)
-				path = $"{path.Substring(0, 253 - longestFileNameLength - 7)}..";
-
-			if(!overwrite && Directory.Exists(path)) {
-				var pathNum = 1;
-				while(Directory.Exists(path + $" ({pathNum})"))
-					pathNum++;
-
-				path += $" ({pathNum})";
-			}
-
-			if(!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-
-			foreach(var e in files) {
-				var entryPath = Path.Combine(path, e.Key);
-				if(overwrite || !File.Exists(entryPath)) {
-					using(var s = File.OpenWrite(entryPath))
-					using(var w = new BinaryWriter(s, System.Text.Encoding.ASCII)) {
-						w.Write(e.Value, 0, e.Value.Length);
-						s.SetLength(e.Value.Length);
-					}
-				}
-
-				progressCb((float)++progress / steps);
+			} finally {
+				foreach(var item in files)
+					Marshal.FreeHGlobal(item.Value.ptr);
 			}
 		}
 	}
