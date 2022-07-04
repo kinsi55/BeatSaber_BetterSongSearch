@@ -47,7 +47,7 @@ namespace BetterSongSearch.Util {
 
 			int steps;
 			var progress = 0;
-			var files = new Dictionary<string, (IntPtr ptr, UnmanagedMemoryStream stream)>();
+			var files = new Dictionary<string, (IntPtr ptr, UnmanagedMemoryStream stream)>(4);
 
 			try {
 				var longestFileNameLength = 0;
