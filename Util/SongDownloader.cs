@@ -64,7 +64,7 @@ namespace BetterSongSearch.Util {
 							throw new InvalidDataException();
 
 						// Dont extract directories / sub-files
-						if(entry.FullName.IndexOf("/", StringComparison.Ordinal) == -1) {
+						if(entry.FullName.IndexOf('/') == -1) {
 							using(var str = entry.Open()) {
 								var file = Marshal.AllocHGlobal(len);
 								var x = new UnmanagedMemoryStream((byte*)file, len, len, FileAccess.ReadWrite);

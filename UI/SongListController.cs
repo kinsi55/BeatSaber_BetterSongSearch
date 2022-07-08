@@ -270,7 +270,7 @@ namespace BetterSongSearch.UI {
 
 		public string fullFormattedSongName => $"{detailsSong.songAuthorName} - {detailsSong.songName}";
 		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", new CultureInfo("en-US"));
-		public string songLength => detailsSong.songDuration.ToString("mm\\:ss");
+		public string songLength => string.Format("{0:00}:{1:00}", detailsSong.songDuration.TotalMinutes, detailsSong.songDuration.Seconds);
 		public string songRating => showVotesInsteadOfRating ? $"<color=#9C9>👍 {detailsSong.upvotes} <color=#C99>👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
 
 #if !DEBUG
