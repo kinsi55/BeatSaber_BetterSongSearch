@@ -118,12 +118,12 @@ namespace BetterSongSearch.UI {
 					await Task.WhenAll(new[] {
 						BSSFlowCoordinator.assetLoader.LoadCoverAsync(song.detailsSong, songAssetLoadCanceller.Token).ContinueWith(
 							x => { coverImage.sprite = x.Result; },
-							CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext()
+							TaskContinuationOptions.OnlyOnRanToCompletion
 						),
 
 						!PluginConfig.Instance.loadSongPreviews ? Task.FromResult(1) : BSSFlowCoordinator.assetLoader.LoadPreviewAsync(song.detailsSong, songAssetLoadCanceller.Token).ContinueWith(
 							x => { if(x.Result != null && songAssetLoadCanceller?.IsCancellationRequested == false) XD.FunnyMono(songPreviewPlayer)?.CrossfadeTo(x.Result, -5f, 0, x.Result.length, null); },
-							CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext()
+							TaskContinuationOptions.OnlyOnRanToCompletion
 						)
 					});
 				} catch { }

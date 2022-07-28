@@ -30,6 +30,9 @@ namespace BetterSongSearch.Util {
 				progressCb(p);
 			});
 
+			if(dl == null || dl.Length == 0)
+				throw new FileNotFoundException();
+
 			var t = new CancellationTokenSource();
 			token.Register(t.Cancel);
 

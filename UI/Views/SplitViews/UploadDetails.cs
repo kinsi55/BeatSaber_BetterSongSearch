@@ -11,36 +11,33 @@ namespace BetterSongSearch.UI.SplitViews {
 		public static readonly UploadDetails instance = new UploadDetails();
 		UploadDetails() { }
 
-		[UIComponent("selectedCharacteristics")] TextMeshProUGUI selectedCharacteristics = null;
-		[UIComponent("selectedSongKey")] TextMeshProUGUI selectedSongKey = null;
-		[UIComponent("selectedSongDescription")] CurvedTextMeshPro selectedSongDescription = null;
-		[UIComponent("selectedRating")] TextMeshProUGUI selectedRating = null;
+		[UIComponent("selectedCharacteristics")] readonly TextMeshProUGUI selectedCharacteristics = null;
+		[UIComponent("selectedSongKey")] readonly TextMeshProUGUI selectedSongKey = null;
+		[UIComponent("selectedSongDescription")] readonly CurvedTextMeshPro selectedSongDescription = null;
+		[UIComponent("selectedRating")] readonly TextMeshProUGUI selectedRating = null;
 		//[UIComponent("selectedDownloadCount")] TextMeshProUGUI selectedDownloadCount = null;
-		[UIComponent("songDetailsLoading")] ImageView songDetailsLoading = null;
+		[UIComponent("songDetailsLoading")] readonly ImageView songDetailsLoading = null;
 
-		public void Populate(SongSearchSong selectedSong) {
+		public async void Populate(SongSearchSong selectedSong) {
 			selectedCharacteristics.text = String.Join(", ", selectedSong.detailsSong.difficulties.GroupBy(x => x.characteristic).Select(x => $"{x.Count()}x {x.Key}"));
 			selectedSongKey.text = selectedSong.detailsSong.key;
 			//selectedDownloadCount.text = selectedSong.detailsSong.downloadCount.ToString("N0");
 			selectedRating.text = selectedSong.detailsSong.rating.ToString("0.0%");
-			selectedSongDescription.text = "";
+			selectedSongDescription.text = "Loading...";
 
 			songDetailsLoading.gameObject.SetActive(true);
 
-			Task.Run(async () => {
-				string desc = "Failed to load description";
+			var desc = await Task.Run(async () => {
 				try {
-					desc = await BSSFlowCoordinator.assetLoader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
+					return await BSSFlowCoordinator.assetLoader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
 				} catch { }
+				return "Failed to load description";
+			});
 
-				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-					songDetailsLoading.gameObject.SetActive(false);
-					// If we dont do that, the description is long and contains unicode the game crashes. Fun.
-					selectedSongDescription.text = desc;
-					selectedSongDescription.gameObject.SetActive(false);
-					selectedSongDescription.gameObject.SetActive(true);
-				});
-			}).ConfigureAwait(false);
+			songDetailsLoading.gameObject.SetActive(false);
+			selectedSongDescription.text = desc;
+			selectedSongDescription.gameObject.SetActive(false);
+			selectedSongDescription.gameObject.SetActive(true);
 		}
 	}
 }

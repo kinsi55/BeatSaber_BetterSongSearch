@@ -104,6 +104,13 @@ namespace BetterSongSearch.UI {
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
 
+		static readonly Dictionary<object, MapMods> funnyMapThing = new Dictionary<object, MapMods>() {
+			{ FilterOptions.modOptions[1], MapMods.NoodleExtensions },
+			{ FilterOptions.modOptions[2], MapMods.MappingExtensions },
+			{ FilterOptions.modOptions[3], MapMods.Chroma },
+			{ FilterOptions.modOptions[4], MapMods.Cinema }
+		};
+
 		public bool DifficultyCheck(in SongDifficulty diff) {
 			if(diff.stars < currentFilter.minimumStars || diff.stars > currentFilter.maximumStars)
 				return false;
@@ -121,19 +128,8 @@ namespace BetterSongSearch.UI {
 				return false;
 
 			if(currentFilter.mods != (string)FilterOptions.modOptions[0]) {
-				if(currentFilter.mods == (string)FilterOptions.modOptions[1]) {
-					if((diff.mods & MapMods.NoodleExtensions) == 0)
-						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[2]) {
-					if((diff.mods & MapMods.MappingExtensions) == 0)
-						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[3]) {
-					if((diff.mods & MapMods.Chroma) == 0)
-						return false;
-				} else if(currentFilter.mods == (string)FilterOptions.modOptions[4]) {
-					if((diff.mods & MapMods.Cinema) == 0)
-						return false;
-				}
+				if((diff.mods & funnyMapThing[currentFilter.mods]) == 0)
+					return false;
 			}
 
 			if(diff.song.songDurationSeconds > 0) {
@@ -210,21 +206,19 @@ namespace BetterSongSearch.UI {
 
 		[UIComponent("sponsorsText")] CurvedTextMeshPro sponsorsText = null;
 		void OpenSponsorsLink() => Process.Start("https://github.com/sponsors/kinsi55");
-		void OpenSponsorsModal() {
+		async void OpenSponsorsModal() {
 			sponsorsText.text = "Loading...";
-			Task.Run(() => {
-				string desc = "Failed to load";
+			var desc = await Task.Run(() => {
 				try {
-					desc = (new WebClient()).DownloadString("http://kinsi.me/sponsors/bsout.php");
+					return (new WebClient()).DownloadString("http://kinsi.me/sponsors/bsout.php");
 				} catch { }
+				return "Failed to load";
+			});
 
-				_ = IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(() => {
-					sponsorsText.text = desc;
-					// There is almost certainly a better way to update / correctly set the scrollbar size...
-					sponsorsText.gameObject.SetActive(false);
-					sponsorsText.gameObject.SetActive(true);
-				});
-			}).ConfigureAwait(false);
+			sponsorsText.text = desc;
+			// There is almost certainly a better way to update / correctly set the scrollbar size...
+			sponsorsText.gameObject.SetActive(false);
+			sponsorsText.gameObject.SetActive(true);
 		}
 
 

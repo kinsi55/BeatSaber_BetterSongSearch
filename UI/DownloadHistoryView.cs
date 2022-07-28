@@ -8,6 +8,7 @@ using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.UI;
@@ -105,6 +106,10 @@ namespace BetterSongSearch.UI {
 					firstEntry.downloadProgress = 1f;
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Downloaded;
 					firstEntry.statusDetails = "";
+				} catch(FileNotFoundException) {
+					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
+					firstEntry.statusDetails = $": File not Found, Uploader probably deleted it";
+					firstEntry.retries = 69;
 				} catch(Exception ex) {
 					if(!(ex is TaskCanceledException)) {
 						Plugin.Log.Warn("Download failed:");

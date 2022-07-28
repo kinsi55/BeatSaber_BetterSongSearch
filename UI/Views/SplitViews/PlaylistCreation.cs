@@ -15,9 +15,9 @@ namespace BetterSongSearch.UI.SplitViews {
 		public static readonly PlaylistCreation instance = new PlaylistCreation();
 		PlaylistCreation() { }
 
-		[UIComponent("playlistSongsCountSlider")] SliderSetting playlistSongsCountSlider = null;
-		[UIComponent("playlistName")] StringSetting playlistName = null;
-		[UIComponent("resultText")] TextMeshProUGUI resultText = null;
+		[UIComponent("playlistSongsCountSlider")] readonly SliderSetting playlistSongsCountSlider = null;
+		[UIComponent("playlistName")] readonly StringSetting playlistName = null;
+		[UIComponent("resultText")] readonly TextMeshProUGUI resultText = null;
 
 		[UIParams] readonly BSMLParserParams parserParams = null;
 
