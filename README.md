@@ -20,6 +20,7 @@ The Game version(s) specific releases are compatible with are mentioned in the R
 
 - Wide variety of [filtering / searching and sorting options](#Screenshots) & the ability to create / load filter presets
 - Absolute banger of a UI that gives you as much information as possible at a single glance
+- Preview of Songs that you havent downloaded yet 😮
 - Uses a locally cached database (Via SongDetailsCache) so all inputs are reflected instantly-ish at the cost of being **unable to find songs which have been uploaded in the last couple of hours**
 - **Accessible while in a Multiplayer lobby!**
 - Button to pick random songs based off your filter settings if you're trying to discover new stuff
