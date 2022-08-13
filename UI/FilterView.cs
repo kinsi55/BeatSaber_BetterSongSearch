@@ -26,16 +26,15 @@ namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\FilterView.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.FilterView.bsml")]
 	class FilterView : BSMLAutomaticViewController, INotifyPropertyChanged {
-		public static List<DateTime> hideOlderThanOptions { get; private set; }
+		public static List<DateTime> hideOlderThanOptions { get; private set; } = BuildList();
 
-		public void Awake() {
-			if(hideOlderThanOptions != null)
-				return;
-
-			hideOlderThanOptions = new List<DateTime>();
+		static List<DateTime> BuildList() {
+			var hideOlderThanOptions = new List<DateTime>();
 
 			for(var x = new DateTime(2018, 5, 1); x < DateTime.Now; x = x.AddMonths(1))
 				hideOlderThanOptions.Add(x);
+
+			return hideOlderThanOptions;
 		}
 
 		public static FilterOptions currentFilter = new FilterOptions();
