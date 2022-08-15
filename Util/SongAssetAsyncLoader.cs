@@ -48,17 +48,17 @@ namespace BetterSongSearch.Util {
 		}
 
 		public async Task<Sprite> LoadCoverAsync(Song song, CancellationToken token) {
+			var mid = song.mapId;
+
+			if(_spriteCache.TryGetValue(mid, out Sprite sprite))
+				return sprite;
+
 			var path = PluginConfig.Instance.coverUrlOverride;
 
 			if(path.Length == 0)
 				path = BeatSaverRegionManager.coverDownloadUrl;
 
 			path += $"/{song.hash.ToLowerInvariant()}.jpg";
-
-			var mid = song.mapId;
-
-			if(_spriteCache.TryGetValue(mid, out Sprite sprite))
-				return sprite;
 
 			var cover = await UnityWebrequestWrapper.DownloadSprite(path, token);
 
@@ -69,17 +69,17 @@ namespace BetterSongSearch.Util {
 		}
 
 		public async Task<AudioClip> LoadPreviewAsync(Song song, CancellationToken token) {
+			var mid = song.mapId;
+
+			if(_previewCache.TryGetValue(mid, out AudioClip ac))
+				return ac;
+
 			var path = PluginConfig.Instance.previewUrlOverride;
 
 			if(path.Length == 0)
 				path = BeatSaverRegionManager.previewDownloadUrl;
 
 			path += $"/{song.hash.ToLowerInvariant()}.mp3";
-
-			var mid = song.mapId;
-
-			if(_previewCache.TryGetValue(mid, out AudioClip ac))
-				return ac;
 
 			var preview = await UnityWebrequestWrapper.DownloadAudio(path, token, AudioType.MPEG);
 
