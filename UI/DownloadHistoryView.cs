@@ -86,6 +86,12 @@ namespace BetterSongSearch.UI {
 			RefreshTable(true);
 
 			await Task.Run(async () => {
+				void errored(string message) {
+					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
+					firstEntry.statusDetails = $": {message}";
+					firstEntry.retries = 69;
+				}
+
 				try {
 					var updateRateLimiter = new Stopwatch();
 					updateRateLimiter.Start();
@@ -103,13 +109,12 @@ namespace BetterSongSearch.UI {
 							IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgressHandler);
 					});
 
-					firstEntry.downloadProgress = 1f;
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Downloaded;
 					firstEntry.statusDetails = "";
 				} catch(FileNotFoundException) {
-					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $": File not Found, Uploader probably deleted it";
-					firstEntry.retries = 69;
+					errored("File not Found, Uploader probably deleted it");
+				} catch(TaskCanceledException) {
+					errored("Download was cancelled");
 				} catch(Exception ex) {
 					if(!(ex is TaskCanceledException)) {
 						Plugin.Log.Warn("Download failed:");
@@ -117,8 +122,9 @@ namespace BetterSongSearch.UI {
 					}
 
 					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: Details in log, {ex.Message}({ex.GetType().Name})";
+					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: Details in log, {ex.Message} ({ex.GetType().Name})";
 				}
+				firstEntry.downloadProgress = 1f;
 			});
 
 			if(firstEntry.status == DownloadHistoryEntry.DownloadStatus.Downloaded) {

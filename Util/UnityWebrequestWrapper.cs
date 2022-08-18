@@ -17,7 +17,6 @@ namespace BetterSongSearch.Util {
 
 			try {
 				www.SetRequestHeader("User-Agent", UserAgent);
-				www.timeout = 10;
 				if(handler != null)
 					www.downloadHandler = handler;
 				if(uwr == null)
@@ -25,17 +24,40 @@ namespace BetterSongSearch.Util {
 
 				var req = www.SendWebRequest();
 
-				while(!req.isDone) {
-					if(token.IsCancellationRequested) {
-						www.Abort();
-						break;
-					}
+				var startThread = SynchronizationContext.Current;
 
-					await Task.Delay(25);
+				Action<Action> post;
 
-					if(progressCb != null && www.downloadProgress > 0)
-						progressCb(www.downloadProgress);
+				if(startThread == null) {
+					post = a => a();
+				} else {
+					post = a => startThread.Send(_ => a(), null);
 				}
+
+				await Task.Run(() => {
+					var lastState = 0f;
+					var timeouter = new System.Diagnostics.Stopwatch();
+					timeouter.Start();
+
+					while(!req.isDone) {
+						if(token.IsCancellationRequested) {
+							post(www.Abort);
+							throw new TaskCanceledException();
+						}
+
+						if(timeouter.ElapsedMilliseconds > 50000 || (lastState == 0 && timeouter.ElapsedMilliseconds > 6000)) {
+							post(www.Abort);
+							throw new TimeoutException();
+						}
+
+						Thread.Sleep(20);
+
+						lastState = www.downloadProgress;
+
+						if(progressCb != null && lastState > 0)
+							post(() => progressCb(lastState));
+					}
+				});
 
 				return www.isDone && !www.isHttpError && !www.isNetworkError;
 			} finally {
