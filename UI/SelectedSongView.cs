@@ -2,10 +2,10 @@
 using BeatSaberMarkupLanguage.Parser;
 using BetterSongSearch.HarmonyPatches;
 using BetterSongSearch.Util;
+using HarmonyLib;
 using HMUI;
-using System;
-using System.Collections;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
@@ -162,10 +162,6 @@ namespace BetterSongSearch.UI {
 			BSSFlowCoordinator.FilterSongs();
 		}
 
-		LevelFilteringNavigationController levelFilteringNavigationController = Resources.FindObjectsOfTypeAll<LevelFilteringNavigationController>().FirstOrDefault();
-		LevelSearchViewController levelSearchViewController = Resources.FindObjectsOfTypeAll<LevelSearchViewController>().FirstOrDefault();
-		LevelCollectionNavigationController levelCollectionNavigationController = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>().FirstOrDefault();
-
 		SongSearchSong songToPlayAfterLoading = null;
 
 		internal void PlayQueuedSongToPlay() {
@@ -175,6 +171,10 @@ namespace BetterSongSearch.UI {
 			PlaySong(songToPlayAfterLoading);
 			songToPlayAfterLoading = null;
 		}
+
+		readonly SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator = FindObjectOfType<SoloFreePlayFlowCoordinator>();
+		readonly MultiplayerLevelSelectionFlowCoordinator multiplayerLevelSelectionFlowCoordinator = FindObjectOfType<MultiplayerLevelSelectionFlowCoordinator>();
+		static readonly ConstructorInfo LevelSelectionFlowCoordinator_State = AccessTools.FirstConstructor(typeof(LevelSelectionFlowCoordinator.State), x => x.GetParameters().Length == 4);
 
 		[UIAction("Play")] void _Play() => PlaySong();
 		internal void PlaySong(SongSearchSong songToPlay = null) {
@@ -197,41 +197,36 @@ namespace BetterSongSearch.UI {
 			if(level == null)
 				return;
 
-			if(levelFilteringNavigationController == null)
-				return;
+			BSSFlowCoordinator.Close(true);
+			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
-			if(songToPlay.diffs.Any(x => x.passesFilter)) try {
-					var diffToSelect = songToPlay.GetFirstPassingDifficulty();
-					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(diffToSelect.detailsDiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
-					var pData = XD.FunnyMono(BSSFlowCoordinator.playerDataModel)?.playerData;
-					if(targetChar != null && pData != null) {
+			if(BSSFlowCoordinator.playerDataModel != null && songToPlay.GetFirstPassingDifficulty() != null) {
+				try {
+					var ddiff = songToPlay.GetFirstPassingDifficulty().detailsDiff;
+
+					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(ddiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
+
+					var pData = BSSFlowCoordinator.playerDataModel.playerData;
+
+					if(targetChar != null) {
 						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
-						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)diffToSelect.detailsDiff.difficulty);
+						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)ddiff.difficulty);
 					}
 				} catch { }
+			}
 
-			BSSFlowCoordinator.Close(true);
+			var x = (LevelSelectionFlowCoordinator.State)LevelSelectionFlowCoordinator_State.Invoke(new object[] {
+				LevelCategory.All,
+				SongCore.Loader.CustomLevelsPack,
+				level,
+				null
+			});
+
+			multiplayerLevelSelectionFlowCoordinator.Setup(x);
+			soloFreePlayFlowCoordinator.Setup(x);
+
 			Manager.goToSongSelect.Invoke();
-
-			SharedCoroutineStarter.instance.StartCoroutine(SelectLevelNextFrame(level));
-			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
-		}
-
-		IEnumerator SelectLevelNextFrame(IPreviewBeatmapLevel level) {
-			// 3 LOC basegame method of selecting a song that works always I LOST
-			if(IPA.Loader.PluginManager.GetPluginFromId("SongBrowser") != null)
-				yield return null;
-
-			levelSearchViewController?.ResetCurrentFilterParams();
-			levelFilteringNavigationController.UpdateCustomSongs();
-			if(levelFilteringNavigationController.selectedLevelCategory.ToString() != nameof(LevelCategory.All))
-				levelFilteringNavigationController.UpdateSecondChildControllerContent((LevelCategory)Enum.Parse(typeof(LevelCategory), nameof(LevelCategory.All)));
-
-			yield return new WaitForEndOfFrame();
-			// Reset again here. This is kind of a duct-tape fix for an edge-case of better song list
-			levelSearchViewController?.ResetCurrentFilterParams();
-			levelCollectionNavigationController?.SelectLevel(level);
 		}
 
 		[UIAction("Download")]

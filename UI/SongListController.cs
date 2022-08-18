@@ -284,7 +284,7 @@ namespace BetterSongSearch.UI {
 		#endregion
 
 		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpperInvariant()}";
-		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.First();
+		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.FirstOrDefault();
 		public SongSearchSong(in Song song) {
 			detailsSong = song;
 			diffs = new SongSearchDiff[song.diffCount];
