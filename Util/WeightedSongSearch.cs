@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BetterSongSearch.Util {
 	static class WeightedSongSearch {
@@ -30,7 +31,7 @@ namespace BetterSongSearch.Util {
 			var maxSearchWeight = 0f;
 			var maxSortWeight = 0f;
 
-			foreach(var x in inList) {
+			Parallel.ForEach(inList, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, x => {
 				var resultWeight = 0;
 				var matchedAuthor = false;
 				var prevMatchIndex = -1;
@@ -107,23 +108,25 @@ namespace BetterSongSearch.Util {
 				if(resultWeight > 0) {
 					var sortWeight = ordersort(x);
 
-					prefiltered.Add(new xd() {
-						song = x,
-						searchWeight = resultWeight,
-						sortWeight = sortWeight
-					});
+					lock(prefiltered) {
+						prefiltered.Add(new xd() {
+							song = x,
+							searchWeight = resultWeight,
+							sortWeight = sortWeight
+						});
 
 #if DEBUG
-					x.sortWeight = sortWeight;
-					x.resultWeight = resultWeight;
+						x.sortWeight = sortWeight;
+						x.resultWeight = resultWeight;
 #endif
-					if(maxSearchWeight < resultWeight)
-						maxSearchWeight = resultWeight;
+						if(maxSearchWeight < resultWeight)
+							maxSearchWeight = resultWeight;
 
-					if(maxSortWeight < sortWeight)
-						maxSortWeight = sortWeight;
+						if(maxSortWeight < sortWeight)
+							maxSortWeight = sortWeight;
+					}
 				}
-			}
+			});
 
 			if(!prefiltered.Any())
 				return new List<SongSearchSong>();
