@@ -232,7 +232,7 @@ namespace BetterSongSearch.UI {
 					 * for those diffs that we checked we pre-set passesFilter so that it
 					 * doesnt need to get (re)checked later whenever the diffs array is accessed
 					 */
-					ref var theThing = ref songsList[i];
+					var theThing = songsList[i];
 
 					for(var iDiff = 0; iDiff < val.diffCount; iDiff++) {
 						var theDiff = theThing.diffs[iDiff];
