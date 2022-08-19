@@ -238,8 +238,8 @@ namespace BetterSongSearch.UI {
 						var theDiff = theThing.diffs[iDiff];
 
 						theDiff._passesFilter = null;
-						if(hasAnyValid = theDiff.passesFilter)
-							break;
+						if(!hasAnyValid)
+							hasAnyValid = theDiff.passesFilter;
 					}
 
 					if(!hasAnyValid)
