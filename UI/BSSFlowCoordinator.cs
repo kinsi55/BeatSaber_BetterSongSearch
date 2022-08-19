@@ -238,14 +238,14 @@ namespace BetterSongSearch.UI {
 						var theDiff = theThing.diffs[iDiff];
 
 						theDiff._passesFilter = null;
-						if(!hasAnyValid)
-							hasAnyValid = theDiff.passesFilter;
+						if(hasAnyValid = theDiff.passesFilter)
+							break;
 					}
 
 					if(!hasAnyValid)
 						continue;
 
-					filteredSongsListPreallocatedArray[sc++] = songsList[i];
+					filteredSongsListPreallocatedArray[sc++] = theThing;
 				}
 
 				SongListController.filteredSongsList = new ArraySegment<SongSearchSong>(filteredSongsListPreallocatedArray, 0, sc);
