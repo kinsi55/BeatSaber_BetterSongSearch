@@ -45,8 +45,6 @@ namespace BetterSongSearch.UI {
 		[UIAction("#post-parse")]
 		void Parsed() {
 			currentFilter.hideOlderThanSlider.slider.maxValue = hideOlderThanOptions.Count - 1;
-			currentFilter.hideOlderThanSlider.Value = 0;
-			currentFilter.hideOlderThanSlider.ReceiveValue();
 
 			((RectTransform)gameObject.transform).offsetMax = new Vector2(20, 22);
 
