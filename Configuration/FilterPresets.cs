@@ -71,7 +71,7 @@ namespace BetterSongSearch.Configuration {
 				if(uploadersBlacklist)
 					value = value.Substring(1);
 
-				uploaders = value.ToLowerInvariant().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToHashSet();
+				uploaders = value.ToLowerInvariant().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).ToHashSet();
 			}
 		}
 
