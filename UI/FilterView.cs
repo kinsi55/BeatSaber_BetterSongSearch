@@ -71,8 +71,6 @@ namespace BetterSongSearch.UI {
 				x.SetImage("#RoundRect10BorderFade");
 		}
 
-		[UIAction("ReloadSongsTable")] void ReloadSongsTable() => BSSFlowCoordinator.songListView.UpdateSearchedSongsList();
-
 		internal void ClearFilters() => SetFilter();
 
 		internal void SetFilter(FilterOptions filter = null) {
