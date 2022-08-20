@@ -127,7 +127,7 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema" };
 
 		#region uiformatters
-		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yyyy", new CultureInfo("en-US"));
+		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yyyy", CultureInfo.InvariantCulture);
 		static string FormatSongLengthLimitFloat(float d) => d >= SONG_LENGTH_FILTER_MAX ? "Unlimited" : TimeSpan.FromMinutes(d).ToString("mm\\:ss");
 		static string FormatMaxStarsFloat(float d) => d >= STAR_FILTER_MAX ? "Unlimited" : d.ToString("0.0");
 		static string PercentFloat(float d) => d.ToString("0.0%");
