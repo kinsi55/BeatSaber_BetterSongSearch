@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,9 +58,19 @@ namespace BetterSongSearch.UI {
 
 			var wasEmpty = searchedSongsList == null;
 
+#if DEBUG
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+#endif
+
 			var i = 0;
 			foreach(var song in _newSearchedSongsList)
 				BSSFlowCoordinator.searchedSongsListPreallocatedArray[i++] = song;
+
+#if DEBUG
+			if(songSearchInput?.text.Length > 0)
+				Plugin.Log.Info(string.Format("Searching the songs took {0}ms", sw.Elapsed.TotalMilliseconds));
+#endif
 
 			searchedSongsList = new ArraySegment<SongSearchSong>(BSSFlowCoordinator.searchedSongsListPreallocatedArray, 0, i);
 
@@ -227,6 +238,45 @@ namespace BetterSongSearch.UI {
 
 		string _uploaderNameLowercase = null;
 		public string uploaderNameLowercase => _uploaderNameLowercase ??= detailsSong.uploaderName.ToLowerInvariant();
+
+		static unsafe string MakeStringSearchable(string s) {
+			// Eh whatever
+			if(s.Length > 255)
+				return s;
+
+			var normalizedString = s.Normalize(NormalizationForm.FormD);
+
+			var pos = 0;
+			var modified = false;
+			char* challoc = stackalloc char[s.Length];
+
+			for(var i = 0; i < normalizedString.Length; i++) {
+				var c = normalizedString[i];
+
+				var cat = CharUnicodeInfo.GetUnicodeCategory(c);
+
+				if(cat == UnicodeCategory.NonSpacingMark) {
+					modified = true;
+					continue;
+				}
+
+				// adds 32 (Ascii ' ') to the A-Z charcode and thus converts it to a-z lmao
+				if(cat == UnicodeCategory.LowercaseLetter || cat == UnicodeCategory.SpaceSeparator || cat == UnicodeCategory.DecimalDigitNumber) {
+					challoc[pos++] = c;
+				} else if(cat == UnicodeCategory.UppercaseLetter && c < '[') {
+					challoc[pos++] = (char)(c + 32);
+				}
+			}
+
+			if(!modified && pos == s.Length)
+				return s;
+
+			return new string(challoc, 0, pos);
+		}
+
+
+		string _searchableSongName = null;
+		public string searchableSongName => _searchableSongName ??= MakeStringSearchable(detailsSong.songName);
 
 		public readonly SongSearchDiff[] diffs;
 
