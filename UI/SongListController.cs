@@ -265,6 +265,7 @@ namespace BetterSongSearch.UI {
 					challoc[pos++] = c;
 				} else if(cat == UnicodeCategory.UppercaseLetter && c < '[') {
 					challoc[pos++] = (char)(c + 32);
+					modified = true;
 				}
 			}
 
