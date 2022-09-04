@@ -9,7 +9,7 @@
 				<string-setting text='Playlist Name' id='playlistName'/>
 				<toggle-setting text='Clear if already exists' value='clearExisting' apply-on-change='true'/>
 				<toggle-setting text='Highlight matching difficulties' value='hightlightDiffs' apply-on-change='true'/>
-				<slider-setting min='20' max='3000' text='Amount of Songs' integer-only='true' id='playlistSongsCountSlider' show-buttons='true'/>
+				<slider-setting min='20' max='3000' increment='20' text='Amount of Songs' integer-only='true' id='playlistSongsCountSlider' show-buttons='true'/>
 			</vertical>
 			<horizontal pad-top='4'>
 				<primary-button text='Create' on-click='CreatePlaylist'/>
