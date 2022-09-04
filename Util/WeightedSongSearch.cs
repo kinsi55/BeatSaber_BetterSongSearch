@@ -1,7 +1,9 @@
 ﻿using BetterSongSearch.UI;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BetterSongSearch.Util {
@@ -37,7 +39,7 @@ namespace BetterSongSearch.Util {
 				var prevMatchIndex = -1;
 
 				var songe = x.detailsSong;
-				var songeName = x.searchableSongName;
+				var songeName = MakeStringSearchable(songe.songName);
 
 				if(possibleSongKey != 0 && x.detailsSong.mapId == possibleSongKey)
 					resultWeight = 30;
@@ -146,6 +148,52 @@ namespace BetterSongSearch.Util {
 
 				return searchWeight + Math.Min(searchWeight / 2, s.sortWeight * maxSortWeightInverse * (searchWeight / 2));
 			}).Select(x => x.song);
+		}
+
+
+
+		public static Dictionary<string, string> cachedSearchableStrings;
+		static unsafe string MakeStringSearchable(string s) {
+			// Eh whatever
+			if(s.Length > 255)
+				return s;
+
+			if(cachedSearchableStrings != null && cachedSearchableStrings.TryGetValue(s, out var _s))
+				return _s ?? s;
+
+			var normalizedString = s.Normalize(NormalizationForm.FormD);
+
+			var pos = 0;
+			var modified = false;
+			char* challoc = stackalloc char[s.Length];
+
+			for(var i = 0; i < normalizedString.Length; i++) {
+				var c = normalizedString[i];
+
+				var cat = CharUnicodeInfo.GetUnicodeCategory(c);
+
+				if(cat == UnicodeCategory.NonSpacingMark) {
+					modified = true;
+					continue;
+				}
+
+				// adds 32 (Ascii ' ') to the A-Z charcode and thus converts it to a-z lmao
+				if(cat == UnicodeCategory.LowercaseLetter || cat == UnicodeCategory.SpaceSeparator || cat == UnicodeCategory.DecimalDigitNumber) {
+					challoc[pos++] = c;
+				} else if(cat == UnicodeCategory.UppercaseLetter && c < '[') {
+					challoc[pos++] = (char)(c + 32);
+					modified = true;
+				}
+			}
+
+			cachedSearchableStrings ??= new Dictionary<string, string>(BSSFlowCoordinator.songsList?.Length ?? 69420);
+
+			if(!modified && pos == s.Length) {
+				cachedSearchableStrings[s] = null;
+				return s;
+			}
+
+			return cachedSearchableStrings[s] = new string(challoc, 0, pos);
 		}
 	}
 }

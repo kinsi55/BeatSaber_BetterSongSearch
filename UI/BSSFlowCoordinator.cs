@@ -194,6 +194,7 @@ namespace BetterSongSearch.UI {
 				searchedSongsListPreallocatedArray = null;
 				SongListController.filteredSongsList = null;
 				SongListController.searchedSongsList = null;
+				WeightedSongSearch.cachedSearchableStrings = null;
 				songsWithScoresShouldProbablyUpdate = true;
 				songListView.songList.ReloadData();
 
