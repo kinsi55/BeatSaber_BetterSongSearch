@@ -133,7 +133,7 @@ namespace BetterSongSearch.UI {
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
 				if(preview != null) try {
 					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.First(x => x.levelID == h).GetCoverImageAsync(songAssetLoadCanceller.Token);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.GetCoverImageAsync(songAssetLoadCanceller.Token);
 				} catch { }
 			}
 			ShowCoverLoader(false);
