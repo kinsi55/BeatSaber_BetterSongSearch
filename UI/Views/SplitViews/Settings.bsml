@@ -22,7 +22,7 @@
 				<text text='BetterSongSearch - China Mirror' align='Center'/>
 			</horizontal>
 			<horizontal pad-bottom='2'>
-				<text id='resultText' text='The chinese BeatSaver mirror is provided by WGzeyu and should only be used if you live in a part of China where BeatSaver happens to be blocked' word-wrapping='true' align='Center'/>
+				<text id='resultText' text='The chinese BeatSaver mirror is provided by WGzeyu and should only be used if you live in a part of China where BeatSaver happens to be not accessible' word-wrapping='true' align='Center'/>
 			</horizontal>
 			<horizontal>
 				<primary-button text='OK, Enable' click-event='CloseChinaModal' on-click='EnableChinaMirror'/>
