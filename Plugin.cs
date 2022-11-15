@@ -1,4 +1,4 @@
-﻿using BetterSongSearch.UI;
+﻿using BetterSongSearch.UI.SplitViews;
 using HarmonyLib;
 using IPA;
 using IPA.Config;
@@ -20,7 +20,7 @@ namespace BetterSongSearch {
 		public void Init(IPALogger logger, Config conf) {
 			Log = logger;
 			Log.Info("BetterSongSearch initialized.");
-			SongListController.cfgInstance = PluginConfig.Instance = conf.Generated<PluginConfig>();
+			Settings.cfgInstance = PluginConfig.Instance = conf.Generated<PluginConfig>();
 
 			UI.Manager.Init();
 

@@ -43,23 +43,7 @@
 		<vertical horizontal-fit='Unconstrained' pad='2' pad-bottom='-2'>
 			<primary-button text='Batch Download' click-event='HideMoreModal' on-click='ShowMultiDlModal' horizontal-fit='Unconstrained'/>
 			<primary-button text='Create / Update Playlist' click-event='HideMoreModal' on-click='ShowPlaylistCreation' horizontal-fit='Unconstrained'/>
-			<primary-button text='BetterSongSearch Settings' click-event='HideMoreModal,ShowSettingsModal' horizontal-fit='Unconstrained'/>
-		</vertical>
-	</modal>
-
-	<modal clickerino-offerino-closerino='true' hide-event='CloseSettingsModal' show-event='ShowSettingsModal' size-delta-x='80' size-delta-y='45'>
-		<vertical horizontal-fit='Unconstrained' pad='4' pad-top='9'>
-			<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
-				<text text='BetterSongSearch - Settings' align='Center'/>
-			</horizontal>
-			<macro.as-host host='cfgInstance'>
-				<toggle-setting text='Return to BSS from Solo' value="returnToBssFromSolo" bind-value="true" apply-on-change="true" hover-hint="When Playing a song from Better Song Search, return once leaving the Solo menu"/>
-				<toggle-setting text='Download Song previews' value="loadSongPreviews" bind-value="true" apply-on-change="true" hover-hint="Load and play a short preview of songs not downloaded yet"/>
-				<toggle-setting text='Smaller Font size' value="smallerFontSize" bind-value="true" apply-on-change="true" hover-hint="Makes the Font size of the Song List smaller"/>
-			</macro.as-host>
-			<horizontal pad-top="5">
-				<button text='Close' click-event='CloseSettingsModal'/>
-			</horizontal>
+			<primary-button text='BetterSongSearch Settings' click-event='HideMoreModal' on-click='ShowSettings' horizontal-fit='Unconstrained'/>
 		</vertical>
 	</modal>
 	

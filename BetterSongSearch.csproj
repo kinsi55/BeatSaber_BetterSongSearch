@@ -59,6 +59,7 @@
     <None Remove="UI\Views\DownloadHistory.bsml" />
     <None Remove="UI\Views\FilterView.bsml" />
     <None Remove="UI\Views\SongList.bsml" />
+    <None Remove="UI\Views\SplitViews\Settings.bsml" />
     <None Remove="UI\Views\SplitViews\UploadDetails.bsml" />
   </ItemGroup>
 
@@ -71,6 +72,7 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\CustomLists\DownloadListCell.bsml" />
     <EmbeddedResource Include="UI\CustomLists\SongListCell.bsml" />
+    <EmbeddedResource Include="UI\Views\SplitViews\Settings.bsml" />
     <EmbeddedResource Include="UI\Views\SplitViews\UploadDetails.bsml" />
   </ItemGroup>
 

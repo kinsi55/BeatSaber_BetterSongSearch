@@ -22,8 +22,6 @@ namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
 	[ViewDefinition("BetterSongSearch.UI.Views.SongList.bsml")]
 	class SongListController : BSMLAutomaticViewController, TableView.IDataSource {
-		public static PluginConfig cfgInstance;
-
 		static internal IList<SongSearchSong> filteredSongsList = null;
 		static internal IList<SongSearchSong> searchedSongsList = null;
 
@@ -185,6 +183,12 @@ namespace BetterSongSearch.UI {
 			BSMLStuff.InitSplitView(ref createPlaylistParams, gameObject, SplitViews.PlaylistCreation.instance);
 
 			SplitViews.PlaylistCreation.instance.Open();
+		}
+
+		BSMLParserParams settingsParams = null;
+		[UIAction("ShowSettings")]
+		void ShowSettings() {
+			BSMLStuff.InitSplitView(ref settingsParams, gameObject, SplitViews.Settings.instance).EmitEvent("ShowModal");
 		}
 
 		// While not the best for readability you have to agree this is a neat implementation!
