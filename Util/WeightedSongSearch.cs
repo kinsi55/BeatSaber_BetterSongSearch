@@ -91,12 +91,27 @@ namespace BetterSongSearch.Util {
 						// If it was the beginning add 5 weighting, else 3
 						resultWeight += wordStart ? 5 : 3;
 
-						// If we did match the beginning, check if we matched an entire word. Get the end index as indicated by our needle
-						var maybeWordEnd = wordStart && matchpos + words[i].Length < songeName.Length;
+						var posInName = matchpos + words[i].Length;
 
-						// Check if we actually end up at a non word char, if so add 2 weighting
-						if(maybeWordEnd && songeName[matchpos + words[i].Length] == ' ')
-							resultWeight += 2;
+						/*
+						 * Check if we are at the end of the song name, but only if it has at least 8 characters
+						 * We do this because otherwise, when searching for "lowermost revolt", songs where the
+						 * songName is exactly "lowermost revolt" would have a lower result weight than 
+						 * "lowermost revolt (JoeBama cover)"
+						 * 
+						 * The 8 character limitation for this is so that super short words like "those" dont end
+						 * up triggering this
+						 */
+						if(songeName.Length > 7 && songeName.Length == posInName) {
+							resultWeight += 3;
+						} else {
+							// If we did match the beginning, check if we matched an entire word. Get the end index as indicated by our needle
+							var maybeWordEnd = wordStart && posInName < songeName.Length;
+
+							// Check if we actually end up at a non word char, if so add 2 weighting
+							if(maybeWordEnd && songeName[matchpos + words[i].Length] == ' ')
+								resultWeight += 2;
+						}
 
 						// If the word we just checked is behind the previous matched, add another 1 weight
 						if(prevMatchIndex != -1 && matchpos > prevMatchIndex)
@@ -181,7 +196,7 @@ namespace BetterSongSearch.Util {
 				if(cat == UnicodeCategory.LowercaseLetter || cat == UnicodeCategory.SpaceSeparator || cat == UnicodeCategory.DecimalDigitNumber) {
 					challoc[pos++] = c;
 				} else if(cat == UnicodeCategory.UppercaseLetter && c < '[') {
-					challoc[pos++] = (char)(c + 32);
+					challoc[pos++] = (char)(c + ' ');
 					modified = true;
 				}
 			}
