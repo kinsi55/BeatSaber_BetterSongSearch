@@ -170,6 +170,9 @@ namespace BetterSongSearch.UI {
 		/// <param name="immediately">True = Close immediately without transition</param>
 		/// <param name="downloadAbortConfim">True = Confirm closing if there is pending downloads</param>
 		public static void Close(bool immediately = false, bool downloadAbortConfim = true) {
+			if(instance == null || !instance.isActivated)
+				return;
+
 			if(downloadAbortConfim && ConfirmCancelOfPending(() => Close(immediately, false)))
 				return;
 
@@ -187,7 +190,7 @@ namespace BetterSongSearch.UI {
 			if(downloadHistoryView.hasUnloadedDownloads)
 				SongCore.Loader.Instance.RefreshSongs(false);
 
-			if(instance != null) Manager._parentFlow.DismissFlowCoordinator(instance, () => {
+			Manager._parentFlow.DismissFlowCoordinator(instance, () => {
 				lastVisibleTableRowIdx = songListView.songList.GetVisibleCellsIdRange().Item1;
 				songsList = null;
 				filteredSongsListPreallocatedArray = null;
