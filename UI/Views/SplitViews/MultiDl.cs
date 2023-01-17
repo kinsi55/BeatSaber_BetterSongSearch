@@ -13,7 +13,8 @@ namespace BetterSongSearch.UI.SplitViews {
 				if(SongListController.searchedSongsList[i].CheckIsDownloaded() || !SongListController.searchedSongsList[i].CheckIsDownloadable())
 					continue;
 
-				BSSFlowCoordinator.downloadHistoryView.TryAddDownload(SongListController.searchedSongsList[i], true);
+				if(!BSSFlowCoordinator.downloadHistoryView.TryAddDownload(SongListController.searchedSongsList[i], true))
+					continue;
 
 				if(++downloaded >= multiDlCountSlider.Value)
 					break;

@@ -273,9 +273,12 @@ namespace BetterSongSearch.UI {
 
 		public bool CheckIsDownloadable() {
 			var dlElem = BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key);
+
+			var downloadingStates = DownloadHistoryEntry.DownloadStatus.Preparing | DownloadHistoryEntry.DownloadStatus.Downloading | DownloadHistoryEntry.DownloadStatus.Queued;
+
 			return dlElem == null || (
 				(dlElem.retries == 3 && dlElem.status == DownloadHistoryEntry.DownloadStatus.Failed) ||
-				(!dlElem.IsInAnyOfStates(DownloadHistoryEntry.DownloadStatus.Preparing | DownloadHistoryEntry.DownloadStatus.Downloading) && !CheckIsDownloaded())
+				(!dlElem.IsInAnyOfStates(downloadingStates) && !CheckIsDownloaded())
 			);
 		}
 
