@@ -35,7 +35,7 @@
 			<vertical spacing='2'>
 				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
 					<text text='&lt;color=#DDD>BeatSaver' align='Center' underlined='true' bold='true' font-size='3.5' color='#69B' size-delta-y='5'/>
-					<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min="1" max='2' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
+					<slider-setting text='Min upload date' id='hideOlderThanSlider' value="_hideOlderThan" bind-value="true" apply-on-change="true" min="0" max='2' integer-only='true' formatter='DateTimeToStr' on-change="UpdateData"/>
 					<slider-setting text='Minimum Rating' value="minimumRating" bind-value="true" apply-on-change="true" max='0.9' increment='0.05' formatter='PercentFloat' on-change="UpdateData"/>
 					<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" max='100' integer-only='true' on-change="UpdateData"/>
 					<string-setting text='Uploader(s)' value='uploadersString' bind-value='true' apply-on-change='true' formatter='FormatUploaderShortInfo' on-change="UpdateData" hover-hint='You can enter multiple Uploader names, seperated by spaces. If you have an Exclamation mark at the beginning of your input it becomes a blacklist for the given uploaders'/>
