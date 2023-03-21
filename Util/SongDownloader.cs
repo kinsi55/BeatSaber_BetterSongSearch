@@ -76,7 +76,7 @@ namespace BetterSongSearch.Util {
 
 								x.Position = 0;
 
-								files.Add(entry.Name, (file, x));
+								files[entry.Name] = (file, x);
 
 								if(entry.Name.Length > longestFileNameLength)
 									longestFileNameLength = entry.Name.Length;
