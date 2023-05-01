@@ -5,6 +5,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using System.Linq;
+using BetterSongSearch.Util;
 
 namespace BetterSongSearch.UI.CustomLists {
 	static class SongListTableData {
@@ -29,13 +30,13 @@ namespace BetterSongSearch.UI.CustomLists {
 	}
 
 	class CustomSongListTableCell : TableCell {
-		[UIComponent("fullFormattedSongName")] TextMeshProUGUI fullFormattedSongName = null;
-		[UIComponent("uploadDateFormatted")] TextMeshProUGUI uploadDateFormatted = null;
-		[UIComponent("levelAuthorName")] TextMeshProUGUI levelAuthorName = null;
-		[UIComponent("songLengthAndRating")] TextMeshProUGUI songLengthAndRating = null;
+		[UIComponent("fullFormattedSongName")] readonly TextMeshProUGUI fullFormattedSongName = null;
+		[UIComponent("uploadDateFormatted")] readonly TextMeshProUGUI uploadDateFormatted = null;
+		[UIComponent("levelAuthorName")] readonly TextMeshProUGUI levelAuthorName = null;
+		[UIComponent("songLengthAndRating")] readonly TextMeshProUGUI songLengthAndRating = null;
 		TextMeshProUGUI[] diffs = null;
 
-		[UIComponent("diffs")] Transform diffsContainer = null;
+		[UIComponent("diffs")] readonly Transform diffsContainer = null;
 
 		[UIAction("#post-parse")]
 		void Parsed() {

@@ -26,10 +26,10 @@
 					<slider-setting text='MERGE_TO_PREV' value="maximumNps" bind-value="true" apply-on-change="true" max='~NPS_FILTER_MAX' increment='0.5' formatter='FormatMaxNps' on-change="UpdateData"/>
 				</vertical>
 				<vertical child-control-height='false' bg='panel-top' pad='2' pad-bottom='1' pad-top='1' preferred-width='64'>
-					<text text='&lt;color=#DDD>ScoreSaber' align='Center' underlined='true' bold='true' font-size='3.5' color='#69B' size-delta-y='5'/>
+					<text text='&lt;color=#DDD>Ranked' align='Center' underlined='true' bold='true' font-size='3.5' color='#69B' size-delta-y='5'/>
 					<list-setting text='Ranked Status' value="rankedState" choices='rankedFilterOptions' bind-value="true" apply-on-change="true" on-change="UpdateData"/>
 					<slider-setting text='Stars' value="minimumStars" bind-value="true" apply-on-change="true" max='13' increment='0.2' formatter='FormatShortFloat' on-change="UpdateData"/>
-					<slider-setting text='MERGE_TO_PREV' value="maximumStars" bind-value="true" apply-on-change="true" max='14' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
+					<slider-setting text='MERGE_TO_PREV' value="maximumStars" bind-value="true" apply-on-change="true" max='~STAR_FILTER_MAX' increment='0.2' formatter='FormatMaxStarsFloat' on-change="UpdateData"/>
 				</vertical>
 			</vertical>
 			<vertical spacing='2'>

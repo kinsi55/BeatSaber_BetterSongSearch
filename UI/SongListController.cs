@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using static BetterSongSearch.UI.DownloadHistoryView;
-using static BetterSongSearch.UI.SongSearchSong;
+using static BetterSongSearch.Util.SongSearchSong;
 
 namespace BetterSongSearch.UI {
 	[HotReload(RelativePathToLayout = @"Views\SongList.bsml")]
@@ -195,9 +195,9 @@ namespace BetterSongSearch.UI {
 		static readonly IReadOnlyDictionary<string, Func<SongSearchSong, float>> sortModes = new Dictionary<string, Func<SongSearchSong, float>>() {
 			{ "Newest Upload", x => x.detailsSong.uploadTimeUnix },
 			{ "Oldest Upload", x => uint.MaxValue - x.detailsSong.uploadTimeUnix },
-			{ "Ranked/Qualified time", x => (x.detailsSong.rankedStatus != RankedStatus.Unranked ? x.detailsSong.rankedChangeUnix : 0f) },
-			{ "Most Stars", x => x.diffs.Max(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 0f) },
-			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.detailsDiff.ranked ? x.detailsDiff.stars : 420f) },
+			{ "Ranked/Qualified time", x => (x.isRanked() ? x.detailsSong.rankedChangeUnix : 0f) },
+			{ "Most Stars", x => x.diffs.Max(x => x.passesFilter && x.songSearchSong.isRanked() ? x.GetStars() : 0f) },
+			{ "Least Stars", x => 420f - x.diffs.Min(x => x.passesFilter && x.songSearchSong.isRanked() ? x.GetStars() : 420f) },
 			{ "Best rated", x => x.detailsSong.rating },
 			{ "Worst rated", x => 420f - (x.detailsSong.rating != 0 ? x.detailsSong.rating : 420f) },
 			//{ "Worst local score", x => {
@@ -217,8 +217,8 @@ namespace BetterSongSearch.UI {
 		};
 
 		internal static readonly IReadOnlyDictionary<string, Func<SongSearchDiff, float>> sortModesDiffSort = new Dictionary<string, Func<SongSearchDiff, float>>() {
-			{ "Most Stars", x => -x.detailsDiff.stars },
-			{ "Least Stars", x => x.detailsDiff.ranked ? x.detailsDiff.stars : -420f },
+			{ "Most Stars", x => -x.GetStars() },
+			{ "Least Stars", x => x.songSearchSong.isRanked() ? x.GetStars() : -420f },
 			//{ "Worst local score", x => {
 			//	if(x.passesFilter && x.CheckHasScore())
 			//		return x.localScore;
@@ -230,128 +230,5 @@ namespace BetterSongSearch.UI {
 		static readonly IReadOnlyList<object> sortModeSelections = sortModes.Select(x => x.Key).ToList<object>();
 
 		internal static string selectedSortMode { get; private set; } = sortModes.First().Key;
-	}
-
-	class SongSearchSong {
-		const bool showVotesInsteadOfRating = true;
-
-		public readonly Song detailsSong;
-
-		string _hash = null;
-		public string hash => _hash ??= detailsSong.hash;
-
-		string _uploaderNameLowercase = null;
-		public string uploaderNameLowercase => _uploaderNameLowercase ??= detailsSong.uploaderName.ToLowerInvariant();
-
-		public readonly SongSearchDiff[] diffs;
-
-		#region BSML stuffs
-		public IOrderedEnumerable<SongSearchDiff> sortedDiffs {
-			get {
-				// Matching Standard > Matching Non-Standard > Non-Matching Standard > Non-Matching Non-Standard
-				var y = diffs.OrderByDescending(x =>
-					(x.passesFilter ? 1 : -3) + (x.detailsDiff.characteristic == MapCharacteristic.Standard ? 1 : 0)
-				);
-
-				// If we are sorting by something that is on a diff-level, sort the diffy as well!
-				if(SongListController.sortModesDiffSort.TryGetValue(SongListController.selectedSortMode, out var diffSorter))
-					y = y.ThenBy(diffSorter);
-
-				return y.ThenByDescending(x => x.detailsDiff.ranked ? 1 : 0);
-			}
-		}
-
-		public bool CheckIsDownloadedAndLoaded() => SongCore.Collections.songWithHashPresent(detailsSong.hash);
-
-		public bool CheckIsDownloaded() {
-			return
-				BSSFlowCoordinator.downloadHistoryView.downloadList.Any(
-					x => x.key == detailsSong.key &&
-					x.status == DownloadHistoryEntry.DownloadStatus.Downloaded
-				) || CheckIsDownloadedAndLoaded();
-		}
-
-		public bool CheckIsDownloadable() {
-			var dlElem = BSSFlowCoordinator.downloadHistoryView.downloadList.FirstOrDefault(x => x.key == detailsSong.key);
-
-			var downloadingStates = DownloadHistoryEntry.DownloadStatus.Preparing | DownloadHistoryEntry.DownloadStatus.Downloading | DownloadHistoryEntry.DownloadStatus.Queued;
-
-			return dlElem == null || (
-				(dlElem.retries == 3 && dlElem.status == DownloadHistoryEntry.DownloadStatus.Failed) ||
-				(!dlElem.IsInAnyOfStates(downloadingStates) && !CheckIsDownloaded())
-			);
-		}
-
-		public bool CheckHasScore() => BSSFlowCoordinator.songsWithScores.ContainsKey(hash);
-
-		bool isQualified => detailsSong.rankedStatus == RankedStatus.Qualified;
-
-		public string fullFormattedSongName => $"{detailsSong.songAuthorName} - {detailsSong.songName}";
-		public string uploadDateFormatted => detailsSong.uploadTime.ToString("dd. MMM yyyy", CultureInfo.InvariantCulture);
-		public string songLength => string.Format("{0:00}:{1:00}", (int)detailsSong.songDuration.TotalMinutes, detailsSong.songDuration.Seconds);
-		public string songRating => showVotesInsteadOfRating ? $"<color=#9C9>👍 {detailsSong.upvotes} <color=#C99>👎 {detailsSong.downvotes}" : $"{detailsSong.rating:0.0%}";
-
-#if !DEBUG
-		public string songLengthAndRating => $"{(isQualified ? "<color=#96C>🚩 Qualified</color> " : "")}⏲ {songLength}  {songRating}";
-#else
-		public float sortWeight = 0;
-		public float resultWeight = 0;
-		public string songLengthAndRating => $"RW{resultWeight} - SW{sortWeight} - {(isQualified ? "<color=#96C>🚩 Qualified</color> " : "")}⏲ {songLength}  {songRating}";
-#endif
-		//public string levelAuthorName => song.levelAuthorName;
-		#endregion
-
-		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpperInvariant()}";
-		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.FirstOrDefault();
-		public SongSearchSong(in Song song) {
-			detailsSong = song;
-			diffs = new SongSearchDiff[song.diffCount];
-
-			// detailsSong.difficulties has an overhead of creating the ArraySegment - This doesnt 👍;
-			for(var i = 0; i < diffs.Length; i++)
-				diffs[i] = new SongSearchDiff(this, in BSSFlowCoordinator.songDetails.difficulties[i + (int)song.diffOffset]);
-		}
-
-		public class SongSearchDiff {
-			internal readonly SongSearchSong songSearchSong;
-			internal readonly SongDifficulty detailsDiff;
-			internal bool? _passesFilter = null;
-			internal bool passesFilter => _passesFilter ??= BSSFlowCoordinator.filterView.DifficultyCheck(in detailsDiff) && BSSFlowCoordinator.filterView.SearchDifficultyCheck(this);
-
-			internal string serializedDiff => $"{detailsDiff.characteristic}_{detailsDiff.difficulty}";
-
-			public bool CheckHasScore() => songSearchSong.CheckHasScore() && BSSFlowCoordinator.songsWithScores[songSearchSong.hash].ContainsKey(serializedDiff);
-			internal float localScore => BSSFlowCoordinator.songsWithScores[songSearchSong.hash][serializedDiff];
-
-			string GetCombinedShortDiffName() {
-				var retVal = $"{(detailsDiff.song.diffCount > 5 ? shortMapDiffNames[detailsDiff.difficulty] : detailsDiff.difficulty.ToString())}";
-
-				if(customCharNames.TryGetValue(detailsDiff.characteristic, out var customCharName))
-					retVal += $"({customCharName})";
-
-				return retVal;
-			}
-			public string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{(detailsDiff.ranked ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "")}";
-			public SongSearchDiff(SongSearchSong songSearchSong, in SongDifficulty diff) {
-				this.detailsDiff = diff;
-				this.songSearchSong = songSearchSong;
-			}
-
-			static readonly IReadOnlyDictionary<MapDifficulty, string> shortMapDiffNames = new Dictionary<MapDifficulty, string> {
-				{ MapDifficulty.Easy, "Easy" },
-				{ MapDifficulty.Normal, "Norm" },
-				{ MapDifficulty.Hard, "Hard" },
-				{ MapDifficulty.Expert, "Ex" },
-				{ MapDifficulty.ExpertPlus, "Ex+" }
-			};
-
-			static readonly IReadOnlyDictionary<MapCharacteristic, string> customCharNames = new Dictionary<MapCharacteristic, string> {
-				{ MapCharacteristic.NinetyDegree, "90" },
-				{ MapCharacteristic.ThreeSixtyDegree, "360" },
-				{ MapCharacteristic.Lawless, "☠" },
-				{ MapCharacteristic.Custom, "?" },
-				{ MapCharacteristic.Lightshow, "💡" }
-			};
-		}
 	}
 }

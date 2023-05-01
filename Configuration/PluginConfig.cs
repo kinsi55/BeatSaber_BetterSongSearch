@@ -13,6 +13,7 @@ namespace BetterSongSearch {
 		public virtual string coverUrlOverride { get; set; } = "";
 		public virtual string previewUrlOverride { get; set; } = "";
 		public virtual string apiUrlOverride { get; set; } = "";
+		public virtual string preferredLeaderboard { get; set; } = "";
 
 		/// <summary>
 		/// This is called whenever BSIPA reads the config from disk (including when file changes are detected).

@@ -17,7 +17,7 @@ namespace BetterSongSearch.Configuration {
 	[JsonObject(MemberSerialization.OptIn)]
 	class FilterOptions : NotifiableSettingsObj {
 		public const float SONG_LENGTH_FILTER_MAX = 15f;
-		public const float STAR_FILTER_MAX = 14f;
+		public const float STAR_FILTER_MAX = 15f;
 		public const float NJS_FILTER_MAX = 25f;
 		public const float NPS_FILTER_MAX = 12f;
 
@@ -114,7 +114,6 @@ namespace BetterSongSearch.Configuration {
 
 
 		[UIComponent("hideOlderThanSlider")] internal SliderSetting hideOlderThanSlider = null;
-		[UIComponent("rankedToggle")] internal ToggleSetting rankedToggle = null;
 
 		[UIAction("UpdateData")] public static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
 
@@ -122,7 +121,7 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("characteristics")] public static readonly List<object> characteristics = Enum.GetNames(typeof(MapCharacteristic)).Prepend("Any").ToList<object>();
 		[UIValue("downloadedFilterOptions")] public static readonly List<object> downloadedFilterOptions = new List<object> { "Show all", "Only downloaded", "Hide downloaded" };
 		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Only passed" };
-		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show all", "Only Ranked", "Only Qualified" };
+		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show All", "ScoreSaber Ranked", "BeatLeader Ranked", "ScoreSaber Qualified", "BeatLeader Qualified" };
 
 		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema" };
 

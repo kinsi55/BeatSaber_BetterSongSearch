@@ -99,28 +99,34 @@ namespace BetterSongSearch.UI {
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
 
-		static readonly Dictionary<object, MapMods> funnyMapThing = new Dictionary<object, MapMods>() {
+		static readonly IReadOnlyDictionary<object, MapMods> funnyMapThing = new Dictionary<object, MapMods>() {
 			{ FilterOptions.modOptions[1], MapMods.NoodleExtensions },
 			{ FilterOptions.modOptions[2], MapMods.MappingExtensions },
 			{ FilterOptions.modOptions[3], MapMods.Chroma },
 			{ FilterOptions.modOptions[4], MapMods.Cinema }
 		};
 
+		static readonly IReadOnlyDictionary<string, RankedStates> funnyMapThing2 = new Dictionary<string, RankedStates>() {
+			{ (string)FilterOptions.rankedFilterOptions[1], RankedStates.ScoresaberRanked },
+			{ (string)FilterOptions.rankedFilterOptions[2], RankedStates.BeatleaderRanked },
+			{ (string)FilterOptions.rankedFilterOptions[3], RankedStates.ScoresaberQualified },
+			{ (string)FilterOptions.rankedFilterOptions[4], RankedStates.BeatleaderQualified },
+		};
+
 		public bool DifficultyCheck(in SongDifficulty diff) {
-			if(diff.stars < currentFilter.minimumStars || diff.stars > currentFilter.maximumStars)
+			if(currentFilter.difficulty_int - (int)diff.difficulty == 0)
 				return false;
 
-			if(currentFilter.difficulty_int != -1 && (int)diff.difficulty != currentFilter.difficulty_int)
-				return false;
-
-			if(currentFilter.characteristic_int != -1 && (int)diff.characteristic != currentFilter.characteristic_int)
+			if(currentFilter.characteristic_int - (int)diff.characteristic == 0)
 				return false;
 
 			if(diff.njs < currentFilter.minimumNjs || diff.njs > currentFilter.maximumNjs)
 				return false;
 
-			if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1] && !diff.ranked)
-				return false;
+			if(currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[0]) {
+				if(!diff.song.rankedStates.HasFlag(funnyMapThing2[currentFilter.rankedState]))
+					return false;
+			}
 
 			if(currentFilter.mods != (string)FilterOptions.modOptions[0]) {
 				if((diff.mods & funnyMapThing[currentFilter.mods]) == 0)
@@ -143,6 +149,23 @@ namespace BetterSongSearch.UI {
 					return false;
 			}
 
+			var star = -1f;
+
+			if(currentFilter.maximumStars != FilterOptions.STAR_FILTER_MAX) {
+				star = diff.GetStars();
+
+				if(star > currentFilter.maximumStars)
+					return false;
+			}
+
+			if(currentFilter.minimumStars != 0f) {
+				if(star == -1)
+					star = diff.GetStars();
+
+				if(star < currentFilter.minimumStars)
+					return false;
+			}
+
 			return true;
 		}
 
@@ -151,17 +174,18 @@ namespace BetterSongSearch.UI {
 				return false;
 
 			if(currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[0]) {
-				if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1]) {
-					if(song.rankedStatus != RankedStatus.Ranked)
-						return false;
-				} else if(currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[2]) {
-					if(song.rankedStatus != RankedStatus.Qualified)
-						return false;
-				}
+				if(!song.rankedStates.HasFlag(funnyMapThing2[currentFilter.rankedState]))
+					return false;
 			}
 
-			if(song.songDurationSeconds > 0f && (song.songDurationSeconds < currentFilter.minimumSongLength * 60 || song.songDurationSeconds > currentFilter.maximumSongLength * 60))
-				return false;
+			const float oneSixtythInverse = 1f / 60;
+
+			if(song.songDurationSeconds > 0f) {
+				var x = song.songDurationSeconds * oneSixtythInverse;
+
+				if(x < currentFilter.minimumSongLength || x > currentFilter.maximumSongLength)
+					return false;
+			}
 
 			var voteCount = song.downvotes + song.upvotes;
 

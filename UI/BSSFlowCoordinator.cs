@@ -214,6 +214,11 @@ namespace BetterSongSearch.UI {
 			if(songDetails == null)
 				return;
 
+#if DEBUG
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+#endif
+
 			await Task.Run(() => {
 				var sc = 0;
 
@@ -254,6 +259,10 @@ namespace BetterSongSearch.UI {
 
 				SongListController.filteredSongsList = new ArraySegment<SongSearchSong>(filteredSongsListPreallocatedArray, 0, sc);
 			});
+
+#if DEBUG
+			Plugin.Log.Info(string.Format("Filtering the songs took {0}ms", sw.Elapsed.TotalMilliseconds));
+#endif
 
 			songListView.UpdateSearchedSongsList();
 		}
