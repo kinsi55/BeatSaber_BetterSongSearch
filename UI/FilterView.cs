@@ -99,19 +99,11 @@ namespace BetterSongSearch.UI {
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
 
-		static readonly IReadOnlyDictionary<object, MapMods> funnyMapThing = new Dictionary<object, MapMods>() {
-			{ FilterOptions.modOptions[1], MapMods.NoodleExtensions },
-			{ FilterOptions.modOptions[2], MapMods.MappingExtensions },
-			{ FilterOptions.modOptions[3], MapMods.Chroma },
-			{ FilterOptions.modOptions[4], MapMods.Cinema }
-		};
+		static readonly IReadOnlyDictionary<object, MapMods> funnyMapThing = Enumerable.Range(1, 4)
+			.ToDictionary(x => FilterOptions.modOptions[x], x => (MapMods)x);
 
-		static readonly IReadOnlyDictionary<string, RankedStates> funnyMapThing2 = new Dictionary<string, RankedStates>() {
-			{ (string)FilterOptions.rankedFilterOptions[1], RankedStates.ScoresaberRanked },
-			{ (string)FilterOptions.rankedFilterOptions[2], RankedStates.BeatleaderRanked },
-			{ (string)FilterOptions.rankedFilterOptions[3], RankedStates.ScoresaberQualified },
-			{ (string)FilterOptions.rankedFilterOptions[4], RankedStates.BeatleaderQualified },
-		};
+		static readonly IReadOnlyDictionary<string, RankedStates> funnyMapThing2 = Enumerable.Range(0, 4)
+			.ToDictionary(x => (string)FilterOptions.rankedFilterOptions[x + 1], x => (RankedStates)(1 << x));
 
 		public bool DifficultyCheck(in SongDifficulty diff) {
 			if(currentFilter.difficulty_int - (int)diff.difficulty == 0)

@@ -129,19 +129,22 @@ namespace BetterSongSearch.Util {
 
 			public bool isRanked => detailsDiff.stars > 0f || detailsDiff.starsBeatleader > 0f;
 
-			string formattedRankDisplay() {
+			string GetFormattedRankDisplay() {
+				if(!passesFilter)
+					return "";
+
 				var lbsvc = GetTargetedRankLeaderboardService();
 
 				if(lbsvc == RankedStates.ScoresaberRanked && detailsDiff.stars > 0) {
-					return passesFilter ? $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>" : "";
+					return $" <color=#{(passesFilter ? "D91" : "650")}>{Math.Round(detailsDiff.stars, 1):0.0}⭐</color>";
 				} else if(lbsvc == RankedStates.BeatleaderRanked && detailsDiff.starsBeatleader > 0) {
-					return passesFilter ? $" <color=#{(passesFilter ? "B1D" : "606")}>{Math.Round(detailsDiff.starsBeatleader, 1):0.0}⭐</color>" : "";
+					return $" <color=#{(passesFilter ? "B1D" : "606")}>{Math.Round(detailsDiff.starsBeatleader, 1):0.0}⭐</color>";
 				}
 
 				return "";
 			}
 
-			public string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{formattedRankDisplay()}";
+			public string formattedDiffDisplay => $"<color=#{(passesFilter ? "EEE" : "888")}>{GetCombinedShortDiffName()}</color>{GetFormattedRankDisplay()}";
 
 			public float GetStars() => GetStars(GetTargetedRankLeaderboardService());
 
