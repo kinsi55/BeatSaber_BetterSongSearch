@@ -117,7 +117,7 @@ namespace BetterSongSearch.Util {
 				if(rStates.HasFlag(RankedStates.ScoresaberRanked) &&
 					// Filtering by BeatLeader ranked
 					FilterView.currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[2] &&
-					PluginConfig.Instance.preferredLeaderboard != "BeatLeader"
+					(PluginConfig.Instance.preferredLeaderboard != "BeatLeader" || !rStates.HasFlag(RankedStates.BeatleaderRanked))
 				)
 					return RankedStates.ScoresaberRanked;
 

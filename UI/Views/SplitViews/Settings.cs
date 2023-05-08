@@ -16,6 +16,17 @@ namespace BetterSongSearch.UI.SplitViews {
 		public static readonly Settings instance = new Settings();
 		Settings() { }
 
+		static readonly IReadOnlyList<object> preferredLeaderboardChoices = new List<object>() { "ScoreSaber", "BeatLeader" };
+
+		string preferredLeaderboard {
+			get => PluginConfig.Instance.preferredLeaderboard;
+			set {
+				PluginConfig.Instance.preferredLeaderboard = value;
+
+				FilterView.limitedUpdateData.CallNextFrame();
+			}
+		}
+
 
 		[UIParams] readonly BSMLParserParams parserParams = null;
 
