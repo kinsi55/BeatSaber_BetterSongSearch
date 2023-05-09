@@ -115,9 +115,14 @@ namespace BetterSongSearch.Util {
 				var rStates = detailsDiff.song.rankedStates;
 
 				if(rStates.HasFlag(RankedStates.ScoresaberRanked) &&
-					// Filtering by BeatLeader ranked
+					// Not Filtering by BeatLeader ranked
 					FilterView.currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[2] &&
-					(PluginConfig.Instance.preferredLeaderboard != "BeatLeader" || !rStates.HasFlag(RankedStates.BeatleaderRanked))
+					(
+						PluginConfig.Instance.preferredLeaderboard != "BeatLeader" || 
+						!rStates.HasFlag(RankedStates.BeatleaderRanked) ||
+						// Filtering by SS ranked
+						FilterView.currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1]
+					)
 				)
 					return RankedStates.ScoresaberRanked;
 
