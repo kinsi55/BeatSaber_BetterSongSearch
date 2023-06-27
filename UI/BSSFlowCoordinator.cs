@@ -73,7 +73,7 @@ namespace BetterSongSearch.UI {
 			}
 		}
 
-		protected async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+		public async override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
 			instance = this;
 
 			closeCancelSource = new CancellationTokenSource();
@@ -208,7 +208,7 @@ namespace BetterSongSearch.UI {
 			}, ViewController.AnimationDirection.Horizontal, immediately);
 		}
 
-		protected override void BackButtonWasPressed(ViewController topViewController) => Close();
+		public override void BackButtonWasPressed(ViewController topViewController) => Close();
 
 		public static async void FilterSongs() {
 			if(songDetails == null)

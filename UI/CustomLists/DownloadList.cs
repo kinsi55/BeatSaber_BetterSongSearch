@@ -48,9 +48,9 @@ namespace BetterSongSearch.UI.CustomLists {
 			return this;
 		}
 
-		protected override void SelectionDidChange(TransitionType transitionType) => RefreshBgState();
-		protected override void HighlightDidChange(TransitionType transitionType) => RefreshBgState();
-		protected override void WasPreparedForReuse() => entry.UpdateProgressHandler = null;
+		public override void SelectionDidChange(TransitionType transitionType) => RefreshBgState();
+		public override void HighlightDidChange(TransitionType transitionType) => RefreshBgState();
+		public override void WasPreparedForReuse() => entry.UpdateProgressHandler = null;
 
 
 		[UIComponent("bgContainer")] ImageView bg = null;
