@@ -106,10 +106,10 @@ namespace BetterSongSearch.UI {
 			.ToDictionary(x => (string)FilterOptions.rankedFilterOptions[x + 1], x => (RankedStates)(1 << x));
 
 		public bool DifficultyCheck(in SongDifficulty diff) {
-			if(currentFilter.difficulty_int - (int)diff.difficulty == 0)
+			if(currentFilter.difficulty_int != -1 && currentFilter.difficulty_int != (int)diff.difficulty)
 				return false;
 
-			if(currentFilter.characteristic_int - (int)diff.characteristic == 0)
+			if(currentFilter.characteristic_int != -1 && currentFilter.characteristic_int != (int)diff.characteristic)
 				return false;
 
 			if(diff.njs < currentFilter.minimumNjs || diff.njs > currentFilter.maximumNjs)
