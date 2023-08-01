@@ -24,6 +24,8 @@ namespace BetterSongSearch {
 
 			UI.Manager.Init();
 
+			SharedCoroutineStarter.Init();
+
 			new Harmony("Kinsi55.BeatSaber.BetterSongSearch").PatchAll(Assembly.GetExecutingAssembly());
 		}
 
