@@ -99,8 +99,8 @@ namespace BetterSongSearch.UI {
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
 
-		static readonly IReadOnlyDictionary<object, MapMods> funnyMapThing = Enumerable.Range(1, 4)
-			.ToDictionary(x => FilterOptions.modOptions[x], x => (MapMods)x);
+		static readonly IReadOnlyDictionary<object, MapMods> funnyMapThing = Enumerable.Range(0, 4)
+			.ToDictionary(x => FilterOptions.modOptions[x], x => (MapMods)(1 << x));
 
 		static readonly IReadOnlyDictionary<string, RankedStates> funnyMapThing2 = Enumerable.Range(0, 4)
 			.ToDictionary(x => (string)FilterOptions.rankedFilterOptions[x + 1], x => (RankedStates)(1 << x));
