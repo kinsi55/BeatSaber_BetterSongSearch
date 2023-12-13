@@ -131,8 +131,9 @@ namespace BetterSongSearch.UI {
 				var h = song.GetCustomLevelIdString();
 
 				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
-				if(preview != null) try {
-					levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
+				try {
+					if(preview != null)
+						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
 					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.GetCoverImageAsync(songAssetLoadCanceller.Token);
 				} catch { }
 			}

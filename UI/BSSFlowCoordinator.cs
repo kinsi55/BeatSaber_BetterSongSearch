@@ -41,10 +41,11 @@ namespace BetterSongSearch.UI {
 					songsWithScoresShouldProbablyUpdate = false;
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
-						if(!x.validScore || x.highScore == 0 || x.levelID.Length < 13 + 40 || !x.levelID.StartsWith("custom_level_", StringComparison.Ordinal))
+						var lid = x.Key.songId;
+						if(!x.Value.validScore || x.Value.highScore == 0 || lid.Length < 13 + 40 || !lid.StartsWith("custom_level_", StringComparison.Ordinal))
 							continue;
 
-						var sh = x.levelID.Substring(13, 40);
+						var sh = lid.Substring(13, 40);
 
 						SongDetailsCache.Structs.Song song;
 						// local score level id's can be scuffed if you pass custom levels w/ no songcore installed
@@ -53,7 +54,7 @@ namespace BetterSongSearch.UI {
 								continue;
 						} catch { continue; }
 
-						if(!song.GetDifficulty(out var diff, (SongDetailsCache.Structs.MapDifficulty)x.difficulty))
+						if(!song.GetDifficulty(out var diff, (SongDetailsCache.Structs.MapDifficulty)x.Key.difficulty))
 							continue;
 
 						if(!_songsWithScores.TryGetValue(sh, out var h))
@@ -65,7 +66,7 @@ namespace BetterSongSearch.UI {
 						 */
 						//var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
 						//h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
-						h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = 0;
+						h[$"{x.Key.characteristic.serializedName}_{x.Key.difficulty}"] = 0;
 					}
 				}
 
