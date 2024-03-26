@@ -49,8 +49,6 @@ namespace BetterSongSearch.UI {
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
-		static BeatmapLevelsModel _beatmapLevelsModel = null;
-		static BeatmapLevelsModel beatmapLevelsModel => XD.FunnyMono(_beatmapLevelsModel) ?? (_beatmapLevelsModel = Resources.FindObjectsOfTypeAll<BeatmapLevelsModel>().FirstOrDefault(x => x.customLevelPackCollection != null));
 
 		static LevelCollectionViewController _levelCollectionViewController;
 		static LevelCollectionViewController levelCollectionViewController => XD.FunnyMono(_levelCollectionViewController) ?? (_levelCollectionViewController = Resources.FindObjectsOfTypeAll<LevelCollectionViewController>().FirstOrDefault());
@@ -130,11 +128,11 @@ namespace BetterSongSearch.UI {
 			} else {
 				var h = song.GetCustomLevelIdString();
 
-				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
+				var level = SongCore.Loader.BeatmapLevelsModelSO.GetBeatmapLevel(h);
 				try {
-					if(preview != null)
-						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.GetCoverImageAsync(songAssetLoadCanceller.Token);
+					if(level != null)
+						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(level, songAssetLoadCanceller.Token);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.previewMediaData.GetCoverSpriteAsync(songAssetLoadCanceller.Token);
 				} catch { }
 			}
 			ShowCoverLoader(false);
@@ -193,7 +191,7 @@ namespace BetterSongSearch.UI {
 
 			playButton.interactable = false;
 
-			var level = beatmapLevelsModel?.GetLevelPreviewForLevelId(songToPlay.GetCustomLevelIdString());
+			var level = SongCore.Loader.BeatmapLevelsModelSO.GetBeatmapLevel(songToPlay.GetCustomLevelIdString());
 
 			if(level == null)
 				return;
