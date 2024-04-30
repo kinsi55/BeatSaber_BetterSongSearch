@@ -51,9 +51,11 @@ namespace BetterSongSearch.UI {
 			StartCoroutine(BSMLStuff.MergeSliders(gameObject));
 
 			// I hate BSML some times
-			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(
-				GetComponentsInChildren<DropDownListSetting>().Where(x => x.associatedValue.MemberName == "mods").First().GetComponent<DropdownWithTableView>()
-			, "_modalView");
+			var m = GetComponentsInChildren<DropDownListSetting>()
+				.Where(x => x.associatedValue.MemberName == "mods")
+				.First()
+				.GetComponent<DropdownWithTableView>()
+				._modalView;
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
 
 			// This is garbage
@@ -61,7 +63,7 @@ namespace BetterSongSearch.UI {
 				if(!x || x.color0 != Color.white || x.sprite.name != "RoundRect10")
 					continue;
 
-				ReflectionUtil.SetField(x, "_skew", 0f);
+				x._skew = 0;
 				x.overrideSprite = null;
 				x.SetImage("#RoundRect10BorderFade");
 				x.color = new Color(0, 0.7f, 1f, 0.4f);

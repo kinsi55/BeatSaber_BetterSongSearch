@@ -23,7 +23,7 @@ namespace BetterSongSearch.UI.SplitViews {
 
 		[UIAction("#post-parse")]
 		void Parsed() {
-			ReflectionUtil.SetField(playlistName.modalKeyboard.modalView, "_animateParentCanvas", false);
+			playlistName.modalKeyboard.modalView._animateParentCanvas = false;
 		}
 
 		internal static string nameToUseOnNextOpen = "h";
@@ -65,7 +65,7 @@ namespace BetterSongSearch.UI.SplitViews {
 			var fName = string.Concat(playlistName.Text.Split(Path.GetInvalidFileNameChars())).Trim();
 
 			if(fName.Length == 0) {
-				ShowResult($"Your Playlist name is invalid");
+				ShowResult("Your Playlist name is invalid");
 				return;
 			}
 

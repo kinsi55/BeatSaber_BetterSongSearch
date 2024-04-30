@@ -86,12 +86,12 @@ namespace BetterSongSearch.Util {
 			listScrollBar.SetActive(true);
 			var vsi = listScrollBar.GetComponentInChildren<VerticalScrollIndicator>(true);
 
-			ReflectionUtil.SetField(sw, "_verticalScrollIndicator", vsi);
+			sw._verticalScrollIndicator = vsi;
 
 			var buttoneZ = listScrollBar.GetComponentsInChildren<NoTransitionsButton>(true).OrderByDescending(x => x.gameObject.name == "UpButton").ToArray();
 			if(buttoneZ.Length == 2) {
-				ReflectionUtil.SetField(sw, "_pageUpButton", (Button)buttoneZ[0]);
-				ReflectionUtil.SetField(sw, "_pageDownButton", (Button)buttoneZ[1]);
+				sw._pageUpButton = buttoneZ[0];
+				sw._pageDownButton = buttoneZ[1];
 
 				buttoneZ[0].onClick.AddListener(sw.PageUpButtonPressed);
 				buttoneZ[1].onClick.AddListener(sw.PageDownButtonPressed);

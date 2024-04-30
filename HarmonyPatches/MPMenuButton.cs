@@ -23,7 +23,7 @@ namespace BetterSongSearch.HarmonyPatches {
 					var t = button.GetComponent<TextSegmentedControlCell>();
 
 					t.text = "Better Song Search";
-					ReflectionUtil.SetField<SelectableCell, Signal>(t, "_wasPressedSignal", null);
+					t._wasPressedSignal = null;
 					t.selectionDidChangeEvent += (A, B, CBADQ) => {
 						if(!t.selected)
 							return;

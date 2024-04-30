@@ -136,7 +136,7 @@ namespace BetterSongSearch.UI {
 				songSearchInput = newSearchBox.GetComponent<InputFieldView>();
 				songSearchPlaceholder = newSearchBox.transform.Find("PlaceholderText")?.GetComponent<CurvedTextMeshPro>();
 
-				ReflectionUtil.SetField(songSearchInput, "_keyboardPositionOffset", new Vector3(-15, -36));
+				songSearchInput.keyboardPositionOffset = new Vector3(-15, -36);
 
 				songSearchInput.onValueChanged.AddListener(_ => UpdateSearchedSongsList());
 			}
@@ -148,20 +148,21 @@ namespace BetterSongSearch.UI {
 			// Funny bsml bug where scrolling would not work otherwise
 			IVRPlatformHelper meWhen = null;
 			foreach(var x in Resources.FindObjectsOfTypeAll<ScrollView>()) {
-				meWhen = ReflectionUtil.GetField<IVRPlatformHelper, ScrollView>(x, "_platformHelper");
+				meWhen = x._platformHelper;
 				if(meWhen != null)
 					break;
 			}
 
 			//foreach(var g in new MonoBehaviour[] { filterView, songListView, downloadHistoryView })
-			foreach(var x in GetComponentsInChildren<ScrollView>()) ReflectionUtil.SetField(x, "_platformHelper", meWhen);
+			foreach(var x in GetComponentsInChildren<ScrollView>()) 
+				ReflectionUtil.SetField(x, nameof(x._platformHelper), meWhen);
 
 			// Make the sort list BIGGER
 			var c = Mathf.Min(9, _sortDropdown.tableViewDataSource.NumberOfCells());
-			ReflectionUtil.SetField(_sortDropdown, "_numberOfVisibleCells", c);
+			_sortDropdown._numberOfVisibleCells = c;
 			_sortDropdown.ReloadData();
 
-			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(_sortDropdown, "_modalView");
+			var m = _sortDropdown._modalView;
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.83f + (c * 0.011f));
 
 			if(searchedSongsList == null)
