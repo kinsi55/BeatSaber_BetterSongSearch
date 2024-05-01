@@ -130,6 +130,7 @@ namespace BetterSongSearch.UI {
 			if(searchBox != null) {
 				var newSearchBox = Instantiate(searchBox, _searchBoxContainer.transform, false);
 				songSearchInput = newSearchBox.GetComponent<InputFieldView>();
+				songSearchInput.text = string.Empty;
 				songSearchPlaceholder = newSearchBox.transform.Find("PlaceholderText")?.GetComponent<CurvedTextMeshPro>();
 
 				songSearchInput._keyboardPositionOffset = new Vector3(-15, -36);
