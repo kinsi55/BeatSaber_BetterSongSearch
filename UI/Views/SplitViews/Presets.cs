@@ -4,7 +4,6 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
 using HMUI;
-using IPA.Utilities;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;

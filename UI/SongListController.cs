@@ -6,16 +6,12 @@ using BetterSongSearch.UI.CustomLists;
 using BetterSongSearch.Util;
 using HMUI;
 using IPA.Utilities;
-using SongDetailsCache.Structs;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
-using static BetterSongSearch.UI.DownloadHistoryView;
 using static BetterSongSearch.Util.SongSearchSong;
 
 namespace BetterSongSearch.UI {
@@ -154,7 +150,7 @@ namespace BetterSongSearch.UI {
 			}
 
 			//foreach(var g in new MonoBehaviour[] { filterView, songListView, downloadHistoryView })
-			foreach(var x in GetComponentsInChildren<ScrollView>()) 
+			foreach(var x in GetComponentsInChildren<ScrollView>())
 				ReflectionUtil.SetField(x, nameof(x._platformHelper), meWhen);
 
 			// Make the sort list BIGGER

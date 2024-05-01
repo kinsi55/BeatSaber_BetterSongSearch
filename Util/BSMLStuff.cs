@@ -1,7 +1,6 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
-using IPA.Utilities;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
@@ -116,9 +115,10 @@ namespace BetterSongSearch.Util {
 				yield return null;
 				var sv = gameObject.GetComponent<ScrollView>();
 
-				if(sv == null)
+				if(sv == null || sv._verticalScrollIndicator == null)
 					yield break;
-				ReflectionUtil.GetField<VerticalScrollIndicator, ScrollView>(sv, "_verticalScrollIndicator")?.RefreshHandle();
+
+				sv._verticalScrollIndicator.RefreshHandle();
 			}
 		}
 	}

@@ -8,7 +8,6 @@ using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
 using HarmonyLib;
 using HMUI;
-using IPA.Utilities;
 using SongDetailsCache.Structs;
 using System;
 using System.Collections.Generic;

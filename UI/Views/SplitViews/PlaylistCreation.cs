@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberPlaylistsLib;
 using BeatSaberPlaylistsLib.Types;
-using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;

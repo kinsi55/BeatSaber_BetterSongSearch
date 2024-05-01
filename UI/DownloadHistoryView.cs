@@ -4,7 +4,6 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.UI.CustomLists;
 using BetterSongSearch.Util;
 using HMUI;
-using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

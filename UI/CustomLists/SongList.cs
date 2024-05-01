@@ -4,7 +4,6 @@ using HMUI;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
-using System.Linq;
 using BetterSongSearch.Util;
 
 namespace BetterSongSearch.UI.CustomLists {

@@ -3,17 +3,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SongDetailsCache.Structs;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace BetterSongSearch.Util {
 	class SongAssetAsyncLoader : IDisposable {
