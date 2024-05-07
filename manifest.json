@@ -4,7 +4,7 @@
     "author": "Kinsi55",
     "version": "0.7.85",
     "description": "Search and download songs with a lot of filtering and sorting options and without frustration!",
-    "gameVersion": "1.34.2",
+    "gameVersion": "1.34.5",
     "dependsOn": {
         "BSIPA": "^4.0.5",
         "BeatSaberMarkupLanguage": "^1.5.3",

@@ -41,8 +41,8 @@ namespace BetterSongSearch.UI {
 					songsWithScoresShouldProbablyUpdate = false;
 
 					foreach(var x in playerDataModel.playerData.levelsStatsData) {
-						var lid = x.Key.songId;
-						if(!x.Value.validScore || x.Value.highScore == 0 || lid.Length < 13 + 40 || !lid.StartsWith("custom_level_", StringComparison.Ordinal))
+						var lid = x.Key.levelId;
+						if(!x.Value.validScore || x.Value.highScore == 0 || lid.Length < 13 + 40 || !lid.StartsWith(CustomLevelLoader.kCustomLevelPrefixId, StringComparison.Ordinal))
 							continue;
 
 						var sh = lid.Substring(13, 40);
@@ -66,7 +66,7 @@ namespace BetterSongSearch.UI {
 						 */
 						//var maxScore = ScoreModel.MaxRawScoreForNumberOfNotes((int)diff.notes);
 						//h[$"{x.beatmapCharacteristic.serializedName}_{x.difficulty}"] = (x.highScore * 100f) / maxScore;
-						h[$"{x.Key.characteristic.serializedName}_{x.Key.difficulty}"] = 0;
+						h[$"{x.Key.beatmapCharacteristic.serializedName}_{x.Key.difficulty}"] = 0;
 					}
 				}
 

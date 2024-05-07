@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BetterSongSearch.UI;
+﻿using BetterSongSearch.UI;
 using HarmonyLib;
 
 namespace BetterSongSearch.HarmonyPatches {

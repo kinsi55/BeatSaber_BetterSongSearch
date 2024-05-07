@@ -3,11 +3,11 @@
 		<horizontal bg='panel-top-gradient'  ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
 			<text text='BetterSongSearch - Batch Download' align='Center'/>
 		</horizontal>
-		<text text='Download a certain amount of songs at once that match your critera, starting from your scroll location in the list' word-wrapping='true'/>
+		<text text='Download a certain amount of songs at once that match your criteria, starting from your scroll location in the list' word-wrapping='true'/>
 		<horizontal>
 			<slider-setting min='5' max='100' increment='1' text='Amount' integer-only='true' id='multiDlCountSlider' show-buttons='true'/>
 		</horizontal>
-		<text font-size='3' font-color='#CCC' text='Want to download even more? You can create a Playlist and download that in the background with Playlistmanager!' word-wrapping='true'/>
+		<text font-size='3' font-color='#CCC' text='Want to download even more? You can create a Playlist and download that in the background with PlaylistManager!' word-wrapping='true'/>
 		<horizontal pad-top='4'>
 			<primary-button text='Download' on-click='StartMultiDownload' click-event='CloseModal'/>
 			<button text='Cancel' click-event='CloseModal'/>

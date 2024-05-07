@@ -4,7 +4,6 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using BetterSongSearch.Configuration;
 using BetterSongSearch.Util;
 using HMUI;
-using IPA.Utilities;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
@@ -38,7 +37,7 @@ namespace BetterSongSearch.UI.SplitViews {
 			BSMLStuff.GetScrollbarForTable(presetList.tableView.gameObject, _presetScrollbarContainer.transform);
 
 			// BSML / HMUI my beloved
-			ReflectionUtil.SetField(newPresetName.modalKeyboard.modalView, "_animateParentCanvas", false);
+			newPresetName.modalKeyboard.modalView._animateParentCanvas = false;
 		}
 
 

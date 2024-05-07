@@ -4,7 +4,6 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using BetterSongSearch.UI.CustomLists;
 using BetterSongSearch.Util;
 using HMUI;
-using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -152,7 +151,7 @@ namespace BetterSongSearch.UI {
 			limitedFullTableReload = new RatelimitCoroutine(downloadHistoryTable.ReloadData, 0.1f);
 			downloadHistoryTable.SetDataSource(this, false);
 
-			ReflectionUtil.SetField(downloadHistoryTable, "_canSelectSelectedCell", true);
+			downloadHistoryTable._canSelectSelectedCell = true;
 
 			BSMLStuff.GetScrollbarForTable(downloadHistoryData.gameObject, _scrollBarContainer.transform);
 		}

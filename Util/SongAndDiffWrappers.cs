@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BetterSongSearch.Configuration;
 using BetterSongSearch.UI;
 using SongDetailsCache.Structs;
@@ -80,7 +78,7 @@ namespace BetterSongSearch.Util {
 		//public string levelAuthorName => song.levelAuthorName;
 		#endregion
 
-		public string GetCustomLevelIdString() => $"custom_level_{detailsSong.hash.ToUpperInvariant()}";
+		public string GetCustomLevelIdString() => CustomLevelLoader.kCustomLevelPrefixId + detailsSong.hash.ToUpperInvariant();
 		public SongSearchDiff GetFirstPassingDifficulty() => sortedDiffs.FirstOrDefault();
 		public SongSearchSong(in Song song) {
 			detailsSong = song;
@@ -118,7 +116,7 @@ namespace BetterSongSearch.Util {
 					// Not Filtering by BeatLeader ranked
 					FilterView.currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[2] &&
 					(
-						PluginConfig.Instance.preferredLeaderboard != "BeatLeader" || 
+						PluginConfig.Instance.preferredLeaderboard != "BeatLeader" ||
 						!rStates.HasFlag(RankedStates.BeatleaderRanked) ||
 						// Filtering by SS ranked
 						FilterView.currentFilter.rankedState == (string)FilterOptions.rankedFilterOptions[1]

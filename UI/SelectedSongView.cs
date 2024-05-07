@@ -49,8 +49,6 @@ namespace BetterSongSearch.UI {
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
-		static BeatmapLevelsModel _beatmapLevelsModel = null;
-		static BeatmapLevelsModel beatmapLevelsModel => XD.FunnyMono(_beatmapLevelsModel) ?? (_beatmapLevelsModel = Resources.FindObjectsOfTypeAll<BeatmapLevelsModel>().FirstOrDefault(x => x.customLevelPackCollection != null));
 
 		static LevelCollectionViewController _levelCollectionViewController;
 		static LevelCollectionViewController levelCollectionViewController => XD.FunnyMono(_levelCollectionViewController) ?? (_levelCollectionViewController = Resources.FindObjectsOfTypeAll<LevelCollectionViewController>().FirstOrDefault());
@@ -130,11 +128,11 @@ namespace BetterSongSearch.UI {
 			} else {
 				var h = song.GetCustomLevelIdString();
 
-				var preview = beatmapLevelsModel?.GetLevelPreviewForLevelId(h);
+				var level = SongCore.Loader.BeatmapLevelsModelSO.GetBeatmapLevel(h);
 				try {
-					if(preview != null)
-						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(preview);
-					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.GetCoverImageAsync(songAssetLoadCanceller.Token);
+					if(level != null)
+						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(level, songAssetLoadCanceller.Token);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.previewMediaData.GetCoverSpriteAsync(songAssetLoadCanceller.Token);
 				} catch { }
 			}
 			ShowCoverLoader(false);
@@ -193,7 +191,7 @@ namespace BetterSongSearch.UI {
 
 			playButton.interactable = false;
 
-			var level = beatmapLevelsModel?.GetLevelPreviewForLevelId(songToPlay.GetCustomLevelIdString());
+			var level = SongCore.Loader.BeatmapLevelsModelSO.GetBeatmapLevel(songToPlay.GetCustomLevelIdString());
 
 			if(level == null)
 				return;
@@ -201,28 +199,32 @@ namespace BetterSongSearch.UI {
 			BSSFlowCoordinator.Close(true);
 			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 
+			BeatmapKey key = new BeatmapKey(null, null, BeatmapDifficulty.Easy);
+			var keys = level.GetBeatmapKeys();
+
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
-			if(BSSFlowCoordinator.playerDataModel != null && songToPlay.GetFirstPassingDifficulty() != null) {
+			if(songToPlay.GetFirstPassingDifficulty() != null) {
 				try {
 					var ddiff = songToPlay.GetFirstPassingDifficulty().detailsDiff;
 
-					var targetChar = SongCore.Loader.beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(ddiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90"));
+					var targetChar = ddiff.characteristic.ToString().Replace("ThreeSixty", "360").Replace("Ninety", "90");
 
-					var pData = BSSFlowCoordinator.playerDataModel.playerData;
-
-					if(targetChar != null) {
-						pData.SetLastSelectedBeatmapCharacteristic(targetChar);
-						pData.SetLastSelectedBeatmapDifficulty((BeatmapDifficulty)ddiff.difficulty);
-					}
+					key = keys.FirstOrDefault(x =>
+						x.difficulty == (BeatmapDifficulty)ddiff.difficulty &&
+						x.beatmapCharacteristic.serializedName == targetChar
+					);
 				} catch { }
 			}
 
-			var x = (LevelSelectionFlowCoordinator.State)LevelSelectionFlowCoordinator_State.Invoke(new object[] {
-				LevelCategory.All,
-				SongCore.Loader.CustomLevelsPack,
-				level,
-				null
-			});
+			if(key.beatmapCharacteristic == null)
+				key = level.GetBeatmapKeys().First();
+
+			var x = new LevelSelectionFlowCoordinator.State(
+				LevelCategory.All, 
+				SongCore.Loader.CustomLevelsPack, 
+				in key, 
+				level
+			);
 
 			multiplayerLevelSelectionFlowCoordinator.Setup(x);
 			soloFreePlayFlowCoordinator.Setup(x);
