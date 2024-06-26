@@ -35,8 +35,6 @@ namespace BetterSongSearch.UI.SplitViews {
 		void Parsed() {
 			FilterPresets.Init();
 
-			BSMLStuff.GetScrollbarForTable(presetList.tableView.gameObject, _presetScrollbarContainer.transform);
-
 			// BSML / HMUI my beloved
 			ReflectionUtil.SetField(newPresetName.modalKeyboard.modalView, "_animateParentCanvas", false);
 		}
@@ -46,7 +44,6 @@ namespace BetterSongSearch.UI.SplitViews {
 		[UIComponent("deleteButton")] readonly NoTransitionsButton deleteButton = null;
 		[UIComponent("presetList")] readonly CustomCellListTableData presetList = null;
 		[UIComponent("newPresetName")] readonly StringSetting newPresetName = null;
-		[UIComponent("presetScrollbarContainer")] readonly VerticalLayoutGroup _presetScrollbarContainer = null;
 		internal void ReloadPresets() {
 			presetList.data = FilterPresets.presets.Select(x => new FilterPresetRow(x.Key)).ToList<object>();
 			presetList.tableView.ReloadData();

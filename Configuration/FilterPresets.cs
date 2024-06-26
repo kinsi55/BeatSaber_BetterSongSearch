@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Components.Settings;
 using BetterSongSearch.UI;
 using BetterSongSearch.Util;
+using HMUI;
 using Newtonsoft.Json;
 using SongDetailsCache.Structs;
 using System;
@@ -16,6 +17,8 @@ namespace BetterSongSearch.Configuration {
 	// Building this like this is kind of shit... But then again not really... Idk
 	[JsonObject(MemberSerialization.OptIn)]
 	class FilterOptions : NotifiableSettingsObj {
+		public static FilterView filterView => BSSFlowCoordinator.filterView;
+
 		public const float SONG_LENGTH_FILTER_MAX = 15f;
 		public const float STAR_FILTER_MAX = 15f;
 		public const float NJS_FILTER_MAX = 25f;
@@ -32,8 +35,7 @@ namespace BetterSongSearch.Configuration {
 
 		[JsonProperty] public float minimumSongLength { get; private set; } = 0f;
 
-		[JsonProperty("maximumSongLength")]
-		public float _maximumSongLength { get; private set; } = 20f;
+		[JsonProperty("maximumSongLength")] float _maximumSongLength = 20f;
 		public float maximumSongLength {
 			get => _maximumSongLength >= SONG_LENGTH_FILTER_MAX ? float.MaxValue : _maximumSongLength;
 			private set => _maximumSongLength = value;
@@ -53,9 +55,11 @@ namespace BetterSongSearch.Configuration {
 
 		[JsonProperty] public float minimumRating { get; private set; } = 0f;
 		[JsonProperty] public int minimumVotes { get; private set; } = 0;
+		[JsonProperty] public bool onlyVerifiedMappers { get; private set; } = false;
+		[JsonProperty] public bool onlyCuratedMaps { get; private set; } = false;
 
 		string _uploadersString = "";
-		[JsonProperty] public string uploadersString { 
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string uploadersString { 
 			get => _uploadersString; 
 			set {
 				if(_uploadersString == value)
@@ -74,7 +78,6 @@ namespace BetterSongSearch.Configuration {
 				uploaders = value.ToLowerInvariant().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries).ToHashSet();
 			}
 		}
-
 
 		public bool uploadersBlacklist { get; private set; } = false;
 		public HashSet<string> uploaders { get; private set; } = new HashSet<string>();
@@ -113,9 +116,42 @@ namespace BetterSongSearch.Configuration {
 		}
 
 
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string mapStyleString { get; set; } = "";
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string mapGenreString { get; set; } = "";
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string mapGenreExcludeString { get; set; } = "";
+
+		static ulong CalculateTagsBitfield(string tags) {
+			if(tags == "" || BSSFlowCoordinator.songDetails == null)
+				return 0;
+
+			var split = tags.ToLowerInvariant().Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+			ulong res = 0;
+
+			foreach(var t in split) {
+				// If it doesnt exist, the default for numbers is 0, and when we add that to an int nothing changes lohl
+				BSSFlowCoordinator.songDetails.tags.TryGetValue(t, out var x);
+
+				res |= x;
+			}
+
+			return res;
+		}
+
+		public ulong _mapStyleBitfield { get; private set; } = 0;
+		public ulong _mapGenreBitfield { get; private set; } = 0;
+		public ulong _mapGenreExcludeBitfield { get; private set; } = 0;
+		internal void CalculateTagBitfields() {
+			_mapStyleBitfield = CalculateTagsBitfield(mapStyleString);
+			_mapGenreBitfield = CalculateTagsBitfield(mapGenreString);
+			_mapGenreExcludeBitfield = CalculateTagsBitfield(mapGenreExcludeString);
+		}
+
+
+
 		[UIComponent("hideOlderThanSlider")] internal SliderSetting hideOlderThanSlider = null;
 
-		[UIAction("UpdateData")] public static void UpdateData(object _) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
+		[UIAction("UpdateData")] public static void UpdateData(object _ = null) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
 
 		[UIValue("difficulties")] public static readonly List<object> difficulties = Enum.GetNames(typeof(MapDifficulty)).Prepend("Any").ToList<object>();
 		[UIValue("characteristics")] public static readonly List<object> characteristics = Enum.GetNames(typeof(MapCharacteristic)).Prepend("Any").ToList<object>();
@@ -124,6 +160,7 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show all", "ScoreSaber Ranked", "BeatLeader Ranked", "ScoreSaber Qualified", "BeatLeader Qualified" };
 
 		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema" };
+		[UIValue("mapStyles")] public static readonly List<object> mapStyles = new List<object> { "Any", "accuracy", "balanced", "challenge", "dance", "fitness", "speed", "tech" };
 
 		#region uiformatters
 		static string DateTimeToStr(int d) => FilterView.hideOlderThanOptions[d].ToString("MMM yyyy", CultureInfo.InvariantCulture);
@@ -140,6 +177,12 @@ namespace BetterSongSearch.Configuration {
 				return "Show all";
 
 			return $"{(uploadersBlacklist ? "Hiding" : "Show only")} <color=#CCC>{uploaders.Count}</color> uploader{(uploaders.Count == 1 ? "" : "s")}";
+		}
+		internal static string FormatBeatSaverTag(string beatsaverTag) {
+			if(SongDetailsCache.BeatSaverTagsMap.map.TryGetValue(beatsaverTag, out var mappedTag))
+				return mappedTag;
+
+			return beatsaverTag;
 		}
 		#endregion
 

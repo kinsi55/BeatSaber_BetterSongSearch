@@ -11,6 +11,7 @@ using HMUI;
 using IPA.Utilities;
 using SongDetailsCache.Structs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -37,10 +38,33 @@ namespace BetterSongSearch.UI {
 			return hideOlderThanOptions;
 		}
 
-		public static FilterOptions currentFilter = new FilterOptions();
+		public static readonly FilterOptions currentFilter = new FilterOptions();
 
 		[UIComponent("filterbarContainer")] Transform filterbarContainer = null;
 		//[UIComponent("modsRequirementDropdown")] DropdownWithTableView _modsRequirementDropdown = null;
+
+		IEnumerator FixupScrollpanel() {
+			yield return null;
+
+			var beatsaverFilterScroller = gameObject.GetComponentInChildren<BSMLScrollView>().transform;
+
+			((RectTransform)beatsaverFilterScroller.Find("Viewport").transform).sizeDelta = new Vector2(-12, -6);
+
+			foreach(var input in 
+				beatsaverFilterScroller.Find("Viewport/BSMLScrollViewContent/BSMLScrollViewContentContainer/BSMLVerticalLayoutGroup")
+				.GetComponentsInChildren<Touchable>()
+			) {
+				RectTransform t = (RectTransform)input.transform;
+
+				if(input.name == "IncButton" || input.name == "DropDownButton") {
+					t = (RectTransform)t.parent;
+					t.Find("DecButton")?.gameObject.SetActive(false);
+				}
+
+				if(t.sizeDelta.x > 30)
+					t.sizeDelta = new Vector2(30, 0);
+			}
+		}
 
 		[UIAction("#post-parse")]
 		void Parsed() {
@@ -49,12 +73,16 @@ namespace BetterSongSearch.UI {
 			((RectTransform)gameObject.transform).offsetMax = new Vector2(20, 22);
 
 			StartCoroutine(BSMLStuff.MergeSliders(gameObject));
+			StartCoroutine(FixupScrollpanel());
 
 			// I hate BSML some times
-			var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(
-				GetComponentsInChildren<DropDownListSetting>().Where(x => x.associatedValue.MemberName == "mods").First().GetComponent<DropdownWithTableView>()
-			, "_modalView");
-			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
+			var y = GetComponentsInChildren<DropDownListSetting>().Where(x => x.associatedValue.MemberName == "mods").FirstOrDefault();
+			if(y != null) {
+				var m = ReflectionUtil.GetField<ModalView, DropdownWithTableView>(
+					y.GetComponent<DropdownWithTableView>()
+				, "_modalView");
+				((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
+			}
 
 			// This is garbage
 			foreach(var x in GetComponentsInChildren<Backgroundable>().Select(x => x.GetComponent<ImageView>())) {
@@ -75,9 +103,14 @@ namespace BetterSongSearch.UI {
 
 		internal void SetFilter(FilterOptions filter = null) {
 			filter ??= new FilterOptions();
-			foreach(var x in AccessTools.GetDeclaredProperties(typeof(FilterOptions)))
-				x.SetValue(currentFilter, x.GetValue(filter));
+			foreach(var x in AccessTools.GetDeclaredProperties(typeof(FilterOptions))) {
+				if(!x.CanWrite || x.Name[0] == '_')
+					continue;
 
+				x.SetValue(currentFilter, x.GetValue(filter));
+			}
+
+			SetGenreFilter(null, null);
 			currentFilter.NotifyPropertiesChanged();
 			/*
 			 * This is a massive hack and I have NO IDEA why I need to do this. If I dont do this, or
@@ -95,6 +128,31 @@ namespace BetterSongSearch.UI {
 
 			SplitViews.Presets.instance.ReloadPresets();
 		}
+
+
+		BSMLParserParams genreViewParams = null;
+		[UIAction("ShowGenrePicker")]
+		void ShowGenrePicker() {
+			BSMLStuff.InitSplitView(ref genreViewParams, gameObject, SplitViews.GenrePicker.instance).EmitEvent("OpenGenreModal");
+
+			SplitViews.GenrePicker.instance.Reload();
+		}
+
+		[UIComponent("genrePickButton")] internal NoTransitionsButton genrePickButton = null;
+		internal void SetGenreFilter(List<string> includedGenres, List<string> excludedGenres) {
+			currentFilter.mapGenreString = includedGenres == null ? "" : string.Join(",", includedGenres);
+			currentFilter.mapGenreExcludeString = excludedGenres == null ? "" : string.Join(",", excludedGenres);
+
+			var genrefilter = "Any";
+
+			if(includedGenres?.Count > 0 || excludedGenres?.Count > 0)
+				genrefilter = $"{includedGenres?.Count ?? 0} Incl., {excludedGenres?.Count ?? 0} Excl.";
+
+			genrePickButton.GetComponentInChildren<CurvedTextMeshPro>().text = genrefilter;
+
+			FilterOptions.UpdateData();
+		}
+
 
 		#region filters
 		static bool requiresScore => (currentFilter.existingScore == (string)FilterOptions.scoreFilterOptions[2]) || SongListController.selectedSortMode == "Worst local score";
@@ -185,6 +243,21 @@ namespace BetterSongSearch.UI {
 				return false;
 
 			if(currentFilter.minimumRating > 0f && (currentFilter.minimumRating > song.rating || voteCount == 0))
+				return false;
+
+			if(currentFilter.onlyCuratedMaps && (song.uploadFlags & UploadFlags.Curated) == 0)
+				return false;
+
+			if(currentFilter.onlyVerifiedMappers && (song.uploadFlags & UploadFlags.VerifiedUploader) == 0)
+				return false;
+
+			if(currentFilter._mapStyleBitfield != 0 && (song.tags & currentFilter._mapStyleBitfield) == 0)
+				return false;
+
+			if(currentFilter._mapGenreBitfield != 0 && (song.tags & currentFilter._mapGenreBitfield) == 0)
+				return false;
+
+			if((song.tags & currentFilter._mapGenreExcludeBitfield) != 0)
 				return false;
 
 			return true;

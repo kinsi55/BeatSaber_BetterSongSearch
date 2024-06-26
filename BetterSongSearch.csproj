@@ -53,6 +53,7 @@
   <ItemGroup>
     <None Remove="UI\CustomLists\DownloadListCell.bsml" />
     <None Remove="UI\CustomLists\SongListCell.bsml" />
+    <None Remove="UI\Views\SplitViews\GenrePicker.bsml" />
     <None Remove="UI\Views\SplitViews\MultiDl.bsml" />
     <None Remove="UI\Views\SplitViews\PlaylistCreation.bsml" />
     <None Remove="UI\Views\SplitViews\Presets.bsml" />
@@ -66,6 +67,7 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\Views\SplitViews\MultiDl.bsml" />
     <EmbeddedResource Include="UI\Views\SplitViews\PlaylistCreation.bsml" />
+    <EmbeddedResource Include="UI\Views\SplitViews\GenrePicker.bsml" />
     <EmbeddedResource Include="UI\Views\SplitViews\Presets.bsml" />
   </ItemGroup>
 
@@ -84,7 +86,7 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
     </Reference>
     <Reference Include="BeatSaberPlaylistsLib">
-      <HintPath>E:\SteamLibrary\steamapps\common\Beat Saber\Libs\BeatSaberPlaylistsLib.dll</HintPath>
+      <HintPath>$(BeatSaberDir)\Libs\BeatSaberPlaylistsLib.dll</HintPath>
     </Reference>
     <Reference Include="BSML">
       <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
@@ -110,6 +112,9 @@
     </Reference>
     <Reference Include="Oculus.VR">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Oculus.VR.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>$(BeatSaberDir)\Libs\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="Rendering">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Rendering.dll</HintPath>

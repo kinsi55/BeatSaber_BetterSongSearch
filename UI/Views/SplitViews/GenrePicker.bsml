@@ -1,0 +1,27 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<modal clickerino-offerino-closerino='true' hide-event='CloseGenreModal' show-event='OpenGenreModal' size-delta-x='80' size-delta-y='78'>
+		<vertical horizontal-fit='Unconstrained' pad='4' pad-bottom='2' pad-top='9'>
+			<horizontal bg='panel-top-gradient' ignore-layout='true' anchor-max-x='.97' anchor-min-x='.03' anchor-min-y='1' anchor-pos-y='-5'>
+				<text text='BetterSongSearch - Genre Filter' align='Center' font-size='4'/>
+			</horizontal>
+			<horizontal horizontal-fit='PreferredSize'>
+				<vertical horizontal-fit='Unconstrained'>
+					<custom-list visible-cells='10' cell-size='5' id='genreList' select-cell='GenreSelected' show-scrollbar='true' clickable-cells='true'>
+						<horizontal child-expand-width='false' child-align='MiddleLeft' spacing='2'>
+							<clickable-text id='includeButton' text='~mappedName' font-size='3.5' on-click='IncludeGenre'/>
+							<horizontal pad-bottom='1' child-expand-width='false'>
+								<clickable-text id='excludeButton' text='❌' font-size='2.4' on-click='ExcludeGenre' hover-hint='Explicitly exclude any Map tagged with this Genre'/>
+							</horizontal>
+						</horizontal>
+					</custom-list>
+				</vertical>
+				<vertical id='scrollbarContainer' preferred-width='8'/>
+			</horizontal>
+			<horizontal>
+				<primary-button text='Select' event-click='CloseGenreModal' on-click='SelectGenre'/>
+				<button text='Clear Selection' event-click='CloseGenreModal' on-click='ClearGenre'/>
+				<button text='Close' click-event='CloseGenreModal'/>
+			</horizontal>
+		</vertical>
+	</modal>
+</bg>
