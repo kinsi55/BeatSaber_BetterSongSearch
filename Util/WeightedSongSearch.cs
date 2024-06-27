@@ -102,7 +102,7 @@ namespace BetterSongSearch.Util {
 						 * The 8 character limitation for this is so that super short words like "those" dont end
 						 * up triggering this
 						 */
-						if(songeName.Length > 7 && songeName.Length == posInName) {
+						if(songeName.Length >= 6 && songeName.Length == posInName) {
 							resultWeight += 3;
 						} else {
 							// If we did match the beginning, check if we matched an entire word. Get the end index as indicated by our needle
