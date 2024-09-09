@@ -26,10 +26,10 @@ namespace BetterSongSearch {
 
 		[OnStart]
 		public void OnApplicationStart() {
-			BS_Utils.Utilities.BSEvents.lateMenuSceneLoadedFresh += LateMenuSceneLoadedFresh;
+			BeatSaberMarkupLanguage.Util.MainMenuAwaiter.MainMenuInitializing += MainMenuInit;
 		}
 
-		public void LateMenuSceneLoadedFresh(ScenesTransitionSetupDataSO scene) {
+		public void MainMenuInit() {
 			UI.Manager.Init();
 			SharedCoroutineStarter.Init();
 		}
