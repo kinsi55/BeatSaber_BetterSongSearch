@@ -18,7 +18,7 @@ namespace BetterSongSearch.UI {
 	class DownloadHistoryView : BSMLAutomaticViewController, TableView.IDataSource {
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
 		[UIComponent("downloadList")] CustomListTableData downloadHistoryData = null;
-		TableView downloadHistoryTable => downloadHistoryData?.tableView;
+		TableView downloadHistoryTable => downloadHistoryData?.TableView;
 		public readonly List<DownloadHistoryEntry> downloadList = new List<DownloadHistoryEntry>();
 		DownloadHistoryEntry[] downloadListSorted = null;
 
@@ -156,7 +156,7 @@ namespace BetterSongSearch.UI {
 			BSMLStuff.GetScrollbarForTable(downloadHistoryData.gameObject, _scrollBarContainer.transform);
 		}
 
-		public float CellSize() => 8.05f;
+		public float CellSize(int idx) => 8.05f;
 		public int NumberOfCells() => downloadList?.Count ?? 0;
 
 		public TableCell CellForIdx(TableView tableView, int idx) => DownloadListTableData.GetCell(tableView).PopulateWithSongData(downloadListSorted[idx]);

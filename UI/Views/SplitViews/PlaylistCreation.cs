@@ -22,7 +22,7 @@ namespace BetterSongSearch.UI.SplitViews {
 
 		[UIAction("#post-parse")]
 		void Parsed() {
-			playlistName.modalKeyboard.modalView._animateParentCanvas = false;
+			playlistName.ModalKeyboard.ModalView._animateParentCanvas = false;
 		}
 
 		internal static string nameToUseOnNextOpen = "h";

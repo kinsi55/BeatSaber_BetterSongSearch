@@ -113,7 +113,7 @@ namespace BetterSongSearch.UI {
 		[UIAction("SelectSong")] void _SelectSong(TableView _, int row) => selectedSongView.SetSelectedSong(searchedSongsList[row]);
 
 		[UIComponent("songList")] public CustomListTableData songListData = null;
-		public TableView songList => songListData?.tableView;
+		public TableView songList => songListData?.TableView;
 		[UIComponent("searchBoxContainer")] private VerticalLayoutGroup _searchBoxContainer = null;
 		[UIComponent("scrollBarContainer")] private VerticalLayoutGroup _scrollBarContainer = null;
 
@@ -166,7 +166,7 @@ namespace BetterSongSearch.UI {
 				Task.Run(_UpdateSearchedSongsList);
 		}
 
-		public float CellSize() => PluginConfig.Instance.smallerFontSize ? 11.66f : 14f;
+		public float CellSize(int idx) => PluginConfig.Instance.smallerFontSize ? 11.66f : 14f;
 		public int NumberOfCells() => searchedSongsList?.Count ?? 0;
 		public TableCell CellForIdx(TableView tableView, int idx) => SongListTableData.GetCell(tableView).PopulateWithSongData(searchedSongsList[idx]);
 

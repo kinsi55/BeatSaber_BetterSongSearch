@@ -21,18 +21,17 @@ namespace BetterSongSearch {
 			Log = logger;
 			Log.Info("BetterSongSearch initialized.");
 			Settings.cfgInstance = PluginConfig.Instance = conf.Generated<PluginConfig>();
-
-			UI.Manager.Init();
-
-			SharedCoroutineStarter.Init();
-
 			new Harmony("Kinsi55.BeatSaber.BetterSongSearch").PatchAll(Assembly.GetExecutingAssembly());
 		}
 
 		[OnStart]
 		public void OnApplicationStart() {
+			BS_Utils.Utilities.BSEvents.lateMenuSceneLoadedFresh += LateMenuSceneLoadedFresh;
+		}
 
-
+		public void LateMenuSceneLoadedFresh(ScenesTransitionSetupDataSO scene) {
+			UI.Manager.Init();
+			SharedCoroutineStarter.Init();
 		}
 
 		[OnExit]

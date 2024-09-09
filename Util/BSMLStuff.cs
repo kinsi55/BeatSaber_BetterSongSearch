@@ -64,7 +64,7 @@ namespace BetterSongSearch.Util {
 			if(viewName == null)
 				viewName = host.GetType().Name;
 
-			return pparams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"BetterSongSearch.UI.Views.SplitViews.{viewName}.bsml"), targetGameObject, host);
+			return pparams = BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"BetterSongSearch.UI.Views.SplitViews.{viewName}.bsml"), targetGameObject, host);
 		}
 
 		static GameObject scrollBar = null;
