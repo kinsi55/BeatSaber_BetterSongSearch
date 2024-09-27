@@ -2,14 +2,14 @@
     "id": "BetterSongSearch",
     "name": "BetterSongSearch",
     "author": "Kinsi55",
-    "version": "0.7.87",
+    "version": "0.7.88",
     "description": "Search and download songs with a lot of filtering and sorting options and without frustration!",
-    "gameVersion": "1.37.5",
+    "gameVersion": "1.37.4",
     "dependsOn": {
-        "BSIPA": "^4.0.5",
-        "BeatSaberMarkupLanguage": "^1.5.3",
-        "BS Utils": "^1.14.0",
+        "BSIPA": "^4.3.5",
+        "BeatSaberMarkupLanguage": "^1.12.0",
+        "BS Utils": "^1.14.1",
         "SongDetailsCache": "^1.2.2",
-        "SongCore": "^3.3.1"
+        "SongCore": "^3.14.13"
     }
 }
