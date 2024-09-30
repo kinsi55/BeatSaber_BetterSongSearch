@@ -43,7 +43,7 @@ namespace BetterSongSearch.UI {
 
 		[UIAction("#post-parse")]
 		void Parsed() {
-			currentFilter.hideOlderThanSlider.slider.maxValue = hideOlderThanOptions.Count - 1;
+			currentFilter.hideOlderThanSlider.Slider.maxValue = hideOlderThanOptions.Count - 1;
 
 			((RectTransform)gameObject.transform).offsetMax = new Vector2(20, 22);
 
@@ -51,7 +51,7 @@ namespace BetterSongSearch.UI {
 
 			// I hate BSML some times
 			var m = GetComponentsInChildren<DropDownListSetting>()
-				.Where(x => x.associatedValue.MemberName == "mods")
+				.Where(x => x.AssociatedValue.MemberName == "mods")
 				.First()
 				.GetComponent<DropdownWithTableView>()
 				._modalView;
@@ -87,7 +87,7 @@ namespace BetterSongSearch.UI {
 			 * Seems like there is SOMETHING broken with how input changes are handled, something to do
 			 * with nested coroutines or whatever. I have no idea. For now I spent enough time trying to fix this
 			 */
-			currentFilter.hideOlderThanSlider.onChange.Invoke(currentFilter.hideOlderThanSlider.Value);
+			currentFilter.hideOlderThanSlider.OnChange.Invoke(currentFilter.hideOlderThanSlider.Value);
 		}
 
 		BSMLParserParams presetsViewParams = null;

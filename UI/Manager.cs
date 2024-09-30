@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace BetterSongSearch.UI {
 	static class Manager {
 		public static void Init() {
-			MenuButtons.instance.RegisterButton(new MenuButton("Better Song Search", "Search songs, but better", ShowFlow, true));
+			MenuButtons.Instance.RegisterButton(new MenuButton("Better Song Search", "Search songs, but better", ShowFlow, true));
 		}
 
 		internal static FlowCoordinator _parentFlow { get; private set; }

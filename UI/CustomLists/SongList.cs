@@ -18,7 +18,7 @@ namespace BetterSongSearch.UI.CustomLists {
 				tableCell.interactable = true;
 
 				tableCell.reuseIdentifier = ReuseIdentifier;
-				BSMLParser.instance.Parse(
+				BSMLParser.Instance.Parse(
 					Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "BetterSongSearch.UI.CustomLists.SongListCell.bsml"),
 					tableCell.gameObject, tableCell
 				);

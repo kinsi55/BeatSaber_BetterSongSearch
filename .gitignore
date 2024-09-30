@@ -6,3 +6,4 @@ obj/*
 HarmonyPatches/RemoveSplashscreen.cs
 HarmonyPatchHelper.cs
 Screenshots/SocialPreview.jpg
+/.vs
