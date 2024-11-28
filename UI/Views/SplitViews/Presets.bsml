@@ -6,7 +6,7 @@
 			</horizontal>
 			<horizontal horizontal-fit='PreferredSize'>
 				<vertical horizontal-fit='Unconstrained'>
-					<custom-list visible-cells='8' cell-size='7' id='presetList' select-cell='PresetSelected'>
+					<custom-list visible-cells='8' cell-size='7' id='presetList' select-cell='PresetSelected' show-scrollbar='true'>
 						<horizontal>
 							<text text='~name' id='label'/>
 						</horizontal>

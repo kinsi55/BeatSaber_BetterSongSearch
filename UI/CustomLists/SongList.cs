@@ -42,11 +42,21 @@ namespace BetterSongSearch.UI.CustomLists {
 			diffs = diffsContainer.GetComponentsInChildren<TextMeshProUGUI>();
 		}
 
+		static Color verifiedSongColor = new Color(.7f, 1f, .7f);
+		static Color verifiedUploaderColor = new Color(.46f, .27f, .68f);
+		static Color normalUploaderColor = new Color(.8f, .8f, .8f);
+
 		public CustomSongListTableCell PopulateWithSongData(SongSearchSong song) {
+			var isCurated = (song.detailsSong.uploadFlags & SongDetailsCache.Structs.UploadFlags.Curated) != 0;
+
 			fullFormattedSongName.text = song.fullFormattedSongName.Replace("\n", " ");
-			fullFormattedSongName.color = song.CheckIsDownloaded() ? Color.gray : Color.white;
+			fullFormattedSongName.color = song.CheckIsDownloaded() ? Color.gray : isCurated ? verifiedSongColor : Color.white;
 
 			uploadDateFormatted.text = song.uploadDateFormatted;
+
+			var isVerified = (song.detailsSong.uploadFlags & SongDetailsCache.Structs.UploadFlags.VerifiedUploader) != 0;
+
+			levelAuthorName.color = isVerified ? verifiedUploaderColor : normalUploaderColor;
 			levelAuthorName.text = song.detailsSong.levelAuthorName;
 			songLengthAndRating.text = song.songLengthAndRating;
 

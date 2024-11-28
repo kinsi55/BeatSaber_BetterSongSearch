@@ -223,6 +223,8 @@ namespace BetterSongSearch.UI {
 			await Task.Run(() => {
 				var sc = 0;
 
+				FilterView.currentFilter.CalculateTagBitfields();
+
 				// Loop through our (custom) songdetails array
 				for(var i = 0; i < songsList.Length; i++) {
 					/*
