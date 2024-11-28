@@ -2,9 +2,9 @@
     "id": "BetterSongSearch",
     "name": "BetterSongSearch",
     "author": "Kinsi55",
-    "version": "0.7.88",
+    "version": "0.7.89",
     "description": "Search and download songs with a lot of filtering and sorting options and without frustration!",
-    "gameVersion": "1.37.4",
+    "gameVersion": "1.38.0",
     "dependsOn": {
         "BSIPA": "^4.3.5",
         "BeatSaberMarkupLanguage": "^1.12.0",

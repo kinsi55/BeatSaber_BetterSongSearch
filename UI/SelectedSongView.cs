@@ -132,7 +132,7 @@ namespace BetterSongSearch.UI {
 				try {
 					if(level != null)
 						levelCollectionViewController?.SongPlayerCrossfadeToLevelAsync(level, songAssetLoadCanceller.Token);
-					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.previewMediaData.GetCoverSpriteAsync(songAssetLoadCanceller.Token);
+					coverImage.sprite = await SongCore.Loader.CustomLevels.Values.FirstOrDefault(x => x.levelID == h)?.previewMediaData.GetCoverSpriteAsync();
 				} catch { }
 			}
 			ShowCoverLoader(false);
