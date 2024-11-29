@@ -47,7 +47,7 @@ namespace BetterSongSearch.UI {
 
 			var beatsaverFilterScroller = gameObject.GetComponentInChildren<BSMLScrollView>().transform;
 
-			((RectTransform)beatsaverFilterScroller.Find("Viewport").transform).sizeDelta = new Vector2(-12, -6);
+			((RectTransform)beatsaverFilterScroller.Find("Viewport").transform).sizeDelta = new Vector2(-5.5f, -5);
 
 			foreach(var input in
 				beatsaverFilterScroller.Find("Viewport/BSMLScrollViewContent/BSMLScrollViewContentContainer/BSMLVerticalLayoutGroup")
@@ -74,13 +74,15 @@ namespace BetterSongSearch.UI {
 			StartCoroutine(BSMLStuff.MergeSliders(gameObject));
 			StartCoroutine(FixupScrollpanel());
 
-			// I hate BSML some times
+			//// I hate BSML some times
 			var m = GetComponentsInChildren<DropDownListSetting>()
 				.Where(x => x.AssociatedValue.MemberName == "mods")
-				.First()
-				.GetComponent<DropdownWithTableView>()
+				.FirstOrDefault() //https://discord.com/channels/441805394323439646/864240224400572467/1311519207682474074
+				?.GetComponent<DropdownWithTableView>()
 				._modalView;
-			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
+
+			if(m != null)
+				((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
 
 			// This is garbage
 			foreach(var x in GetComponentsInChildren<Backgroundable>().Select(x => x.GetComponent<ImageView>())) {
