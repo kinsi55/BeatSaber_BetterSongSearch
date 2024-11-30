@@ -174,7 +174,12 @@ namespace BetterSongSearch.UI {
 				return false;
 
 			if(currentFilter.rankedState != (string)FilterOptions.rankedFilterOptions[0]) {
-				if(!diff.song.rankedStates.HasFlag(funnyMapThing2[currentFilter.rankedState]))
+				var state = funnyMapThing2[currentFilter.rankedState];
+
+				if(state == RankedStates.ScoresaberRanked && diff.stars == 0)
+					return false;
+
+				if(state == RankedStates.BeatleaderRanked && diff.starsBeatleader == 0)
 					return false;
 			}
 
