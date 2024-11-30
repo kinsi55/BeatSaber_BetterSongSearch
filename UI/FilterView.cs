@@ -91,12 +91,12 @@ namespace BetterSongSearch.UI {
 
 				x._skew = 0;
 				x.overrideSprite = null;
-				x.SetImage("#RoundRect10BorderFade");
+				x.SetImageAsync("#RoundRect10BorderFade");
 				x.color = new Color(0, 0.7f, 1f, 0.4f);
 			}
 
 			foreach(var x in filterbarContainer.GetComponentsInChildren<ImageView>().Where(x => x.gameObject.name == "Underline"))
-				x.SetImage("#RoundRect10BorderFade");
+				x.SetImageAsync("#RoundRect10BorderFade");
 		}
 
 		internal void ClearFilters() => SetFilter();
