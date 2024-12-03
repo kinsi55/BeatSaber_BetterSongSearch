@@ -85,47 +85,45 @@ namespace BetterSongSearch.UI {
 
 			RefreshTable(true);
 
-			await Task.Run(async () => {
-				void errored(string message) {
-					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $": {message}";
-					firstEntry.retries = 69;
+			void errored(string message) {
+				firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
+				firstEntry.statusDetails = $": {message}";
+				firstEntry.retries = 69;
+			}
+
+			try {
+				var updateRateLimiter = new Stopwatch();
+				updateRateLimiter.Start();
+
+				await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
+					if(updateRateLimiter.ElapsedMilliseconds < 50)
+						return;
+
+					firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / {RETRY_COUNT}");
+					firstEntry.downloadProgress = progress;
+
+					updateRateLimiter.Restart();
+
+					if(firstEntry.UpdateProgressHandler != null)
+						firstEntry.UpdateProgressHandler();
+				});
+
+				firstEntry.status = DownloadHistoryEntry.DownloadStatus.Downloaded;
+				firstEntry.statusDetails = "";
+			} catch(FileNotFoundException) {
+				errored("File not Found, Uploader probably deleted it");
+			} catch(TaskCanceledException) {
+				errored("Download was cancelled");
+			} catch(Exception ex) {
+				if(!(ex is TaskCanceledException)) {
+					Plugin.Log.Warn("Download failed:");
+					Plugin.Log.Warn(ex);
 				}
 
-				try {
-					var updateRateLimiter = new Stopwatch();
-					updateRateLimiter.Start();
-
-					await SongDownloader.BeatmapDownload(firstEntry, BSSFlowCoordinator.closeCancelSource.Token, (float progress) => {
-						if(updateRateLimiter.ElapsedMilliseconds < 50)
-							return;
-
-						firstEntry.statusDetails = string.Format("({0:0%}{1})", progress, firstEntry.retries == 0 ? "" : $", retry #{firstEntry.retries} / {RETRY_COUNT}");
-						firstEntry.downloadProgress = progress;
-
-						updateRateLimiter.Restart();
-
-						if(firstEntry.UpdateProgressHandler != null)
-							IPA.Utilities.Async.UnityMainThreadTaskScheduler.Factory.StartNew(firstEntry.UpdateProgressHandler);
-					});
-
-					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Downloaded;
-					firstEntry.statusDetails = "";
-				} catch(FileNotFoundException) {
-					errored("File not Found, Uploader probably deleted it");
-				} catch(TaskCanceledException) {
-					errored("Download was cancelled");
-				} catch(Exception ex) {
-					if(!(ex is TaskCanceledException)) {
-						Plugin.Log.Warn("Download failed:");
-						Plugin.Log.Warn(ex);
-					}
-
-					firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
-					firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: Details in log, {ex.Message} ({ex.GetType().Name})";
-				}
-				firstEntry.downloadProgress = 1f;
-			});
+				firstEntry.status = DownloadHistoryEntry.DownloadStatus.Failed;
+				firstEntry.statusDetails = $"{(firstEntry.retries < 3 ? "(Will retry)" : "")}: Details in log, {ex.Message} ({ex.GetType().Name})";
+			}
+			firstEntry.downloadProgress = 1f;
 
 			if(firstEntry.status == DownloadHistoryEntry.DownloadStatus.Downloaded) {
 				// NESTING HELLLL

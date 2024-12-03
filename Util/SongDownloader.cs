@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -40,8 +40,7 @@ namespace BetterSongSearch.Util {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
-				// Not async'ing this as BeatmapDownload() is supposed to be called in a task
-				ExtractZip(s, folderName, t.Token, progressCb);
+				await Task.Run(() => ExtractZip(s, folderName, t.Token, progressCb));
 			}
 		}
 
@@ -86,7 +85,7 @@ namespace BetterSongSearch.Util {
 							progress++;
 						}
 
-						progressCb((float)++progress / steps);
+						UnityMainThreadTaskScheduler.Factory.StartNew(() => progressCb((float)++progress / steps));
 					}
 				}
 
@@ -121,7 +120,7 @@ namespace BetterSongSearch.Util {
 						}
 					}
 
-					progressCb((float)++progress / steps);
+					UnityMainThreadTaskScheduler.Factory.StartNew(() => progressCb((float)++progress / steps));
 				}
 			} finally {
 				foreach(var item in files)

@@ -46,6 +46,12 @@ namespace BetterSongSearch.UI {
 
 			if(selectedSong != null)
 				SetIsDownloaded(selectedSong.CheckIsDownloaded(), selectedSong.CheckIsDownloadable());
+
+			if(soloFreePlayFlowCoordinator == null)
+				soloFreePlayFlowCoordinator = FindObjectOfType<SoloFreePlayFlowCoordinator>();
+
+			if(multiplayerLevelSelectionFlowCoordinator == null)
+				multiplayerLevelSelectionFlowCoordinator = FindObjectOfType<MultiplayerLevelSelectionFlowCoordinator>();
 		}
 
 		static internal SongPreviewPlayer songPreviewPlayer { get; private set; } = null;
@@ -118,7 +124,9 @@ namespace BetterSongSearch.UI {
 					await Task.WhenAll(new[] {
 						BSSFlowCoordinator.assetLoader.LoadCoverAsync(song.detailsSong, songAssetLoadCanceller.Token).ContinueWith(
 							x => { coverImage.sprite = x.Result; },
-							TaskContinuationOptions.OnlyOnRanToCompletion
+							CancellationToken.None,
+							TaskContinuationOptions.OnlyOnRanToCompletion,
+							TaskScheduler.FromCurrentSynchronizationContext()
 						),
 
 						!PluginConfig.Instance.loadSongPreviews ? Task.FromResult(1) : BSSFlowCoordinator.assetLoader.LoadPreviewAsync(song.detailsSong, songAssetLoadCanceller.Token).ContinueWith(
@@ -172,8 +180,8 @@ namespace BetterSongSearch.UI {
 			songToPlayAfterLoading = null;
 		}
 
-		readonly SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator = FindObjectOfType<SoloFreePlayFlowCoordinator>();
-		readonly MultiplayerLevelSelectionFlowCoordinator multiplayerLevelSelectionFlowCoordinator = FindObjectOfType<MultiplayerLevelSelectionFlowCoordinator>();
+		SoloFreePlayFlowCoordinator soloFreePlayFlowCoordinator;
+		MultiplayerLevelSelectionFlowCoordinator multiplayerLevelSelectionFlowCoordinator;
 		static readonly ConstructorInfo LevelSelectionFlowCoordinator_State = AccessTools.FirstConstructor(typeof(LevelSelectionFlowCoordinator.State), x => x.GetParameters().Length == 4);
 
 		[UIAction("Play")] void _Play() => PlaySong();

@@ -3,7 +3,6 @@ using BetterSongSearch.Util;
 using HMUI;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 
 namespace BetterSongSearch.UI.SplitViews {
@@ -27,12 +26,12 @@ namespace BetterSongSearch.UI.SplitViews {
 
 			songDetailsLoading.gameObject.SetActive(true);
 
-			var desc = await Task.Run(async () => {
-				try {
-					return await BSSFlowCoordinator.assetLoader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
-				} catch { }
-				return "Failed to load description";
-			});
+			string desc;
+			try {
+				desc = await BSSFlowCoordinator.assetLoader.GetSongDescription(selectedSong.detailsSong.key, BSSFlowCoordinator.closeCancelSource.Token);
+			} catch {
+				desc = "Failed to load description";
+			}
 
 			songDetailsLoading.gameObject.SetActive(false);
 			selectedSongDescription.text = desc;
