@@ -21,42 +21,30 @@ namespace BetterSongSearch.Util {
 
 				var req = www.SendWebRequest();
 
-				var startThread = SynchronizationContext.Current;
+				var lastState = 0f;
+				var timeouter = new System.Diagnostics.Stopwatch();
+				timeouter.Start();
 
-				Action<Action> post;
+				while(!req.isDone) {
+					if(token.IsCancellationRequested) {
+						www.Abort();
+						throw new TaskCanceledException();
+					}
 
-				if(startThread == null) {
-					post = a => a();
-				} else {
-					post = a => startThread.Send(_ => a(), null);
+					if(timeouter.ElapsedMilliseconds > 50000 || (lastState == 0 && timeouter.ElapsedMilliseconds > 6000)) {
+						www.Abort();
+						throw new TimeoutException();
+					}
+
+					await Task.Delay(20);
+
+					lastState = www.downloadProgress;
+
+					if(progressCb != null && lastState > 0)
+						progressCb(lastState);
 				}
 
-				await Task.Run(() => {
-					var lastState = 0f;
-					var timeouter = new System.Diagnostics.Stopwatch();
-					timeouter.Start();
-
-					while(!req.isDone) {
-						if(token.IsCancellationRequested) {
-							post(www.Abort);
-							throw new TaskCanceledException();
-						}
-
-						if(timeouter.ElapsedMilliseconds > 50000 || (lastState == 0 && timeouter.ElapsedMilliseconds > 6000)) {
-							post(www.Abort);
-							throw new TimeoutException();
-						}
-
-						Thread.Sleep(20);
-
-						lastState = www.downloadProgress;
-
-						if(progressCb != null && lastState > 0)
-							post(() => progressCb(lastState));
-					}
-				});
-
-				return www.isDone && !www.isHttpError && !www.isNetworkError;
+				return www.isDone && www.result == UnityWebRequest.Result.Success;
 			} finally {
 				if(www != null && uwr == null)
 					www.Dispose();
