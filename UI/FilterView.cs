@@ -50,7 +50,7 @@ namespace BetterSongSearch.UI {
 
 			((RectTransform)beatsaverFilterScroller.Find("Viewport").transform).sizeDelta = new Vector2(-12, -6);
 
-			foreach(var input in 
+			foreach(var input in
 				beatsaverFilterScroller.Find("Viewport/BSMLScrollViewContent/BSMLScrollViewContentContainer/BSMLVerticalLayoutGroup")
 				.GetComponentsInChildren<Touchable>()
 			) {
@@ -131,14 +131,13 @@ namespace BetterSongSearch.UI {
 
 
 		BSMLParserParams genreViewParams = null;
-		[UIAction("ShowGenrePicker")]
-		void ShowGenrePicker() {
+
+		internal void ShowGenrePicker() {
 			BSMLStuff.InitSplitView(ref genreViewParams, gameObject, SplitViews.GenrePicker.instance).EmitEvent("OpenGenreModal");
 
 			SplitViews.GenrePicker.instance.Reload();
 		}
 
-		[UIComponent("genrePickButton")] internal NoTransitionsButton genrePickButton = null;
 		internal void SetGenreFilter(List<string> includedGenres, List<string> excludedGenres) {
 			currentFilter.mapGenreString = includedGenres == null ? "" : string.Join(",", includedGenres);
 			currentFilter.mapGenreExcludeString = excludedGenres == null ? "" : string.Join(",", excludedGenres);
@@ -148,7 +147,7 @@ namespace BetterSongSearch.UI {
 			if(includedGenres?.Count > 0 || excludedGenres?.Count > 0)
 				genrefilter = $"{includedGenres?.Count ?? 0} Incl., {excludedGenres?.Count ?? 0} Excl.";
 
-			genrePickButton.GetComponentInChildren<CurvedTextMeshPro>().text = genrefilter;
+			currentFilter.genrePickButton.GetComponentInChildren<CurvedTextMeshPro>().text = genrefilter;
 
 			FilterOptions.UpdateData();
 		}
