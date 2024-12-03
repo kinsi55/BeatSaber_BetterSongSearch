@@ -77,12 +77,11 @@ namespace BetterSongSearch.UI {
 			//// I hate BSML some times
 			var m = GetComponentsInChildren<DropDownListSetting>()
 				.Where(x => x.AssociatedValue.MemberName == "mods")
-				.FirstOrDefault() //https://discord.com/channels/441805394323439646/864240224400572467/1311519207682474074
-				?.GetComponent<DropdownWithTableView>()
+				.First()
+				.GetComponent<DropdownWithTableView>()
 				._modalView;
 
-			if(m != null)
-				((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
+			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
 
 			// This is garbage
 			foreach(var x in GetComponentsInChildren<Backgroundable>().Select(x => x.GetComponent<ImageView>())) {
@@ -131,14 +130,13 @@ namespace BetterSongSearch.UI {
 
 
 		BSMLParserParams genreViewParams = null;
-		[UIAction("ShowGenrePicker")]
-		void ShowGenrePicker() {
+		
+		internal void ShowGenrePicker() {
 			BSMLStuff.InitSplitView(ref genreViewParams, gameObject, SplitViews.GenrePicker.instance).EmitEvent("OpenGenreModal");
 
 			SplitViews.GenrePicker.instance.Reload();
 		}
 
-		[UIComponent("genrePickButton")] internal NoTransitionsButton genrePickButton = null;
 		internal void SetGenreFilter(List<string> includedGenres, List<string> excludedGenres) {
 			currentFilter.mapGenreString = includedGenres == null ? "" : string.Join(",", includedGenres);
 			currentFilter.mapGenreExcludeString = excludedGenres == null ? "" : string.Join(",", excludedGenres);
@@ -148,7 +146,7 @@ namespace BetterSongSearch.UI {
 			if(includedGenres?.Count > 0 || excludedGenres?.Count > 0)
 				genrefilter = $"{includedGenres?.Count ?? 0} Incl., {excludedGenres?.Count ?? 0} Excl.";
 
-			genrePickButton.GetComponentInChildren<CurvedTextMeshPro>().text = genrefilter;
+			currentFilter.genrePickButton.GetComponentInChildren<CurvedTextMeshPro>().text = genrefilter;
 
 			FilterOptions.UpdateData();
 		}

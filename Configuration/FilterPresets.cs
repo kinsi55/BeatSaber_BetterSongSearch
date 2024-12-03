@@ -150,6 +150,10 @@ namespace BetterSongSearch.Configuration {
 
 
 		[UIComponent("hideOlderThanSlider")] internal SliderSetting hideOlderThanSlider = null;
+		[UIComponent("genrePickButton")] internal NoTransitionsButton genrePickButton = null;
+
+		[UIAction("ShowGenrePicker")]
+		void ShowGenrePicker() => filterView.ShowGenrePicker();
 
 		[UIAction("UpdateData")] public static void UpdateData(object _ = null) => SharedCoroutineStarter.instance.StartCoroutine(FilterView.limitedUpdateData.CallNextFrame());
 

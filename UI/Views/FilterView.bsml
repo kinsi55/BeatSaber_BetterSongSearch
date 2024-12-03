@@ -42,11 +42,9 @@
 							<slider-setting text='Minimum Votes' value="minimumVotes" bind-value="true" apply-on-change="true" max='100' integer-only='true' on-change="UpdateData"/>
 							<string-setting text='Uploader(s)' value='uploadersString' bind-value='true' apply-on-change='true' formatter='FormatUploaderShortInfo' on-change="UpdateData" hover-hint='You can enter multiple Uploader names, seperated by spaces. If you have an Exclamation mark at the beginning of your input it becomes a blacklist for the given uploaders'/>
 							<dropdown-list-setting text='Map Style' value="mapStyleString" apply-on-change="true" bind-value="true" choices='mapStyles' formatter='FormatBeatSaverTag' on-change="UpdateData"/>
-							<horizontal pad-right="-3"> <!--child-alignment="MiddleRight" -->
+							<horizontal child-alignment="MiddleRight" pad-right="-3">
 								<text text="Song Genre" align="MidlineLeft" italics="true"/>
-								<macro.as-host host='filterView'>
-									<button id='genrePickButton' text="Any" preferred-width="29" on-click="ShowGenrePicker" all-uppercase="false"/>
-								</macro.as-host>
+								<button id='genrePickButton' text="Any" preferred-width="29" on-click="ShowGenrePicker" all-uppercase="false"/>
 							</horizontal>
 							<checkbox-setting apply-on-change="true" value="onlyCuratedMaps" text="Curated Maps" on-change="UpdateData"/>
 							<checkbox-setting apply-on-change="true" value="onlyVerifiedMappers" text="Verified Mappers" on-change="UpdateData"/>
