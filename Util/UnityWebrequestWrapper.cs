@@ -34,17 +34,22 @@ namespace BetterSongSearch.Util {
 						throw new TaskCanceledException();
 					}
 
-					if(timeouter.ElapsedMilliseconds > 50000 || (lastState == 0 && timeouter.ElapsedMilliseconds > 6000)) {
+					await Task.Delay(20);
+
+					if(lastState == www.downloadProgress) {
+						if(timeouter.ElapsedMilliseconds < (lastState == 0 ? 6000 : 10000))
+							continue;
+
 						www.Abort();
 						throw new TimeoutException();
 					}
-
-					await Task.Delay(20);
 
 					lastState = www.downloadProgress;
 
 					if(progressCb != null && lastState > 0)
 						progressCb(lastState);
+
+					timeouter.Restart();
 				}
 
 				return www.isDone && www.result == UnityWebRequest.Result.Success;
