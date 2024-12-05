@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IPA.Utilities.Async;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -33,8 +34,9 @@ namespace BetterSongSearch.Util {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
-				// Not async'ing this as BeatmapDownload() is supposed to be called in a task
-				ExtractZip(s, folderName, t.Token, progressCb);
+				var sThread = SynchronizationContext.Current;
+
+				await Task.Run(() => ExtractZip(s, folderName, t.Token, (p) => sThread.Post(_ => progressCb(p), null)));
 			}
 		}
 
