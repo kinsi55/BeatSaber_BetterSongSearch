@@ -34,7 +34,9 @@ namespace BetterSongSearch.Util {
 				entry.status = DownloadHistoryEntry.DownloadStatus.Extracting;
 				progressCb(0);
 
-				await Task.Run(() => ExtractZip(s, folderName, t.Token, progressCb));
+				var sThread = SynchronizationContext.Current;
+
+				await Task.Run(() => ExtractZip(s, folderName, t.Token, (p) => sThread.Post(_ => progressCb(p), null)));
 			}
 		}
 
@@ -79,7 +81,7 @@ namespace BetterSongSearch.Util {
 							progress++;
 						}
 
-						UnityMainThreadTaskScheduler.Factory.StartNew(() => progressCb((float)++progress / steps));
+						progressCb((float)++progress / steps);
 					}
 				}
 
@@ -114,7 +116,7 @@ namespace BetterSongSearch.Util {
 						}
 					}
 
-					UnityMainThreadTaskScheduler.Factory.StartNew(() => progressCb((float)++progress / steps));
+					progressCb((float)++progress / steps);
 				}
 			} finally {
 				foreach(var item in files)
