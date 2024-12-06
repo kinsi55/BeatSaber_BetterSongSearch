@@ -52,7 +52,7 @@ namespace BetterSongSearch.Util {
 					timeouter.Restart();
 				}
 
-				return www.isDone && www.result == UnityWebRequest.Result.Success;
+				return www.isDone && !www.isHttpError && !www.isNetworkError;
 			} finally {
 				if(www != null && uwr == null)
 					www.Dispose();
