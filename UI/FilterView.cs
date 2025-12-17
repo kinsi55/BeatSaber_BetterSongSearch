@@ -81,6 +81,10 @@ namespace BetterSongSearch.UI {
 				.GetComponent<DropdownWithTableView>()
 				._modalView;
 
+			foreach(var l in GetComponentsInChildren<CurvedTextMeshPro>().Where(x => x.gameObject.name == "Title"))
+				l.enableWordWrapping = false;
+				
+
 			((RectTransform)m.transform).pivot = new Vector2(0.5f, 0.3f);
 
 			// This is garbage

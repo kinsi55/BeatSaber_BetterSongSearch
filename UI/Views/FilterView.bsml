@@ -1,4 +1,4 @@
-﻿<vertical preferred-width="130" anchor-min-y="1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+﻿<vertical preferred-width="130" anchor-min-y="1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
 	<horizontal bg='panel-top-gradient' id='filterbarContainer' child-align='MiddleRight' child-control-width='false'>
 		<horizontal ignore-layout='true' pad-top='1'>
 			<text text='FILTERS' align='Center' font-size='7' italics='true'/>
