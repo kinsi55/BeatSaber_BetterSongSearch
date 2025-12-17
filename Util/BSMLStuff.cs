@@ -16,6 +16,7 @@ namespace BetterSongSearch.Util {
 				var ourContainer = x.transform.parent;
 				var prevContainer = ourContainer.parent.GetChild(ourContainer.GetSiblingIndex() - 1);
 
+				(prevContainer.Find("Title").transform as RectTransform).offsetMax = new Vector2(-40, 0);
 				(prevContainer.Find("BSMLSlider").transform as RectTransform).offsetMax = new Vector2(-20, 0);
 				(ourContainer.Find("BSMLSlider").transform as RectTransform).offsetMin = new Vector2(-20, 0);
 				ourContainer.position = prevContainer.position;

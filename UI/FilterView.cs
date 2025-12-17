@@ -49,19 +49,27 @@ namespace BetterSongSearch.UI {
 
 			((RectTransform)beatsaverFilterScroller.Find("Viewport").transform).sizeDelta = new Vector2(-5.5f, -5);
 
-			foreach(var input in
-				beatsaverFilterScroller.Find("Viewport/BSMLScrollViewContent/BSMLScrollViewContentContainer/BSMLVerticalLayoutGroup")
-				.GetComponentsInChildren<Touchable>()
-			) {
-				RectTransform t = (RectTransform)input.transform;
+			foreach(var x in beatsaverFilterScroller.GetComponentsInChildren<GenericSetting>()) {
+				Transform transform = x.transform;
+				RectTransform text;
+				RectTransform control;
 
-				if(input.name == "IncButton" || input.name == "DropDownButton") {
-					t = (RectTransform)t.parent;
-					t.Find("DecButton")?.gameObject.SetActive(false);
+				switch(x) {
+					case SliderSetting _:
+						text = (RectTransform)transform.Find("Title");
+						control = (RectTransform)transform.Find("BSMLSlider");
+						break;
+					case DropDownListSetting _:
+						transform = transform.parent;
+						text = (RectTransform)transform.Find("Label");
+						control = (RectTransform)transform.Find("Dropdown");
+						break;
+					default:
+						continue;
 				}
 
-				if(t.sizeDelta.x > 30)
-					t.sizeDelta = new Vector2(30, 0);
+				text.offsetMax = new Vector2(-30, 0);
+				control.offsetMin = new Vector2(-30, 0);
 			}
 		}
 
