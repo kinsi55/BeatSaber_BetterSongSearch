@@ -163,7 +163,7 @@ namespace BetterSongSearch.Configuration {
 		[UIValue("scoreFilterOptions")] public static readonly List<object> scoreFilterOptions = new List<object> { "Show all", "Hide passed", "Only passed" };
 		[UIValue("rankedFilterOptions")] public static readonly List<object> rankedFilterOptions = new List<object> { "Show all", "ScoreSaber Ranked", "BeatLeader Ranked", "ScoreSaber Qualified", "BeatLeader Qualified" };
 
-		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema" };
+		[UIValue("modOptions")] public static readonly List<object> modOptions = new List<object> { "Any", "Noodle Extensions", "Mapping Extensions", "Chroma", "Cinema", "Vivify" };
 		[UIValue("mapStyles")] public static readonly List<object> mapStyles = new List<object> { "Any", "accuracy", "balanced", "challenge", "dance", "fitness", "speed", "tech" };
 
 		#region uiformatters
