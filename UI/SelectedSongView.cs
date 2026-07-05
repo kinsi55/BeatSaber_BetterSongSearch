@@ -148,7 +148,7 @@ namespace BetterSongSearch.UI {
 
 		internal void SetIsDownloaded(bool isDownloaded, bool downloadable = true) {
 			playButton.gameObject.SetActive(isDownloaded);
-			playButton.interactable = Manager.goToSongSelect != null;
+			playButton.interactable = Manager.playSongCallback != null;
 			downloadButton.gameObject.SetActive(!isDownloaded);
 
 			if(!isDownloaded)
@@ -207,7 +207,7 @@ namespace BetterSongSearch.UI {
 			BSSFlowCoordinator.Close(true);
 			ReturnToBSS.returnTobss = PluginConfig.Instance.returnToBssFromSolo;
 
-			BeatmapKey key = new BeatmapKey(null, null, BeatmapDifficulty.Easy);
+			BeatmapKey key = new BeatmapKey(level.levelID, null, BeatmapDifficulty.Easy);
 			var keys = level.GetBeatmapKeys();
 
 			// If this fails for some reason, eh whatever. This is just for preselecting a / the matching diff
@@ -237,7 +237,7 @@ namespace BetterSongSearch.UI {
 			multiplayerLevelSelectionFlowCoordinator.Setup(x);
 			soloFreePlayFlowCoordinator.Setup(x);
 
-			Manager.goToSongSelect.Invoke();
+			Manager.playSongCallback(level, key);
 		}
 
 		[UIAction("Download")]
